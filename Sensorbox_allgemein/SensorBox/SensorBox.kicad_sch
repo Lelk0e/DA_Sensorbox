@@ -3176,6 +3176,12 @@
 		(uuid "8e7a5a38-efdd-4b0c-9e45-90aaac1a4bc0")
 	)
 	(junction
+		(at 46.99 170.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9c56a7a2-7ef9-4251-8d33-c5c1b4d4b912")
+	)
+	(junction
 		(at 140.97 111.76)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3192,6 +3198,32 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "ef679bc9-cb20-4277-ae1c-78d4ed7ee31d")
+	)
+	(junction
+		(at 99.06 172.72)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "fe4ce3b6-54ea-4b26-b30d-922a28a5c728")
+	)
+	(wire
+		(pts
+			(xy 99.06 172.72) (xy 100.33 172.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0303a9d7-7e77-4bcf-9975-da78bb0f5738")
+	)
+	(wire
+		(pts
+			(xy 40.64 170.18) (xy 40.64 171.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "03ab6e59-95d7-426d-918a-b2c9c5075204")
 	)
 	(wire
 		(pts
@@ -3245,6 +3277,26 @@
 	)
 	(wire
 		(pts
+			(xy 53.34 170.18) (xy 46.99 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0d059564-452b-440d-87b9-5caab4cf6a23")
+	)
+	(wire
+		(pts
+			(xy 99.06 175.26) (xy 99.06 172.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "12074a41-626c-4c01-9ca8-02363df7c058")
+	)
+	(wire
+		(pts
 			(xy 135.89 109.22) (xy 152.4 109.22)
 		)
 		(stroke
@@ -3252,6 +3304,26 @@
 			(type default)
 		)
 		(uuid "15276e1a-2d50-4f2d-8dec-55974c26a86f")
+	)
+	(wire
+		(pts
+			(xy 46.99 182.88) (xy 46.99 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1f3c2a93-13f2-4d9f-83cb-a2ef2e20853b")
+	)
+	(wire
+		(pts
+			(xy 93.98 172.72) (xy 99.06 172.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2eb11415-eacf-46d1-9879-d49146a44758")
 	)
 	(wire
 		(pts
@@ -3575,6 +3647,16 @@
 	)
 	(wire
 		(pts
+			(xy 99.06 182.88) (xy 46.99 182.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a75c4e71-2e47-4c04-bd67-248c9fa4d890")
+	)
+	(wire
+		(pts
 			(xy 234.95 102.87) (xy 255.27 102.87)
 		)
 		(stroke
@@ -3662,6 +3744,16 @@
 			(type default)
 		)
 		(uuid "e3017f89-899c-47e9-b11a-0434d73bf44d")
+	)
+	(wire
+		(pts
+			(xy 46.99 170.18) (xy 40.64 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e55ca45d-3a17-4c3a-9a9d-2638a950c0d2")
 	)
 	(wire
 		(pts
@@ -3790,24 +3882,24 @@
 		)
 		(uuid "859a51fc-9215-48ba-9233-fed96ae36b33")
 	)
-	(global_label "CLK_GPIO23"
+	(global_label "CLK_GPIO19"
 		(shape input)
-		(at 156.21 62.23 180)
+		(at 181.61 64.77 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify left)
 		)
 		(uuid "08cef7f1-53b9-434f-8ebe-eb476bac72f7")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 141.7948 62.23 0)
+			(at 196.0252 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -3966,6 +4058,50 @@
 			)
 		)
 	)
+	(global_label "Data_GPIO20"
+		(shape input)
+		(at 53.34 167.64 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3e087173-a381-4aaf-97f1-c84d901cfc03")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 38.1992 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "Data_GPIO20"
+		(shape input)
+		(at 181.61 67.31 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3ed71c4b-413a-4191-9141-c0e2ffee4a7b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 196.7508 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "V+"
 		(shape input)
 		(at 149.86 106.68 0)
@@ -4098,6 +4234,28 @@
 			)
 		)
 	)
+	(global_label "SCK_GPIO23"
+		(shape input)
+		(at 156.21 62.23 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "88899fb6-9ad5-4f94-ab8a-cea14908b439")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 141.6134 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "VCC_Batterie"
 		(shape input)
 		(at 228.6 116.84 0)
@@ -4186,7 +4344,7 @@
 			)
 		)
 	)
-	(global_label "CLK_GPIO23"
+	(global_label "CLK_GPIO19"
 		(shape input)
 		(at 220.98 43.18 180)
 		(fields_autoplaced yes)
@@ -4406,6 +4564,50 @@
 			)
 		)
 	)
+	(global_label "SCK_GPIO23"
+		(shape input)
+		(at 93.98 170.18 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e82d3085-8e69-4589-a5a9-8a48f29e6b38")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 108.5766 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VDD_3V3"
+		(shape input)
+		(at 100.33 172.72 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ed52081f-c2af-4b01-b20b-a12d65d80dd8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 111.419 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "CMD_GPIO16"
 		(shape input)
 		(at 181.61 62.23 0)
@@ -4428,7 +4630,7 @@
 			)
 		)
 	)
-	(global_label "CLK_GPIO23"
+	(global_label "CLK_GPIO19"
 		(shape input)
 		(at 209.55 137.16 180)
 		(fields_autoplaced yes)
@@ -4469,6 +4671,76 @@
 				)
 				(justify right)
 				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 99.06 179.07 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "031feadd-ea21-4384-b5b5-f68c0a9c188b")
+		(property "Reference" "C4"
+			(at 102.87 177.7999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100nF"
+			(at 102.87 180.3399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 100.0252 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 99.06 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 99.06 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8eea3898-3c0a-42dd-ada8-86a85909c668")
+		)
+		(pin "2"
+			(uuid "1a873a4f-6532-4b20-9811-3fda47771ea0")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "C4")
+					(unit 1)
+				)
 			)
 		)
 	)
@@ -5790,6 +6062,72 @@
 	)
 	(symbol
 		(lib_id "power:GND1")
+		(at 40.64 171.45 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "708a9702-538c-42fc-80fc-9201fe2b0c8c")
+		(property "Reference" "#PWR020"
+			(at 40.64 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND1"
+			(at 40.64 176.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 40.64 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 40.64 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND1\" , ground"
+			(at 40.64 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2bc06dcc-b3b0-49a9-922c-b97fb7fe4a72")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "#PWR020")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND1")
 		(at 72.39 57.15 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -6918,7 +7256,7 @@
 	)
 	(symbol
 		(lib_id "PS1-O3-100:PS1-O3-100")
-		(at 78.74 148.59 0)
+		(at 120.65 149.86 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6927,7 +7265,7 @@
 		(fields_autoplaced yes)
 		(uuid "babe8a26-b353-4675-bbeb-52a9dded9ff4")
 		(property "Reference" "U2"
-			(at 95.25 149.8599 0)
+			(at 137.16 151.1299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6936,7 +7274,7 @@
 			)
 		)
 		(property "Value" "PS1-O3-100"
-			(at 95.25 152.3999 0)
+			(at 137.16 153.6699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6945,7 +7283,7 @@
 			)
 		)
 		(property "Footprint" "PS1O3100"
-			(at 95.25 243.51 0)
+			(at 137.16 244.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6955,7 +7293,7 @@
 			)
 		)
 		(property "Datasheet" "https://sgx.cdistore.com/datasheets/sgx/ds-0353-ps1ps4-o3-100.pdf"
-			(at 95.25 343.51 0)
+			(at 137.16 344.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6965,7 +7303,7 @@
 			)
 		)
 		(property "Description" "SENSOR OZONE 100PPM -20C ~ 40C"
-			(at 78.74 148.59 0)
+			(at 120.65 149.86 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6974,7 +7312,7 @@
 			)
 		)
 		(property "Height" "5.6"
-			(at 95.25 543.51 0)
+			(at 137.16 544.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6984,7 +7322,7 @@
 			)
 		)
 		(property "Manufacturer_Name" "SGX Sensortech Limited"
-			(at 95.25 643.51 0)
+			(at 137.16 644.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6994,7 +7332,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "PS1-O3-100"
-			(at 95.25 743.51 0)
+			(at 137.16 744.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7004,7 +7342,7 @@
 			)
 		)
 		(property "Mouser Part Number" ""
-			(at 95.25 843.51 0)
+			(at 137.16 844.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7014,7 +7352,7 @@
 			)
 		)
 		(property "Mouser Price/Stock" ""
-			(at 95.25 943.51 0)
+			(at 137.16 944.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7024,7 +7362,7 @@
 			)
 		)
 		(property "Arrow Part Number" ""
-			(at 95.25 1043.51 0)
+			(at 137.16 1044.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7034,7 +7372,7 @@
 			)
 		)
 		(property "Arrow Price/Stock" ""
-			(at 95.25 1143.51 0)
+			(at 137.16 1144.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7629,7 +7967,7 @@
 	)
 	(symbol
 		(lib_id "HPP845E131R5:HPP845E131R5")
-		(at 67.31 170.18 0)
+		(at 53.34 167.64 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7638,7 +7976,7 @@
 		(fields_autoplaced yes)
 		(uuid "e956852d-e257-46ff-84d0-6137dfd6c381")
 		(property "Reference" "U5"
-			(at 87.63 160.02 0)
+			(at 73.66 157.48 0)
 			(effects
 				(font
 					(size 1.524 1.524)
@@ -7646,7 +7984,7 @@
 			)
 		)
 		(property "Value" "HPP845E131R5"
-			(at 87.63 162.56 0)
+			(at 73.66 160.02 0)
 			(effects
 				(font
 					(size 1.524 1.524)
@@ -7654,7 +7992,7 @@
 			)
 		)
 		(property "Footprint" "SON6_HPP845E131R5_TEC"
-			(at 67.31 170.18 0)
+			(at 53.34 167.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7664,7 +8002,7 @@
 			)
 		)
 		(property "Datasheet" "HPP845E131R5"
-			(at 67.31 170.18 0)
+			(at 53.34 167.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7674,7 +8012,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 67.31 170.18 0)
+			(at 53.34 167.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
