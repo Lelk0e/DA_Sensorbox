@@ -6,16 +6,15 @@ BME280 mySensor;
 
 // Set network credentials
 const char *ssid = "ESP32_AccessPoint";
-const char *password = "12345678"; // At least 8 characters
+const char *password = "12345678";  // At least 8 characters
 
-WiFiServer server(80); // Create a server on port 80
+WiFiServer server(80);  // Create a server on port 80
 
-void setup()
-{
+void setup() {
   // Initialize serial communication
   Serial.begin(115200);
   Wire.begin(19, 20);
-  Wire.setClock(400000); // Increase to fast I2C speed!
+  Wire.setClock(400000);  // Increase to fast I2C speed!
 
   // Initialize BME280 sensor
   mySensor.beginI2C();
@@ -33,17 +32,14 @@ void setup()
   Serial.println(WiFi.softAPIP());
 }
 
-void loop()
-{
+void loop() {
   // Check if a client has connected
   WiFiClient client = server.available();
-  if (client)
-  {
+  if (client) {
     Serial.println("New Client Connected");
 
-    
-    while (client.connected())
-    {
+
+    while (client.connected()) {
       // Read sensor data
       float humidity = mySensor.readFloatHumidity();
       float pressure = mySensor.readFloatPressure();
@@ -57,10 +53,10 @@ void loop()
       data += "\"altitude\":" + String(altitude, 1) + ",";
       data += "\"temperature\":" + String(temperature, 1);
       data += "}";
-      client.println(data); 
-      Serial.println("Data sent to client: " + data); 
+      client.println(data);
+      Serial.println("Data sent to client: " + data);
 
-      delay(500); 
+      delay(500);
     }
 
     // Close the connection when the client disconnects
