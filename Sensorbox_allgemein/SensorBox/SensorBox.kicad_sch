@@ -3341,6 +3341,16 @@
 	)
 	(wire
 		(pts
+			(xy 157.48 116.84) (xy 158.75 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0f1deb4e-89c5-49c2-9afc-ccb11b1c1303")
+	)
+	(wire
+		(pts
 			(xy 151.13 146.05) (xy 151.13 143.51)
 		)
 		(stroke
@@ -3831,6 +3841,16 @@
 	)
 	(wire
 		(pts
+			(xy 175.26 116.84) (xy 176.53 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dc8b983a-4633-4ab3-af2f-3e134e1d70ae")
+	)
+	(wire
+		(pts
 			(xy 154.94 54.61) (xy 156.21 54.61)
 		)
 		(stroke
@@ -4276,28 +4296,6 @@
 			)
 		)
 	)
-	(global_label "1.8+"
-		(shape input)
-		(at 157.48 116.84 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "3d1a1ae1-5ff9-498e-b6ef-79167a000472")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 165.0614 116.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "SCL_GPIO20"
 		(shape input)
 		(at 181.61 67.31 0)
@@ -4408,9 +4406,9 @@
 			)
 		)
 	)
-	(global_label "1.8+"
+	(global_label "VDD_3V3"
 		(shape input)
-		(at 175.26 116.84 0)
+		(at 158.75 116.84 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4418,9 +4416,9 @@
 			)
 			(justify left)
 		)
-		(uuid "62731ca9-dc1d-4b62-bf02-4c329e53d9c9")
+		(uuid "69592872-ab4b-4e33-9ebb-fc9c869724bb")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 182.8414 116.84 0)
+			(at 169.839 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4668,6 +4666,28 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VDD_3V3"
+		(shape input)
+		(at 176.53 116.84 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d91ee24b-4b12-462f-b21e-756afa041542")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 187.619 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 				(hide yes)
 			)
 		)
