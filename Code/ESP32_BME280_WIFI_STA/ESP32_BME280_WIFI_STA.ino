@@ -9,7 +9,9 @@ const char *serverIP = "192.168.4.1"; // Default IP for ESP32 in AP mode
 const uint16_t serverPort = 80;       // Same port as server on the sending ESP32
  
 WiFiClient client;
- 
+
+
+
 void setup()
 {
   // Initialize serial communication
