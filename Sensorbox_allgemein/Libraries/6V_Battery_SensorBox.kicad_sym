@@ -2,7 +2,7 @@
 	(version 20231120)
 	(generator "kicad_symbol_editor")
 	(generator_version "8.0")
-	(symbol "Battery_6V"
+	(symbol "Battery_3V7"
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -22,7 +22,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Battery_6V:Bat_6V"
+		(property "Footprint" "Battery_6V:Bat_3V7"
 			(at 0 0 0)
 			(effects
 				(font
@@ -49,7 +49,7 @@
 				(hide yes)
 			)
 		)
-		(symbol "Battery_6V_0_1"
+		(symbol "Battery_3V7_0_1"
 			(rectangle
 				(start 0 0)
 				(end 7 -6)
@@ -62,7 +62,7 @@
 				)
 			)
 		)
-		(symbol "Battery_6V_1_1"
+		(symbol "Battery_3V7_1_1"
 			(pin input line
 				(at 6.35 -2.54 0)
 				(length 2.54)
