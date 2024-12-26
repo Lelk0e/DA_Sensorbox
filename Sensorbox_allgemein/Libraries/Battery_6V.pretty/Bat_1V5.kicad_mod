@@ -1,4 +1,4 @@
-(footprint "Bat_3V7"
+(footprint "Bat_1V5"
 	(version 20240108)
 	(generator "pcbnew")
 	(generator_version "8.0")
@@ -15,7 +15,7 @@
 			)
 		)
 	)
-	(property "Value" "Bat_3V7"
+	(property "Value" "Bat_1V5"
 		(at 0 1 0)
 		(unlocked yes)
 		(layer "F.Fab")
@@ -27,7 +27,7 @@
 			)
 		)
 	)
-	(property "Footprint" "Bat_3V7"
+	(property "Footprint" "Bat_1V5"
 		(at 0 0 0)
 		(unlocked yes)
 		(layer "F.Fab")
@@ -69,7 +69,7 @@
 	(attr smd)
 	(fp_rect
 		(start 0 0)
-		(end 80 40)
+		(end 15 60)
 		(stroke
 			(width 0.1)
 			(type default)
@@ -91,19 +91,19 @@
 		)
 	)
 	(pad "V+" smd roundrect
-		(at 73.66 12.7)
+		(at 7.62 2.54)
 		(size 3.683 3.302)
 		(layers "F.Cu" "F.Paste" "F.Mask")
 		(roundrect_rratio 0.25)
 		(thermal_bridge_angle 45)
-		(uuid "9283f64e-1b97-4865-8313-42a2b70119b3")
+		(uuid "e1731169-101e-457a-bb40-5d2803616a9b")
 	)
 	(pad "V-" smd roundrect
-		(at 73.66 30.48)
+		(at 7.62 55.88)
 		(size 3.683 3.302)
 		(layers "F.Cu" "F.Paste" "F.Mask")
 		(roundrect_rratio 0.25)
 		(thermal_bridge_angle 45)
-		(uuid "46c72053-2209-455d-b641-507c159598e9")
+		(uuid "5242ace7-a1a2-48a4-9255-24cf2566d4fe")
 	)
 )

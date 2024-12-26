@@ -22,7 +22,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Battery_6V:Bat_3V7"
+		(property "Footprint" "Battery_6V:Bat_1V5"
 			(at 0 0 0)
 			(effects
 				(font
