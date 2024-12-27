@@ -1,0 +1,10 @@
+(unit MM)
+
+(package "PS1O3100"
+    (type UNDEF)
+    (uver 2)
+    (mountForm default
+        (footprintRef "PS1O3100")
+        (spec "default")
+    )
+)
