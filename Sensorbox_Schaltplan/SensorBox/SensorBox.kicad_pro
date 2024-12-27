@@ -587,7 +587,23 @@
   "sheets": [
     [
       "7cbe8151-7294-42e6-9c4e-6ec8952d674f",
-      "Stammblatt"
+      "Root"
+    ],
+    [
+      "4e108680-12ff-4cb8-b9bb-87f55612a553",
+      "Temperatur-Sensor"
+    ],
+    [
+      "4c52dcef-16c4-4248-b44e-4d3cc6a659a9",
+      "Luftdruck-Sensor"
+    ],
+    [
+      "cedf42a7-aa6b-4df6-871c-4aca42e7ffe1",
+      "Ozon-Sensor"
+    ],
+    [
+      "1c32aaa3-afad-4bd9-87f2-7ec40b07aa67",
+      "Luftfeuchtigkeit-Sensor"
     ]
   ],
   "text_variables": {}
