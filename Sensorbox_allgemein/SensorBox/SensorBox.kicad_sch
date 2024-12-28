@@ -8366,7 +8366,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "ESP32_Wroom_e:ESP32_Wroom_E"
 			(at 151.13 31.75 0)
 			(effects
 				(font
