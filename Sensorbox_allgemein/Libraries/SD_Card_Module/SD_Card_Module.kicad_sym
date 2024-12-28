@@ -49,6 +49,19 @@
 				(hide yes)
 			)
 		)
+		(symbol "Modul_Fermion_0_1"
+			(rectangle
+				(start 0 5.08)
+				(end 28 -14.92)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
 		(symbol "Modul_Fermion_1_1"
 			(pin input line
 				(at 0 0 0)
