@@ -1,0 +1,2 @@
+Licenses for the code which uses the asynwebserver library, which contains all important factors, for creating a asyn. webserver
+More details about the AsyncWebserver library can be found on "https://github.com/me-no-dev/ESPAsyncWebServer"
