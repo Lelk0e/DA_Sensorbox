@@ -3,9 +3,6 @@
   <head>
     <title>ESP TEST</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="http://cdn.rawgit.com/Mikhus/canvas-gauges/gh-pages/download/2.1.7/all/gauge.min.js"></script>
   </head>
   <body>
     <div class="topnav">
@@ -15,8 +12,9 @@
       <div class="card-grid">
         <div class="card">
           <p class="card-title">HPPS-Humidity</p>
-          <canvas id="HPPS-Sensor-humidity"></canvas>
-          <label id="clk"></label>
+          <label id="humidity">HPP in %: ha </label>
+          <label id="clk">date show</label>
+          <button onclick="getTimeOnLabel()" id="but" >Click me, to check, if date is working</button> <!-- test if date is working-->
         </div>
       </div>
     </div>
