@@ -29,6 +29,7 @@ void setup() {
   Serial.begin(115200);
   mesh.setDebugMsgTypes(ERROR | DEBUG | CONNECTION);
   mesh.init("Sensorbox", "12345678", &userSched, 5555);
+  mesh.setContainsRoot(true);
   mesh.setName(nodeName);
   mesh.onReceive(&receivedCallback);
   mesh.onChangedConnections([]() {
