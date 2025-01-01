@@ -45,11 +45,10 @@ void setup() {
   mesh.init("Sensorbox", "12345678", &userSched, 5555);
   mesh.setRoot(true);
   mesh.setContainsRoot(true);
-  mesh.setAPIP(IPAddress(192, 168, 4, 1));
   mesh.setName(nodeName);
   mesh.onReceive(&receivedCallback);
   mesh.onNewConnection(&newConnectionCallback);
-
+  Serial.println(mesh.getAPIP());
   // Setup web server routes
   server.on("/bme", HTTP_GET, [](AsyncWebServerRequest *request) {
       request->send(200, "text/plain", msgBME);
