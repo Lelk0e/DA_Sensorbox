@@ -8,20 +8,20 @@
     <link rel="stylesheet" href="design.css">
     <script src="web_code.js"></script>
 </head>
-<body style="background-color:darkslategrey;"> 
+<body style="background-color:darkslategrey;" onload="canvas_setting()"> 
     <!--Vertical alignment for the objects-->
     <div class="stack_ver">
         <!--Filter system-->
         <div class="stack_hor"> <!--objects will be aligned in a horizontal way-->
             <!--select the sensors-->
-            <select style="background-color:dimgray;" name="Sensors">
+            <select onchange="sensor_setting()" id="box_sens" style="background-color:dimgray;" name="Sensors">
                 <option id="sens_temp">Temperature</option>
                 <option id="sens_air_moisure">Airmoisure</option>
                 <option id="sens_air_pressure">Airpressure</option>
                 <option id="sens_gas">Gas</option>
             </select>
             <!--select the time-->
-            <select style="background-color:dimgray;" name="Time">
+            <select onchange="time_setting()" id="box_time" style="background-color:dimgray;" name="Time">
                 <option id="time_today">Today</option>
                 <option id="time_yesterday">Yesterday</option>
                 <option id="time_this_week">This Week</option>
@@ -36,7 +36,7 @@
         </div>
         <!--Canvas--> 
         <!--xy box .... time x ... data y ---- doing it with a canvas-->   
-        <canvas id="graph" height="400" width="500" style="background-color:white;"></canvas>
+        <canvas  id="graph" height="800" width="1500" style="background-color:white;" style="border: 5px black"></canvas>
     </div>
 </body>
 </html>

@@ -1,4 +1,3 @@
 canvas{
-    stroke: black;
-    stroke-width: 10px;
+    border: 5px black;
 }
