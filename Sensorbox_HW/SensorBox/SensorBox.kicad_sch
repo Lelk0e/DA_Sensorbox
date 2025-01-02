@@ -3044,6 +3044,167 @@
 				)
 			)
 		)
+		(symbol "ST0245:ST0245"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0.254 2.032 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "ST0245_0_1"
+				(rectangle
+					(start 1.27 1.27)
+					(end 16.51 -11.43)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "ST0245_1_1"
+				(text "ST0245"
+					(at 12.446 -5.334 0)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(pin input line
+					(at 0 0 0)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 0 -2.54 0)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 0 -5.08 0)
+					(length 2.54)
+					(name "CLK"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 0 -7.62 0)
+					(length 2.54)
+					(name "DAT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 0 -10.16 0)
+					(length 2.54)
+					(name "RST"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "Sensor:BME280"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -4894,6 +5055,16 @@
 	)
 	(wire
 		(pts
+			(xy 156.21 104.14) (xy 156.21 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4e609af4-af3d-44b6-b5bb-6927f41e6445")
+	)
+	(wire
+		(pts
 			(xy 80.01 48.26) (xy 99.06 48.26)
 		)
 		(stroke
@@ -5074,6 +5245,26 @@
 	)
 	(wire
 		(pts
+			(xy 176.53 67.31) (xy 179.07 67.31)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6ad234f0-a9b1-4c6a-9d1f-828c9664192b")
+	)
+	(wire
+		(pts
+			(xy 148.59 104.14) (xy 148.59 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6b2e0d41-407e-4bf1-abff-3277aa2653a9")
+	)
+	(wire
+		(pts
 			(xy 121.92 172.72) (xy 132.08 172.72)
 		)
 		(stroke
@@ -5121,6 +5312,16 @@
 			(type default)
 		)
 		(uuid "734c4698-190b-4461-8e91-74167235c1d3")
+	)
+	(wire
+		(pts
+			(xy 153.67 104.14) (xy 153.67 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "736a2115-5e20-4d4d-bd45-4d813f1132cb")
 	)
 	(wire
 		(pts
@@ -5181,6 +5382,16 @@
 			(type default)
 		)
 		(uuid "7bdc6855-3c10-44f2-81b4-ac7c6c6c9ed2")
+	)
+	(wire
+		(pts
+			(xy 151.13 104.14) (xy 151.13 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7dfb8d0e-bc52-474b-b7f3-4c5ed163dae9")
 	)
 	(wire
 		(pts
@@ -5804,6 +6015,16 @@
 	)
 	(wire
 		(pts
+			(xy 146.05 106.68) (xy 146.05 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f4643127-0916-412e-90c5-07f88e2d95d7")
+	)
+	(wire
+		(pts
 			(xy 105.41 157.48) (xy 121.92 157.48)
 		)
 		(stroke
@@ -5919,6 +6140,18 @@
 			(type none)
 		)
 		(uuid a5ade57b-825e-4776-843f-a7a86b450356)
+	)
+	(rectangle
+		(start 129.54 80.01)
+		(end 172.72 120.65)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid bbe2ab74-c0ea-4968-9a07-dab941b1ab94)
 	)
 	(rectangle
 		(start 205.74 13.97)
@@ -6141,6 +6374,17 @@
 			)
 		)
 		(uuid "8d572917-5597-4d6c-bceb-5b39f83242ca")
+	)
+	(text "RTC-Modul\n"
+		(exclude_from_sim no)
+		(at 151.13 84.328 0)
+		(effects
+			(font
+				(size 3 3)
+				(bold yes)
+			)
+		)
+		(uuid "8d67773d-b064-4978-a321-126ad3bd70ff")
 	)
 	(text "VSAT = 1V2, da dass am besten ist\n"
 		(exclude_from_sim no)
@@ -6463,6 +6707,28 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SCL_GPIO22"
+		(shape input)
+		(at 151.13 106.68 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "46dbaac8-f914-4ae2-bcd7-1b4a74422418")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 151.13 121.0347 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 				(hide yes)
 			)
 		)
@@ -6929,6 +7195,28 @@
 			)
 		)
 	)
+	(global_label "RST_GPIO2"
+		(shape input)
+		(at 156.21 106.68 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "cdcc2df0-b39d-4038-b52d-6166ab6ce953")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 156.21 119.7647 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "VDD_5V"
 		(shape input)
 		(at 233.68 41.91 180)
@@ -7019,6 +7307,28 @@
 	)
 	(global_label "VDD_5V"
 		(shape input)
+		(at 146.05 106.68 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e0b49bd4-e63a-431b-b7f3-11e435d6efaf")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 146.05 116.5595 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VDD_5V"
+		(shape input)
 		(at 88.9 176.53 90)
 		(fields_autoplaced yes)
 		(effects
@@ -7096,6 +7406,50 @@
 		(uuid "ed52081f-c2af-4b01-b20b-a12d65d80dd8")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 129.199 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SDA_GPIO21"
+		(shape input)
+		(at 153.67 106.68 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ef3c7c00-55de-402d-905a-454063dcca4b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 153.67 121.0952 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "RST_GPIO2"
+		(shape input)
+		(at 179.07 67.31 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f7a3d0c9-1333-48a8-9a2e-dedabc46aa2e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 192.1547 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8333,6 +8687,72 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "C6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND1")
+		(at 148.59 106.68 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "30fcaa10-6cd8-47e5-8f8f-0fbab4cd7394")
+		(property "Reference" "#PWR015"
+			(at 148.59 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND1"
+			(at 148.59 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 148.59 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 148.59 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND1\" , ground"
+			(at 148.59 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "da9062bf-453c-4f6e-8899-9d2aca896434")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "#PWR015")
 					(unit 1)
 				)
 			)
@@ -11609,6 +12029,85 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "C7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "ST0245:ST0245")
+		(at 146.05 104.14 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f2aff830-291e-4c78-8063-7e6b654d8b85")
+		(property "Reference" "U11"
+			(at 158.75 94.6149 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "~"
+			(at 158.75 96.52 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 146.05 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 146.05 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 146.05 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "9c17c8fd-0a83-40dc-89f7-7c61ead4f72a")
+		)
+		(pin "1"
+			(uuid "596772d1-0828-4640-954f-ba0a9d87da5f")
+		)
+		(pin "5"
+			(uuid "c58c2084-b055-4c1b-80c8-c2446eb1a647")
+		)
+		(pin "3"
+			(uuid "7a4658d1-c21b-4dec-b2b0-9d72f37bb0e4")
+		)
+		(pin "4"
+			(uuid "82f593a9-cea8-463f-9422-82fcf1bc49f6")
+		)
+		(instances
+			(project ""
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "U11")
 					(unit 1)
 				)
 			)
