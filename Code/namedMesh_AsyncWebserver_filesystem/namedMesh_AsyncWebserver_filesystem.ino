@@ -1,6 +1,10 @@
 #include "namedMesh.h"
 #include <ESPAsyncWebServer.h>
-#include "IPAddress.h"
+#include "FS.h"
+#include <SPI.h>
+#include <SD.h>
+
+#define cs_pin 5
 
 Scheduler userSched;
 namedMesh mesh;
@@ -11,16 +15,23 @@ String msgOzon = "";
 String msgPT = "";
 String msgInter = "";
 
+AsyncWebServer server(80);
+
 void sendRoot();
 
 void sendRoot() {
   mesh.sendBroadcast(nodeName);
 }
 
-IPAddress getlocalIP() {
-    return IPAddress(mesh.getAPIP()); 
+void initSDCard(){
+  if(!SD.begin(cs_pin)){
+    Serial.println("Mount Failed");
+    return;
+  }
+  uint8_t cardType = SD.cardType();
+  uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+  Serial.printf("Size: %lluMB\n", cardSize);
 }
-
 
 void receivedCallback(String &from, String &msg) {
   Serial.printf("Received from=%s msg=%s\n", from.c_str(), msg.c_str());
@@ -45,26 +56,38 @@ void setup() {
   mesh.init("Sensorbox", "12345678", &userSched, 5555);
   mesh.setRoot(true);
   mesh.setContainsRoot(true);
-  mesh.setAPIP(IPAddress(192, 168, 4, 1));
+  Serial.println(mesh.getAPIP());
   mesh.setName(nodeName);
   mesh.onReceive(&receivedCallback);
   mesh.onNewConnection(&newConnectionCallback);
   mesh.onChangedConnections([]() {
     Serial.printf("Changed connection\n");
   });
-  server.on("/bme", HTTP_GET, [](AsyncWebServerRequest *request) {
-      request->send(200, "text/plain", msgBME);
+  initSDCard();
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SD, "/webpage/website.html", "text/html");
   });
-  server.on("/ozon", HTTP_GET, [](AsyncWebServerRequest *request) {
-      request->send(200, "text/plain", msgOzon);
-  });
-  server.on("/PT100", HTTP_GET, [](AsyncWebServerRequest *request) {
-      request->send(200, "text/plain", msgPT);
-  });
-  server.on("/Inter", HTTP_GET, [](AsyncWebServerRequest *request) {
-      request->send(200, "text/plain", msgInter);
+  server.on("/set-time", HTTP_GET, [](AsyncWebServerRequest *request) {
+    String hour;
+    String minute;
+    String second;
+    if (request->hasParam("hour") && request->hasParam("minute") && request->hasParam("second")) {
+      hour = request->getParam("hour")->value();
+      minute = request->getParam("minute")->value();
+      second = request->getParam("second")->value();
+      Serial.print("Received time: ");
+      Serial.print(hour);
+      Serial.print(":");
+      Serial.print(minute);
+      Serial.print(":");
+      Serial.println(second);
+      request->send(200, "text/plain", "Time received successfully");
+    } else {
+      request->send(400, "text/plain", "Missing time parameters");
+    }
   });
   server.begin();
+
 }
 
 void loop() {
