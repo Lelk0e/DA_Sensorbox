@@ -7760,7 +7760,7 @@
 	)
 	(text "1V5 3x\n4V5"
 		(exclude_from_sim no)
-		(at 132.842 17.272 0)
+		(at 132.08 19.812 0)
 		(effects
 			(font
 				(size 3 3)
