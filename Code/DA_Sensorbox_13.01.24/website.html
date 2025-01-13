@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ESP Web Server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <h2>ESP Web Server</h2>
+
+    <h4>Set Time</h4>
+    <button type="button" onclick="setTime()">Send Time</button>
+
+    <script>
+      function setTime() {
+        // Get the current time from the client's device
+        var currentTime = new Date();
+        var hour = currentTime.getHours();
+        var minute = currentTime.getMinutes();
+        var second = currentTime.getSeconds();
+
+        // Send the time to the ESP32
+        var xhr = new XMLHttpRequest();
+        xhr.open(
+          "GET",
+          "/set-time?hour=" + hour + "&minute=" + minute + "&second=" + second,
+          true
+        );
+        xhr.onload = function () {
+          alert("Time set successfully: " + xhr.responseText);
+        };
+        xhr.send();
+      }
+    </script>
+  </body>
+</html>
