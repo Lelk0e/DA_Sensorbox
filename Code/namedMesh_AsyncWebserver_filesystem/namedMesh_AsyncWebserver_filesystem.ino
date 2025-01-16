@@ -95,7 +95,7 @@ void receivedCallback(String &from, String &msg) {
 
 void newConnectionCallback(uint32_t nodeId) {
   sendRoot();
-  mesh.sendBroadcast(hour + ";" + minute + ";" + second);
+  mesh.sendBroadcast(hour + ":" + minute + ":" + second);
 }
 
 void initSDCard(){

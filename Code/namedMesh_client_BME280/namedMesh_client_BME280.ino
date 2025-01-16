@@ -43,6 +43,9 @@ void receivedCallback(String &from, String &msg) {
     delimiterSplit(msg, ":");
   }
 }
+void newConnectionCallback(uint32_t nodeId) {
+ 
+}
 
 void initSDCard(){
   if(!SD.begin(cs_pin)){
@@ -54,19 +57,21 @@ void initSDCard(){
   Serial.printf("Size: %lluMB\n", cardSize);
 }
 
-void delimiterSplit(string s, char del){
+void delimiterSplit(String s, char* del){
   std::stringstream ss (s);
-  string part;
+  String part;
 
-  std::getline(ss, part, del);
+  getline(ss, part, del);
   hour = stoi(part); //stoi --> Convert string to int
-  std::getline(ss, part, del);
+  getline(ss, part, del);
   minute = stoi(part); //stoi --> Convert string to int
-  std::getline(ss, part, del);
+  getline(ss, part, del);
   second = stoi(part); //stoi --> Convert string to int
 }
 
-void readBme(){
+float readBme(){
+  float pressure = bme280Sensor.readFloatPressure();
+  return pressure;
 
 }
 
