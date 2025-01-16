@@ -5263,6 +5263,12 @@
 		(uuid "0623f3a7-883b-48fc-870e-2b6bbbefc0fc")
 	)
 	(junction
+		(at 369.57 111.76)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "064a4909-fe0d-4285-b42a-8df3a1b88eb9")
+	)
+	(junction
 		(at 381 127)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5435,6 +5441,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "ad630614-efc7-4a53-8897-59bd712a9764")
+	)
+	(junction
+		(at 383.54 76.2)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b055ba2d-d864-451d-837d-b814c9c4780f")
 	)
 	(junction
 		(at 88.9 27.94)
@@ -5680,6 +5692,16 @@
 	)
 	(wire
 		(pts
+			(xy 374.65 71.12) (xy 374.65 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0d9a1198-d06e-44a2-b24d-b522f8554128")
+	)
+	(wire
+		(pts
 			(xy 97.79 62.23) (xy 97.79 57.15)
 		)
 		(stroke
@@ -5760,7 +5782,17 @@
 	)
 	(wire
 		(pts
-			(xy 377.19 82.55) (xy 379.73 82.55)
+			(xy 377.19 76.2) (xy 377.19 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1918b5cc-b09d-48b0-acda-9d1a42806b44")
+	)
+	(wire
+		(pts
+			(xy 377.19 76.2) (xy 383.54 76.2)
 		)
 		(stroke
 			(width 0)
@@ -6930,13 +6962,13 @@
 	)
 	(wire
 		(pts
-			(xy 374.65 77.47) (xy 379.73 77.47)
+			(xy 383.54 85.09) (xy 383.54 83.82)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "9dca7218-d1c6-4bcb-877c-4af48da3f022")
+		(uuid "9db03703-cf39-49d0-b26e-2357b9d03feb")
 	)
 	(wire
 		(pts
@@ -7030,6 +7062,16 @@
 	)
 	(wire
 		(pts
+			(xy 383.54 76.2) (xy 386.08 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a630a3e5-7a63-4418-9496-a11c000bcda6")
+	)
+	(wire
+		(pts
 			(xy 139.7 205.74) (xy 87.63 205.74)
 		)
 		(stroke
@@ -7090,6 +7132,16 @@
 	)
 	(wire
 		(pts
+			(xy 368.3 111.76) (xy 369.57 111.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b09c32af-a7e4-4f3c-8bb7-6b85991efc32")
+	)
+	(wire
+		(pts
 			(xy 281.94 52.07) (xy 284.48 52.07)
 		)
 		(stroke
@@ -7107,16 +7159,6 @@
 			(type default)
 		)
 		(uuid "b68e6f32-dee8-4c6d-8708-3941682e4eb0")
-	)
-	(wire
-		(pts
-			(xy 369.57 111.76) (xy 369.57 109.22)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b8d93f9b-9d40-46b3-a78b-ec8f1c0d6678")
 	)
 	(wire
 		(pts
@@ -7250,6 +7292,16 @@
 	)
 	(wire
 		(pts
+			(xy 389.89 85.09) (xy 383.54 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cac54b91-3c2f-4c82-8549-c9444b62be54")
+	)
+	(wire
+		(pts
 			(xy 184.15 218.44) (xy 187.96 218.44)
 		)
 		(stroke
@@ -7337,6 +7389,16 @@
 			(type default)
 		)
 		(uuid "d244c558-671c-45a0-950a-85765675254c")
+	)
+	(wire
+		(pts
+			(xy 365.76 119.38) (xy 369.57 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d2ccc370-c980-4484-8f45-654d54a41737")
 	)
 	(wire
 		(pts
@@ -7860,6 +7922,16 @@
 		)
 		(uuid fbbade16-36e4-4b26-9e57-3bea5d9e5a46)
 	)
+	(text "für 3,3V\n"
+		(exclude_from_sim no)
+		(at 387.858 83.312 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "0a5a826f-5303-4f1b-9df7-936a0c053574")
+	)
 	(text "Luftdruck-Sensor"
 		(exclude_from_sim no)
 		(at 42.418 161.544 0)
@@ -7903,6 +7975,16 @@
 			)
 		)
 		(uuid "2461734a-ee19-4aa7-b0da-c130df6a5181")
+	)
+	(text "für 3,3V\n"
+		(exclude_from_sim no)
+		(at 363.22 115.824 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "24f00502-8d63-44ca-bda1-28aa38b095e5")
 	)
 	(text "für 3,3V\n"
 		(exclude_from_sim no)
@@ -8361,7 +8443,7 @@
 	)
 	(global_label "Mosi_GPIO23"
 		(shape input)
-		(at 379.73 82.55 0)
+		(at 386.08 76.2 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -8371,7 +8453,7 @@
 		)
 		(uuid "23d76357-ef43-4dec-81ca-920432fae2dc")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 394.8104 82.55 0)
+			(at 401.1604 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8647,22 +8729,22 @@
 	)
 	(global_label "Miso_GPIO19"
 		(shape input)
-		(at 369.57 109.22 90)
+		(at 368.3 111.76 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left)
+			(justify right)
 		)
 		(uuid "59c2910a-a6d2-45a7-aa08-02f64f739e82")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 369.57 94.1396 90)
+			(at 353.2196 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 				(hide yes)
 			)
 		)
@@ -8757,7 +8839,7 @@
 	)
 	(global_label "SCK_GPIO18"
 		(shape input)
-		(at 379.73 77.47 0)
+		(at 374.65 71.12 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -8767,7 +8849,7 @@
 		)
 		(uuid "728099ea-5ebb-4a97-9936-bac3f82c8f69")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 394.3266 77.47 0)
+			(at 389.2466 71.12 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10408,6 +10490,75 @@
 		)
 	)
 	(symbol
+		(lib_id "Diode:1.5KExxA")
+		(at 369.57 115.57 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1a1e70fa-64d1-4fa0-af8c-1d1ff6c6ad19")
+		(property "Reference" "D5"
+			(at 372.11 114.2999 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1.5KExxA"
+			(at 371.348 116.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Diode_THT:D_DO-201AE_P15.24mm_Horizontal"
+			(at 364.49 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/88301/15ke.pdf"
+			(at 369.57 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "1500W unidirectional TVS diode, DO-201AE"
+			(at 369.57 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "266efd59-2d1f-496e-b3ec-09b73c5178eb")
+		)
+		(pin "2"
+			(uuid "e4720aa1-0587-4b76-a7eb-59397604ca7e")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "D5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 280.67 105.41 180)
 		(unit 1)
@@ -10541,6 +10692,73 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "C3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND1")
+		(at 365.76 119.38 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1e5a6df7-72d7-4c3a-85c0-5ddd85f642ba")
+		(property "Reference" "#PWR023"
+			(at 359.41 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND1"
+			(at 361.95 119.3799 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 365.76 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 365.76 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND1\" , ground"
+			(at 365.76 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d07548b6-16d8-4b5e-810a-8e5cb985da59")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "#PWR023")
 					(unit 1)
 				)
 			)
@@ -13273,6 +13491,75 @@
 		)
 	)
 	(symbol
+		(lib_id "Diode:1.5KExxA")
+		(at 383.54 80.01 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "920db660-700e-45d9-ad82-eb946ca234c6")
+		(property "Reference" "D6"
+			(at 386.08 78.7399 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1.5KExxA"
+			(at 385.318 81.28 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Diode_THT:D_DO-201AE_P15.24mm_Horizontal"
+			(at 378.46 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/88301/15ke.pdf"
+			(at 383.54 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "1500W unidirectional TVS diode, DO-201AE"
+			(at 383.54 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e30aae74-5bbf-49c1-b0ee-287f07bc642b")
+		)
+		(pin "2"
+			(uuid "f59cc76b-913b-405f-89f3-dd3676103d9c")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "D6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 346.71 30.48 0)
 		(unit 1)
@@ -13785,6 +14072,73 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "C5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND1")
+		(at 389.89 85.09 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a6c13ee6-ff2f-448e-8ae4-531911a0a39b")
+		(property "Reference" "#PWR024"
+			(at 396.24 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND1"
+			(at 393.7 85.0899 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 389.89 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 389.89 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND1\" , ground"
+			(at 389.89 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "32aa3de9-7bb8-4030-8b02-eccafcc062fe")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "#PWR024")
 					(unit 1)
 				)
 			)
