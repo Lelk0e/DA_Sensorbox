@@ -148,8 +148,8 @@ function time_setting(){
         case "Today":
             lapse = 24; //1, because of 0 time
             unit = x_point_length / lapse;
-
-            ctx.clearRect(-unit/2, 1, x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
+            //clearRect(...,...,unit/2 + x_axe_length-1,...) --> +unit/2, because of the x-axe line shift, thats why, okay?
+            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
                                                               //we are beginning at 1, because line with
             measure_text_x_axe_and_delete(); //deleting the text
 
@@ -172,14 +172,13 @@ function time_setting(){
             } 
             ctx.font = "20px serif";
             ctx.fillText("x in hours", x_whole_axe_length + x_axe_name_diff,1);  
-
         break;
         
         case "Yesterday":
             lapse = 24; //1, because of 0 time
             unit = x_point_length / lapse; //for each time lapse
 
-            ctx.clearRect(-unit/2, 1, x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared --> 12, is the font size of the text
+            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared --> 12, is the font size of the text
                                                               //we are beginning at 1, because line with
             measure_text_x_axe_and_delete(); //deleting the text
 
@@ -208,7 +207,7 @@ function time_setting(){
             lapse = 7; //1, because of 0 time
             unit = x_point_length / lapse; //for each time lapse
 
-            ctx.clearRect(-unit/2, 1, x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
+            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
                                                               //we are beginning at 1, because line with
             measure_text_x_axe_and_delete(); //deleting the text
 
@@ -231,7 +230,7 @@ function time_setting(){
             lapse = 7; //1, because of 0 time
             unit = x_point_length / lapse; //for each time lapse
 
-            ctx.clearRect(-unit/2, 1, x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
+            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
                                                               //we are beginning at 1, because line with
             measure_text_x_axe_and_delete(); //deleting the text
 
@@ -254,7 +253,7 @@ function time_setting(){
             lapse = 30; //1, because of 0 time
             unit = x_point_length / lapse; //for each time lapse
 
-            ctx.clearRect(-unit/2, 1, x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
+            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
                                                               //we are beginning at 1, because line with
             measure_text_x_axe_and_delete(); //deleting the text
 
@@ -277,7 +276,7 @@ function time_setting(){
             lapse = 30; //1, because of 0 time
             unit = x_point_length / lapse; //for each time lapse
 
-            ctx.clearRect(-unit/2, 1, x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
+            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
                                                               //we are beginning at 1, because line with
             measure_text_x_axe_and_delete(); //deleting the text
 
@@ -300,7 +299,7 @@ function time_setting(){
             lapse = 12; //--> it was 365, i changed it to 12, i want to display the months, the idea came from a friend, i found it quite genious
             unit = x_point_length / lapse; //for each time lapse
 
-            ctx.clearRect(-unit/2 , 1, x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
+            ctx.clearRect(-unit/2 , 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
                                                               //we are beginning at 1, because line with
             measure_text_x_axe_and_delete(); //deleting the text
 
@@ -323,7 +322,7 @@ function time_setting(){
             lapse = 12; //1, because of 0 time --> etc. the same works here 
             unit = x_point_length / lapse; //for each time lapse
 
-            ctx.clearRect(-unit/2, 1, x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
+            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
                                                               //we are beginning at 1, because line with
             measure_text_x_axe_and_delete(); //deleting the text
 
