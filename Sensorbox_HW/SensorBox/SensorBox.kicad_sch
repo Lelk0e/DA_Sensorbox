@@ -7965,6 +7965,18 @@
 		)
 		(uuid "14f30374-28fe-49f5-8162-dd7f6c8df33a")
 	)
+	(text "Passt"
+		(exclude_from_sim no)
+		(at 66.04 225.044 0)
+		(effects
+			(font
+				(size 2.032 2.032)
+				(thickness 0.4064)
+				(bold yes)
+			)
+		)
+		(uuid "16fe4893-7ba2-4004-835a-2d40edeca112")
+	)
 	(text "Spannungsregler -- 3V-40V Input, Output\neinstellbar, hier indem Fall 5V"
 		(exclude_from_sim no)
 		(at 63.246 18.288 0)
@@ -7985,6 +7997,28 @@
 			)
 		)
 		(uuid "24f00502-8d63-44ca-bda1-28aa38b095e5")
+	)
+	(text "Passt"
+		(exclude_from_sim no)
+		(at 268.732 172.72 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+		)
+		(uuid "2697922c-6ffc-4af9-891d-c20f729487b1")
+	)
+	(text "Passt nicht wegen Pin1"
+		(exclude_from_sim no)
+		(at 387.35 52.07 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+		)
+		(uuid "278f06d2-2c24-47ce-8121-8f2c6aba1fa1")
 	)
 	(text "für 3,3V\n"
 		(exclude_from_sim no)
@@ -8007,6 +8041,18 @@
 		)
 		(uuid "2a824c38-309f-4ec8-ad55-7cb77668620f")
 	)
+	(text "Passt"
+		(exclude_from_sim no)
+		(at 196.596 24.384 0)
+		(effects
+			(font
+				(size 2.032 2.032)
+				(thickness 0.4064)
+				(bold yes)
+			)
+		)
+		(uuid "2f46154b-f453-46ff-bb77-35fc7fe8e82a")
+	)
 	(text "IoutMax bei -5V -> 100mA\n"
 		(exclude_from_sim no)
 		(at 223.52 71.374 0)
@@ -8027,6 +8073,17 @@
 			(justify left)
 		)
 		(uuid "4167b37d-a1bb-41d3-8ddb-26b59f253e25")
+	)
+	(text "Passt\n"
+		(exclude_from_sim no)
+		(at 248.412 150.876 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+		)
+		(uuid "43922b87-70bd-4479-9f4f-1791db1a31de")
 	)
 	(text "Spannungs Inverter\n"
 		(exclude_from_sim no)
@@ -8210,6 +8267,28 @@
 		)
 		(uuid "c9f654c4-1293-4e44-b4d3-3b0d3c447945")
 	)
+	(text "Passt nicht "
+		(exclude_from_sim no)
+		(at 366.522 143.002 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+		)
+		(uuid "d1617e5b-fa92-4fd6-97d8-1034e4b455cd")
+	)
+	(text "Passt nicht - EPAD anschauen \nob es nötig ist"
+		(exclude_from_sim no)
+		(at 135.89 179.578 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+		)
+		(uuid "de9badf2-9778-461b-907a-b7c4cc9b5398")
+	)
 	(text "Ozon-Sensor"
 		(exclude_from_sim no)
 		(at 183.896 167.64 0)
@@ -8220,6 +8299,29 @@
 			)
 		)
 		(uuid "e196d597-f272-4bb0-a026-f981867648b8")
+	)
+	(text "Passt nicht"
+		(exclude_from_sim no)
+		(at 176.276 175.26 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+		)
+		(uuid "e42a2892-1c52-4115-b418-a1c21f30e25b")
+	)
+	(text "Passt"
+		(exclude_from_sim no)
+		(at 175.26 88.9 0)
+		(effects
+			(font
+				(size 2.032 2.032)
+				(thickness 0.4064)
+				(bold yes)
+			)
+		)
+		(uuid "eb3dc1dc-6515-414f-9ddf-a9673b2460f8")
 	)
 	(global_label "VDD_3V3"
 		(shape input)
@@ -8793,7 +8895,7 @@
 			)
 		)
 	)
-	(global_label "RTC_32Khz_GPIO32"
+	(global_label "RTC_32Khz_GPIO34"
 		(shape input)
 		(at 255.27 39.37 180)
 		(fields_autoplaced yes)
@@ -9167,7 +9269,7 @@
 			)
 		)
 	)
-	(global_label "RTC_32Khz_GPIO32"
+	(global_label "RTC_32Khz_GPIO34"
 		(shape input)
 		(at 378.46 35.56 0)
 		(fields_autoplaced yes)
@@ -9811,7 +9913,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "2.2k"
+		(property "Value" "3k"
 			(at 365.506 85.598 90)
 			(effects
 				(font
@@ -15112,7 +15214,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "3k"
 			(at 366.268 75.184 90)
 			(effects
 				(font
@@ -15875,7 +15977,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "2.2k"
+		(property "Value" "3k"
 			(at 370.078 90.424 0)
 			(effects
 				(font
