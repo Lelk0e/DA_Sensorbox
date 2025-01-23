@@ -1,10 +1,8 @@
 #include "namedMesh.h"
-#include "FS.h"
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
 #include "SparkFunBME280.h"
-#include <bits/stdc++.h>
 
 #define BME280_ADDRESS 0x77
 BME280 bme280Sensor;
@@ -40,7 +38,7 @@ void sendRoot() {
 
 void receivedCallback(String &from, String &msg) {
   if(from.equals("mainESP")){
-    delimiterSplit(msg, ":");
+    delimiterSplit(msg, ':');
   }
 }
 void newConnectionCallback(uint32_t nodeId) {
@@ -57,16 +55,13 @@ void initSDCard(){
   Serial.printf("Size: %lluMB\n", cardSize);
 }
 
-void delimiterSplit(String s, char* del){
-  std::stringstream ss (s);
-  String part;
-
-  getline(ss, part, del);
-  hour = stoi(part); //stoi --> Convert string to int
-  getline(ss, part, del);
-  minute = stoi(part); //stoi --> Convert string to int
-  getline(ss, part, del);
-  second = stoi(part); //stoi --> Convert string to int
+void delimiterSplit(String s, char del){
+  int firstDel = s.indexOf(del);
+  int secondDel = s.indexOf(del, firstDel + 1);
+  
+  hour = s.substring(0, firstDel).toInt();
+  minute = s.substring(firstDel + 1, secondDel).toInt();
+  second = s.substring(secondDel + 1).toInt();
 }
 
 float readBme(){
@@ -80,7 +75,7 @@ void setup() {
 
   Wire.begin(sda_pin, scl_pin);
 
-  Wire.SetClock(400000);
+  Wire.setClock(400000);
 
   initMesh();
 
