@@ -493,6 +493,8 @@ function sensor_setting(){
 }
 
 function HTTP_SET(){ //here i will set and save the values for the sensor data
-    
+    //bme should also measure temperature 
+
+    //ozon in ppm, does it change
 }
 
