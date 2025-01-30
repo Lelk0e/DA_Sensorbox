@@ -1,10 +1,8 @@
 #include "namedMesh.h"
-#include "FS.h"
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
 #include "SparkFunBME280.h"
-#include <bits/stdc++.h>
 
 #define BME280_ADDRESS 0x77
 BME280 bme280Sensor;
@@ -12,6 +10,8 @@ BME280 bme280Sensor;
 #define cs_pin 5
 #define sda_pin 19
 #define scl_pin 20
+
+using namespace std;
 
 Scheduler userSched;
 namedMesh mesh;
@@ -40,8 +40,11 @@ void sendRoot() {
 
 void receivedCallback(String &from, String &msg) {
   if(from.equals("mainESP")){
-    delimiterSplit(msg, ":");
+    timeSplit(msg, ':');
   }
+}
+void newConnectionCallback(uint32_t nodeId) {
+ 
 }
 
 void initSDCard(){
@@ -54,19 +57,32 @@ void initSDCard(){
   Serial.printf("Size: %lluMB\n", cardSize);
 }
 
-void delimiterSplit(string s, char del){
-  std::stringstream ss (s);
-  string part;
-
-  std::getline(ss, part, del);
-  hour = stoi(part); //stoi --> Convert string to int
-  std::getline(ss, part, del);
-  minute = stoi(part); //stoi --> Convert string to int
-  std::getline(ss, part, del);
-  second = stoi(part); //stoi --> Convert string to int
+void timeSplit(string s, char del) {
+    size_t prefixEnd = s.find(':');
+    if (prefixEnd != string::npos) {
+        string timePortion = s.substr(prefixEnd + 1);
+        size_t firstDel = timePortion.find(del);
+        size_t secondDel = timePortion.find(del, firstDel + 1);
+        hour = stoi(timePortion.substr(0, firstDel));
+        minute = stoi(timePortion.substr(firstDel + 1, secondDel - firstDel - 1));
+        second = stoi(timePortion.substr(secondDel + 1));
+    } else {
+        hour = minute = second = 0;
+    }
 }
 
-void readBme(){
+
+string messageType(string msg) {
+    if (msg.find(':') != string::npos) {
+        size_t firstDel = msg.find(':');
+        return msg.substr(0, firstDel);
+    }
+    return "";
+}
+
+float readBme(){
+  float pressure = bme280Sensor.readFloatPressure();
+  return pressure;
 
 }
 
@@ -75,7 +91,7 @@ void setup() {
 
   Wire.begin(sda_pin, scl_pin);
 
-  Wire.SetClock(400000);
+  Wire.setClock(400000);
 
   initMesh();
 
