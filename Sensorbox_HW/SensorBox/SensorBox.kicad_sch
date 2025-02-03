@@ -10843,7 +10843,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Battery:BatteryHolder_Keystone_2479_3xAAA"
+		(property "Footprint" "Battery_Basket:BatteryHolder_Keystone_2479_3xAAA"
 			(at 128.27 54.61 0)
 			(effects
 				(font
@@ -11441,7 +11441,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal"
 			(at 177.8 235.712 90)
 			(effects
 				(font
@@ -12877,7 +12877,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Fuse:Fuse_Littelfuse_372_D8.50mm"
 			(at 147.32 43.18 0)
 			(effects
 				(font
@@ -13204,91 +13204,6 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "C8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "2024-10-21_12-55-34:HPP845E131R5")
-		(at 95.25 170.18 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "699e3f29-6c73-4e73-8e5a-6a0488b104c0")
-		(property "Reference" "U3"
-			(at 115.57 160.02 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Value" "HPP845E131R5"
-			(at 115.57 162.56 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Footprint" "HPP_footprints:SON6_HPP845E131R5_TEC"
-			(at 95.25 170.18 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "HPP845E131R5"
-			(at 95.25 170.18 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 95.25 170.18 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "ad190719-f15c-477d-8028-3aaa055d5d7c")
-		)
-		(pin "1"
-			(uuid "3d115eba-16cc-43c5-b53a-d35511fd5b84")
-		)
-		(pin "7"
-			(uuid "9d9b9004-6189-478f-9232-5493e00e2106")
-		)
-		(pin "5"
-			(uuid "c979f0a4-bcf2-428c-98dd-ed229ad03c9f")
-		)
-		(pin "3"
-			(uuid "380677b7-8c9e-4b90-946c-47d9bbf0f22a")
-		)
-		(pin "4"
-			(uuid "798cb957-2ab7-447d-a6b3-65ee25e2349f")
-		)
-		(pin "6"
-			(uuid "d02ac93a-8029-454f-b7ef-731162cb96e0")
-		)
-		(instances
-			(project "SensorBox"
-				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
-					(reference "U3")
 					(unit 1)
 				)
 			)
@@ -14067,7 +13982,7 @@
 				)
 			)
 		)
-		(property "Footprint" "PS1O3100"
+		(property "Footprint" "Ozonsensor:PS1O3100"
 			(at 115.57 146.38 0)
 			(effects
 				(font
@@ -14683,7 +14598,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
 			(at 294.64 214.63 0)
 			(effects
 				(font
@@ -15374,6 +15289,91 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "ADC1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "2024-10-21_12-55-34:HPP845E131R5")
+		(at 95.25 170.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b3fa88bf-012d-43bc-ab7a-21c62b2cb7c8")
+		(property "Reference" "U8"
+			(at 115.57 160.02 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "HPP845E131R5"
+			(at 115.57 162.56 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "HPP_footprints:SON6_HPP845E131R5_TEC"
+			(at 95.25 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "HPP845E131R5"
+			(at 95.25 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 95.25 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "6"
+			(uuid "e1fb9b32-ef7a-44aa-b497-dafadb3dae8c")
+		)
+		(pin "2"
+			(uuid "6783a134-e799-4ba3-b0e9-e9e2abf24a76")
+		)
+		(pin "7"
+			(uuid "6666c7db-cb7d-41a3-9463-1246521602d5")
+		)
+		(pin "4"
+			(uuid "2d42e002-f90c-46b5-baa8-be050f8cc6f9")
+		)
+		(pin "3"
+			(uuid "449e8b32-d0cd-43e3-9b53-1cc3551759e8")
+		)
+		(pin "1"
+			(uuid "0813d5aa-c768-496a-8be4-720c04e134f4")
+		)
+		(pin "5"
+			(uuid "2194e54f-1488-4303-90cb-fc45c6265682")
+		)
+		(instances
+			(project ""
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "U8")
 					(unit 1)
 				)
 			)
@@ -16646,7 +16646,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_LGA:Bosch_LGA-8_2.5x2.5mm_P0.65mm_ClockwisePinNumbering"
+		(property "Footprint" "BME280 (2):BME280"
 			(at 22.86 179.07 0)
 			(effects
 				(font
