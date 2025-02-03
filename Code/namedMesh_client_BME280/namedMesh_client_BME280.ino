@@ -17,9 +17,7 @@ Scheduler userSched;
 namedMesh mesh;
 
 String nodeName = "BME280";
-String hour;
-String minute;
-String second;
+int hour, minute, second;
 
 void initMesh(){
   mesh.setDebugMsgTypes(ERROR | DEBUG | CONNECTION);
@@ -57,34 +55,42 @@ void initSDCard(){
   Serial.printf("Size: %lluMB\n", cardSize);
 }
 
-void timeSplit(string s, char del) {
-    size_t prefixEnd = s.find(':');
-    if (prefixEnd != string::npos) {
-        string timePortion = s.substr(prefixEnd + 1);
-        size_t firstDel = timePortion.find(del);
-        size_t secondDel = timePortion.find(del, firstDel + 1);
-        hour = stoi(timePortion.substr(0, firstDel));
-        minute = stoi(timePortion.substr(firstDel + 1, secondDel - firstDel - 1));
-        second = stoi(timePortion.substr(secondDel + 1));
+void timeSplit(String s, char del) {
+    int prefixEnd = s.indexOf(':');
+    if (prefixEnd != -1) {
+        String timePortion = s.substring(prefixEnd + 1);
+        int firstDel = timePortion.indexOf(del);
+        int secondDel = timePortion.indexOf(del, firstDel + 1);
+        
+        hour = timePortion.substring(0, firstDel).toInt();
+        minute = timePortion.substring(firstDel + 1, secondDel).toInt();
+        second = timePortion.substring(secondDel + 1).toInt();
     } else {
-        hour = minute = second = 0;
+        hour = 0;
+        minute = 0;
+        second = 0;
     }
 }
 
 
-string messageType(string msg) {
-    if (msg.find(':') != string::npos) {
-        size_t firstDel = msg.find(':');
-        return msg.substr(0, firstDel);
+
+String messageType(String msg) {
+    if (msg.indexOf(':') != -1) {
+        int firstDel = msg.indexOf(':');
+        return msg.substring(0, firstDel);
     }
     return "";
 }
 
-float readBme(){
-  float pressure = bme280Sensor.readFloatPressure();
-  return pressure;
 
+float readBme() {
+    float pressure = bme280Sensor.readFloatPressure();
+    if (isnan(pressure)) {
+        return -1;
+    }
+    return pressure;
 }
+
 
 void setup() {
   Serial.begin(115200);
@@ -94,6 +100,8 @@ void setup() {
   Wire.setClock(400000);
 
   initMesh();
+
+  initSDCard();
 
   if (!bme280Sensor.beginI2C(Wire)) {
     Serial.println("Failed to initialize BME280 sensor!");
