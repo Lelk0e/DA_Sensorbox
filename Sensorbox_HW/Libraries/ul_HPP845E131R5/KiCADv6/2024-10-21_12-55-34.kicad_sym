@@ -25,7 +25,7 @@
 				)
 			)
 		)
-		(property "Footprint" "HPP845E131R5:SON6_HPP845E131R5_TEC"
+		(property "Footprint" "HPP_footprints:SON6_HPP845E131R5_TEC"
 			(at 0 0 0)
 			(effects
 				(font
