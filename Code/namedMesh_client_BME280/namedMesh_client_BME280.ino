@@ -12,10 +12,12 @@ BME280 bme280Sensor;
 #define sda_pin 19
 #define scl_pin 20
 
-#define BUF_SIZE 4096
+#define BUF_SIZE 2048
 byte buf[BUF_SIZE];
 char filename[] = "/BME280.db";
 FILE *myFile;
+
+volatile bool lowPowerMode = false;
 
 using namespace std;
 
@@ -155,18 +157,6 @@ void logSensorData() {
     Serial.println("Data logged to SQLite DB");
 }
 
-void setup() {
-  Serial.begin(115200);
-  Wire.begin(sda_pin, scl_pin);
-  Wire.setClock(400000);
-  initMesh();
-  initSDCard();
-  if (!bme280Sensor.beginI2C(Wire)) {
-    Serial.println("Failed to initialize BME280 sensor!");
-    while (true)
-      ;
-  }
-}
 
 int32_t read_fn_rctx(struct dblog_read_context *ctx, void *buf, uint32_t pos, size_t len) {
   if (fseek(myFile, pos, SEEK_SET))
@@ -222,10 +212,55 @@ void sendDB() {
   fclose(myFile);
 }
 
+void LPM(unsigned long durationMillis) {
+  lowPowerMode = true;
+  mesh.stop();
+  Serial.println("Entering low power mode");
+  Task *exitTask = new Task(durationMillis, 1, []() { exitLPM(); });
+  userSched.addTask(*exitTask);
+  exitTask->enable();
+}
+
+void exitLPM() {
+  lowPowerMode = false;
+  Serial.println("Exiting low power mode");
+  
+  
+  initMesh();
+  
+  while(!mesh.isConnected("mainESP"));
+  sendDB();
+  delay(100);
+  LPM(30000); 
+}
+
+void setup() {
+  Serial.begin(115200);
+  Wire.begin(sda_pin, scl_pin);
+  Wire.setClock(400000);
+  initMesh();
+  initSDCard();
+  if (!bme280Sensor.beginI2C(Wire)) {
+    Serial.println("Failed to initialize BME280 sensor!");
+    while (true)
+      ;
+  }
+   Task *firstLpmTask = new Task(10000, 1, []() {
+    LPM(30000);
+  });
+  userSched.addTask(*firstLpmTask);
+  firstLpmTask->enable();
+}
+
 
 void loop() {
-  mesh.update();
+  userSched.execute();
+
+  if (!lowPowerMode) {
+    mesh.update();
+  }
+  
   logSensorData();
-  //sendDB();
+  
   delay(1000);
 }
