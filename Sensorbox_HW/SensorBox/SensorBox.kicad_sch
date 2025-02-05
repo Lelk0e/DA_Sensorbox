@@ -7182,7 +7182,7 @@
 	)
 	(wire
 		(pts
-			(xy 375.92 50.8) (xy 375.92 53.34)
+			(xy 375.92 52.07) (xy 375.92 53.34)
 		)
 		(stroke
 			(width 0)
@@ -7209,6 +7209,16 @@
 			(type default)
 		)
 		(uuid "bc981759-de2d-488d-8ca5-13c51f9d6e56")
+	)
+	(wire
+		(pts
+			(xy 375.92 44.45) (xy 375.92 43.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bcc504ab-e1c9-42a5-99ec-6c858da7afdd")
 	)
 	(wire
 		(pts
@@ -13210,76 +13220,6 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 375.92 46.99 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "5f1e8b3d-86bc-4f36-a893-5cade4f7dedc")
-		(property "Reference" "R2"
-			(at 378.46 45.7199 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "4.7k"
-			(at 378.46 48.2599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 374.142 46.99 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 375.92 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Resistor"
-			(at 375.92 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "26c74aca-ddf5-4222-9a8f-ef5a87cc4c21")
-		)
-		(pin "2"
-			(uuid "bd8e0961-bbaa-4c83-af5d-2d835f87b664")
-		)
-		(instances
-			(project "SensorBox"
-				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
-					(reference "R2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
 		(at 161.29 259.08 270)
 		(unit 1)
 		(exclude_from_sim no)
@@ -15149,6 +15089,76 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "JP1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 375.92 48.26 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "99bda7f8-1458-43c8-ab60-317244fd0073")
+		(property "Reference" "R5"
+			(at 378.46 46.9899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "4.7k"
+			(at 378.46 49.5299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 374.142 48.26 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 375.92 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 375.92 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "99f94271-0ae0-41a7-b9b6-22bc5d08dca5")
+		)
+		(pin "2"
+			(uuid "40ae7511-05b3-4cb5-81d6-561e1c8452c0")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "R5")
 					(unit 1)
 				)
 			)
