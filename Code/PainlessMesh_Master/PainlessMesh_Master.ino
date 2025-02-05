@@ -12,11 +12,11 @@ uint32_t nodeID;
 
 void sendMessage();
 Task taskSendMessage(TASK_SECOND * 1, TASK_FOREVER, &sendMessage);
-
 void sendMessage() {
   String msg = "Hello from node ";
   msg += mesh.getNodeId();
   mesh.sendBroadcast(msg);
+
   taskSendMessage.setInterval(random(TASK_SECOND * 1, TASK_SECOND * 5));
 }
 
