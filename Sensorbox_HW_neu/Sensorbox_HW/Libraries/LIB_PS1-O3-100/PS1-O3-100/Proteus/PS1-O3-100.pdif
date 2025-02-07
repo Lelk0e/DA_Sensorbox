@@ -1,0 +1,140 @@
+;Proteus Design Interchange Format
+(PDIF
+ (vendor "SamacSys Limited")
+ (version 1 0)
+ (library
+  (part "PS1-O3-100"
+   (description "SENSOR OZONE 100PPM -20C ~ 40C")
+   (family "ANA")
+   (package "PS1O3100")
+   (attribute "Datasheet Link" "https://sgx.cdistore.com/datasheets/sgx/ds-0353-ps1ps4-o3-100.pdf")
+   (attribute "Geometry.Height" "5.6mm")
+   (attribute "Manufacturer_Name" "SGX Sensortech Limited")
+   (attribute "Manufacturer_Part_Number" "PS1-O3-100")
+   (attribute "Mouser Part Number" "")
+   (attribute "Mouser Price/Stock" "")
+   (attribute "Arrow Part Number" "")
+   (attribute "Arrow Price/Stock" "")
+   (gate
+    (symbol "PS1-O3-100")
+    (pin "C1" C1 PS)
+    (pin "R1" R1 PS)
+    (pin "S1" S1 PS)
+   )
+  )
+  (symbol "PS1-O3-100"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 200 100) (pt 600 100) (pt 600 -300) (pt 200 -300) (pt 200 100) (closed))
+   )
+   (terminal
+    (body (symbol "PIN") (pt 0 0) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -200) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -100) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+  )
+  (symbol "PIN"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 200 0))))
+  (symbol "PINSHORT"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 100 0))))
+  (package "PS1O3100"
+   (units MM)
+   (layer OCCA
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -4.71 -3)
+      (pt 9.79 -3)
+      (pt 9.79 10.5)
+      (pt -4.71 10.5)
+      (pt -4.71 -3))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt 2.54 -2)
+      (pt -3.21 -2)
+      (pt -3.21 1.25)
+      (pt -3.71 1.25)
+      (pt -3.71 6.25)
+      (pt -3.21 6.25)
+      (pt -3.21 9.5)
+      (pt 8.29 9.5)
+      (pt 8.29 6.25)
+      (pt 8.79 6.25)
+      (pt 8.79 1.25)
+      (pt 8.29 1.25)
+      (pt 8.29 -2)
+      (pt 2.54 -2))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed true)
+      (pt 2.54 -2)
+      (pt -3.21 -2)
+      (pt -3.21 1.25)
+      (pt -3.71 1.25)
+      (pt -3.71 6.25)
+      (pt -3.21 6.25)
+      (pt -3.21 9.5)
+      (pt 8.29 9.5)
+      (pt 8.29 6.25)
+      (pt 8.79 6.25)
+      (pt 8.79 1.25)
+      (pt 8.29 1.25)
+      (pt 8.29 -2)
+      (pt 2.54 -2))))
+   (layer TSLK
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -4 0)
+      (arc (pt -4.000 0.000) (pt -4.100 0.050) (pt -4.000 -0.050) (start 180.0) (sweep .0))
+      (pt -4.1 0)
+      (arc (pt -4.100 0.000) (pt -4.100 0.050) (pt -4.000 -0.050) (start 180.0) (sweep 180.0))
+      (pt -4 0))))
+   (leg C1 (pt 0.000 0.000) (padstack 1))
+   (leg R1 (pt 5.080 0.000) (padstack 0))
+   (leg S1 (pt 2.540 0.000) (padstack 0))
+   (padstack 0
+    (hole 0.6)
+    (plated true)
+    (pad (layer TCOP) (round 1.100))
+    (pad (layer INNER) (round 1.100))
+    (pad (layer BCOP) (round 1.100))
+   )
+   (padstack 1
+    (hole 0.6)
+    (plated true)
+    (pad (layer TCOP) (square 1.100))
+    (pad (layer INNER) (round 1.100))
+    (pad (layer BCOP) (square 1.100))
+   )
+   (model "PS1-O3-100.stp"
+    (euler 0 0 0)
+    (offset 0 0 0)
+   )
+  )
+ )
+)
