@@ -18,6 +18,7 @@ char filename[] = "/BME280.db";
 FILE *myFile;
 
 volatile bool lowPowerMode = false;
+volatile bool LPMsig = false;
 
 using namespace std;
 
@@ -77,6 +78,11 @@ void receivedCallback(String &from, String &msg) {
   if (from.equals("mainESP")) {
     if (messageType(msg) == "Time") {
       timeSplit(msg, ':');
+    }
+  }
+  if (from.equals("mainESP")){
+    if (messageType(msg) == "LPMsh"){
+      LPMsig = true;
     }
   }
 }
@@ -200,8 +206,8 @@ void sendDB() {
     float pressure;
     memcpy(&pressure, colVal1, sizeof(float));
 
-    String msg = String(ts) + ":" + String(pressure, 2);
-    String mainNode = "mainESP";
+    String msg = "Data:Time:" + String(ts) + ":BME280:" + String(pressure, 2);
+    String rootNode = "mainESP";
     mesh.sendSingle(mainNode, msg);
     delay(50);
 
@@ -213,9 +219,12 @@ void sendDB() {
 }
 
 void LPM(unsigned long durationMillis) {
+  if (!LPMsig) return;
+  LMPsig = false;
+
   lowPowerMode = true;
   mesh.stop();
-  Serial.println("Entering low power mode");
+  Serial.println("Entering LPM");
   Task *exitTask = new Task(durationMillis, 1, []() { exitLPM(); });
   userSched.addTask(*exitTask);
   exitTask->enable();
@@ -223,14 +232,14 @@ void LPM(unsigned long durationMillis) {
 
 void exitLPM() {
   lowPowerMode = false;
-  Serial.println("Exiting low power mode");
+  Serial.println("Exiting LPM");
   
   
   initMesh();
   
   while(!mesh.isConnected("mainESP"));
   sendDB();
-  delay(100);
+  delay(2000);
   LPM(30000); 
 }
 
@@ -245,13 +254,14 @@ void setup() {
     while (true)
       ;
   }
-   Task *firstLpmTask = new Task(10000, 1, []() {
+
+  Task firstLpmTask(10000, 1, []() {
     LPM(30000);
   });
-  userSched.addTask(*firstLpmTask);
-  firstLpmTask->enable();
-}
+  userSched.addTask(firstLpmTask);
+  firstLpmTask.enable();
 
+}
 
 void loop() {
   userSched.execute();
