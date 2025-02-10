@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'PS1_O3_100'
+CLASS = DISCRETE
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "ARROW_PART_NUMBER", "ARROW_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "SGX Sensortech Limited", "PS1-O3-100" (!) = "", "PS1O3100", "Other", "", "", "", "", "SENSOR OZONE 100PPM -20C ~ 40C", "https://sgx.cdistore.com/datasheets/sgx/ds-0353-ps1ps4-o3-100.pdf", "5.6 mm"
+END_PART
+
+END.

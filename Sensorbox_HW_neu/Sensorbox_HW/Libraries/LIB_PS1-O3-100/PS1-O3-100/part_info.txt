@@ -1,0 +1,9 @@
+Manufacturer=SGX Sensortech Limited
+PartNumber=PS1-O3-100
+PartCategory=Undefined or Miscellaneous
+PackageCategory=Other
+PinCount=3
+Version=1.4
+Released=2024-10-22 11:23:48
+Downloaded=2024-10-30 12:13:17
+3D=Y

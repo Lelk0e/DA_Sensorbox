@@ -54,6 +54,15 @@ class namedMesh : public painlessMesh {
 
   String getName() { return nodeName; }
 
+  bool isConnected(const String &nodeName) {
+    for (auto &entry : nameMap) {
+        if (entry.second.equals(nodeName)) {
+            return true;
+        }
+    }
+    return false;
+  }
+
   void setName(String &name) {
     nodeName = name;
     // Start broadcast task if not done yet

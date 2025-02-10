@@ -1,0 +1,13 @@
+(unit MM)
+
+(package "PS1-O3-100"
+    (type UNDEF)
+    (uver 2)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (utime 2024-10-22-11:23:48)
+    (mountForm default
+        (footprintRef "PS1O3100")
+        (spec "System")
+    )
+)
