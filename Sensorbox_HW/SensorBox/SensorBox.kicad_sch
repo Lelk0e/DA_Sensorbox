@@ -14061,7 +14061,7 @@
 			(uuid "834616b7-3520-49ba-842b-c9576350af1d")
 		)
 		(instances
-			(project ""
+			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "D7")
 					(unit 1)
@@ -16307,7 +16307,7 @@
 			(uuid "2194e54f-1488-4303-90cb-fc45c6265682")
 		)
 		(instances
-			(project ""
+			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "U8")
 					(unit 1)
@@ -17242,7 +17242,7 @@
 			(uuid "8f28b694-e363-441c-964b-211b50b28ac9")
 		)
 		(instances
-			(project ""
+			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "C14")
 					(unit 1)
