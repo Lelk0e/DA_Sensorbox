@@ -208,7 +208,7 @@ void sendDB() {
 
     String msg = "Data:Time:" + String(ts) + ":BME280:" + String(pressure, 2);
     String rootNode = "mainESP";
-    mesh.sendSingle(mainNode, msg);
+    mesh.sendSingle(rootNode, msg);
     delay(50);
 
     if (dblog_read_next_row(&rctx) != 0)
@@ -220,7 +220,7 @@ void sendDB() {
 
 void LPM(unsigned long durationMillis) {
   if (!LPMsig) return;
-  LMPsig = false;
+  LPMsig = false;
 
   lowPowerMode = true;
   mesh.stop();
@@ -233,14 +233,9 @@ void LPM(unsigned long durationMillis) {
 void exitLPM() {
   lowPowerMode = false;
   Serial.println("Exiting LPM");
-  
-  
   initMesh();
-  
   while(!mesh.isConnected("mainESP"));
   sendDB();
-  delay(2000);
-  LPM(30000); 
 }
 
 void setup() {
@@ -255,17 +250,13 @@ void setup() {
       ;
   }
 
-  Task firstLpmTask(10000, 1, []() {
-    LPM(30000);
-  });
-  userSched.addTask(firstLpmTask);
-  firstLpmTask.enable();
-
 }
 
 void loop() {
   userSched.execute();
-
+  if (LPMsig){
+    LPM(30000);
+  }
   if (!lowPowerMode) {
     mesh.update();
   }
