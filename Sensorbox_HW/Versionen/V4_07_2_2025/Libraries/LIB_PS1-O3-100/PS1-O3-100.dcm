@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP PS1-O3-100
+D SENSOR OZONE 100PPM -20C ~ 40C
+K
+F https://sgx.cdistore.com/datasheets/sgx/ds-0353-ps1ps4-o3-100.pdf
+$ENDCMP
+#
+#End Doc Library

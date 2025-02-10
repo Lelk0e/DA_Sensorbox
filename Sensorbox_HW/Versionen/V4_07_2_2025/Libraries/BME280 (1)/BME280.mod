@@ -1,0 +1,94 @@
+PCBNEW-LibModule-V1  
+# encoding utf-8
+Units mm
+$INDEX
+PSON65P250X250X100-8N
+$EndINDEX
+$MODULE PSON65P250X250X100-8N
+Po 0 0 0 15 00000000 00000000 ~~
+Li PSON65P250X250X100-8N
+Cd 2.5 mm x 2.5 mm x 0.93 mm metal lid LGA
+Sc 00000000
+At SMD
+Op 0 0 0
+.SolderMask 0
+.SolderPaste 0
+T0 -0.439538 -1.86676 0.321721 0.321721 0 0.05 N V 21 "PSON65P250X250X100-8N"
+T1 -0.184638 1.80686 0.321103 0.321103 0 0.05 N V 21 "VAL**"
+DS -1.3 -1.3 -1.3 1.3 0.127 27
+DS -1.3 1.3 1.3 1.3 0.127 27
+DS 1.3 1.3 1.3 -1.3 0.127 27
+DS 1.3 -1.3 -1.3 -1.3 0.127 27
+DS -1.3 1.385 1.3 1.385 0.127 21
+DS -1.3 -1.385 1.3 -1.385 0.127 21
+DC 1.6 -1 1.65 -1 0.2 21
+DS -1.55 -1.55 1.55 -1.55 0.05 26
+DS 1.55 -1.55 1.55 1.55 0.05 26
+DS 1.55 1.55 -1.55 1.55 0.05 26
+DS -1.55 1.55 -1.55 -1.55 0.05 26
+DC 1 -1 1.05 -1 0.2 27
+$PAD
+Sh "3" R 0.49 0.45 0 0 0
+At SMD N 00088000
+.SolderMask 0
+.SolderPaste 0
+Ne 0 ""
+Po 0.97 0.325
+$EndPAD
+$PAD
+Sh "2" R 0.49 0.45 0 0 0
+At SMD N 00088000
+.SolderMask 0
+.SolderPaste 0
+Ne 0 ""
+Po 0.97 -0.325
+$EndPAD
+$PAD
+Sh "1" R 0.49 0.45 0 0 0
+At SMD N 00088000
+.SolderMask 0
+.SolderPaste 0
+Ne 0 ""
+Po 0.97 -0.975
+$EndPAD
+$PAD
+Sh "4" R 0.49 0.45 0 0 0
+At SMD N 00088000
+.SolderMask 0
+.SolderPaste 0
+Ne 0 ""
+Po 0.97 0.975
+$EndPAD
+$PAD
+Sh "6" R 0.49 0.45 0 0 0
+At SMD N 00088000
+.SolderMask 0
+.SolderPaste 0
+Ne 0 ""
+Po -0.97 0.325
+$EndPAD
+$PAD
+Sh "7" R 0.49 0.45 0 0 0
+At SMD N 00088000
+.SolderMask 0
+.SolderPaste 0
+Ne 0 ""
+Po -0.97 -0.325
+$EndPAD
+$PAD
+Sh "8" R 0.49 0.45 0 0 0
+At SMD N 00088000
+.SolderMask 0
+.SolderPaste 0
+Ne 0 ""
+Po -0.97 -0.975
+$EndPAD
+$PAD
+Sh "5" R 0.49 0.45 0 0 0
+At SMD N 00088000
+.SolderMask 0
+.SolderPaste 0
+Ne 0 ""
+Po -0.97 0.975
+$EndPAD
+$EndMODULE PSON65P250X250X100-8N

@@ -1,0 +1,19 @@
+.PS1-O3-100 :1 ;SENSOR OZONE 100PPM -20C ~ 40C
+PS1O3100
+*STM U
+*NGS
+*PNM 1=C1 2=R1 3=S1
+*PLB 1="C1" 2="R1" 3="S1"
+*MXP 3
+*DFN PS1-O3-100
+~!Manufacturer_Name (SGX Sensortech Limited)
+~!Manufacturer_Part_Number (PS1-O3-100)
+~!Mouser Part Number (-)
+~!Mouser Price/Stock (-)
+~!Arrow Part Number (-)
+~!Arrow Price/Stock (-)
+~!Link Datasheet (https://sgx.cdistore.com/datasheets/sgx/ds-0353-ps1ps4-o3-100.pdf)
+~!Height (5.6mm)
+~!3D_Model (PS1-O3-100)
+PS1-O3-100
+1.1!U 2.1!U 3.1!U 
