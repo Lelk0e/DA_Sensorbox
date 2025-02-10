@@ -1,10 +1,10 @@
 #include "namedMesh.h"
+//#define ASYNC_TCP_SSL_ENABLED 1
 #include <ESPAsyncWebServer.h>
-#include "FS.h"
+#include <AsyncTCP.h>
 #include <SPI.h>
 #include <SD.h>
 #include "ulog_sqlite.h"
-
 #define cs_pin 5
 
 Scheduler userSched;
@@ -22,7 +22,17 @@ int dhour;
 int dminute;
 int dsecond;
 
-AsyncWebServer server(80);
+String sensorTable;
+float sensorDataValue;
+
+volatile bool lowPowerMode = false;
+
+FILE *myFile;
+
+#define BUF_SIZE 2048
+byte buf[BUF_SIZE];
+
+AsyncWebServer server(443);
 
 void initMesh() {
   mesh.setDebugMsgTypes(ERROR | DEBUG | CONNECTION);
@@ -48,7 +58,7 @@ void receivedCallback(String &from, String &msg) {
   Serial.printf("Received from=%s msg=%s\n", from.c_str(), msg.c_str());
   if (from.equals("BME280")) {
     if (messageType(msg) == "Data") {
-      dataSplit(msg);
+      dataSplit(msg, ':');
       logSensorData();
     }
   }
@@ -57,7 +67,7 @@ void receivedCallback(String &from, String &msg) {
 
 void newConnectionCallback(uint32_t nodeId) {
   sendRoot();
-  mesh.sendBroadcast(hour + ":" + minute + ":" + second);
+  mesh.sendBroadcast(String(hour) + ":" + String(minute) + ":" + String(second));
 }
 
 
@@ -93,9 +103,9 @@ void dataSplit(String s, char del) {
 void logSensorData() {
   char dbFilename[32];
   sprintf(dbFilename, "/%s.db", sensorTable.c_str());
-  y
 
-    myFile = fopen(dbFilename, "a+b");
+
+  myFile = fopen(dbFilename, "a+b");
   if (!myFile) {
     Serial.print("Open Error for ");
     Serial.println(dbFilename);
@@ -220,9 +230,9 @@ void setup() {
 
   server.on("/set-time", HTTP_GET, [](AsyncWebServerRequest *request) {
     if (request->hasParam("hour") && request->hasParam("minute") && request->hasParam("second")) {
-      hour = request->getParam("hour")->value();
-      minute = request->getParam("minute")->value();
-      second = request->getParam("second")->value();
+      hour = request->getParam("hour")->value().toInt();
+      minute = request->getParam("minute")->value().toInt();
+      second = request->getParam("second")->value().toInt();
       Serial.print("Received time: ");
       Serial.print(hour);
       Serial.print(":");
@@ -235,7 +245,24 @@ void setup() {
     }
   });
 
-
+  //   server.onSslFileRequest([](void * arg, const char *filename, uint8_t **buf) -> int {
+  //    Serial.printf("SSL File: %s\n", filename);
+  //    File file = SPIFFS.open(filename, "r");
+  //    if(file){
+  //      size_t size = file.size();
+  //      uint8_t * nbuf = (uint8_t*)malloc(size);
+  //      if(nbuf){
+  //        size = file.read(nbuf, size);
+  //        file.close();
+  //        *buf = nbuf;
+  //        return size;
+  //      }
+  //      file.close();
+  //    }
+  //    *buf = 0;
+  //    return 0;
+  //  }, NULL);
+  //  server.beginSecure("/server.cer", "/server.key", NULL);
   server.begin();
 }
 
