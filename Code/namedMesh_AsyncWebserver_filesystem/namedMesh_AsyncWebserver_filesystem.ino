@@ -48,8 +48,6 @@ void initMesh() {
   });
 }
 
-void sendRoot();
-
 void sendRoot() {
   mesh.sendBroadcast(nodeName);
 }
@@ -213,8 +211,74 @@ int32_t read_fn_rctx(struct dblog_read_context *ctx, void *buf, uint32_t pos, si
   return ret;
 }
 
+void LPM(unsigned long durationMillis) {
+  mesh.sendBroadcast("LPMsh");
+  lowPowerMode = true;
+  mesh.stop();
+  Serial.println("Entering LPM");
+  Task *exitTask = new Task(durationMillis, 1, []() {
+    exitLPM();
+  });
+  userSched.addTask(*exitTask);
+  exitTask->enable();
+}
 
+void exitLPM() {
+  lowPowerMode = false;
+  Serial.println("Exiting LPM");
+  initMesh();
+  Task *nextLpmTask = new Task(5000, 1, []() {
+    LPM(30000);
+  });
+  userSched.addTask(*nextLpmTask);
+  nextLpmTask->enable();
+}
 
+String wrDBtoWs(char *filename) {
+  String data = "";  // Accumulate all rows here
+  myFile = fopen(filename, "r+b");
+  if (!myFile) {
+    Serial.println("Error opening DB for reading");
+    return data;
+  }
+
+  struct dblog_read_context rctx;
+  rctx.page_size_exp = 12;  // Must match the page_size_exp used during writing
+  rctx.read_fn = read_fn_rctx;
+  rctx.buf = buf;
+  int res = dblog_read_init(&rctx);
+  if (res) {
+    print_error(res);
+    fclose(myFile);
+    return data;
+  }
+
+  // Loop through each row in the database
+  while (true) {
+    uint32_t colType0, colType1;
+    uint8_t *colVal0 = (uint8_t *)dblog_read_col_val(&rctx, 0, &colType0);
+    uint8_t *colVal1 = (uint8_t *)dblog_read_col_val(&rctx, 1, &colType1);
+    if (!colVal0 || !colVal1)
+      break;
+
+    char ts[32];
+    strncpy(ts, (const char *)colVal0, sizeof(ts) - 1);
+    ts[sizeof(ts) - 1] = '\0';
+
+    float pressure;
+    memcpy(&pressure, colVal1, sizeof(float));
+
+    // Append the data to the string
+    data += "Time:" + String(ts) + ":BME280:" + String(pressure, 2) + "\n";
+
+    delay(5);
+    if (dblog_read_next_row(&rctx) != 0)
+      break;
+  }
+
+  fclose(myFile);
+  return data;
+}
 
 void setup() {
 
@@ -244,7 +308,10 @@ void setup() {
       request->send(400, "text/plain", "Missing time parameters");
     }
   });
-
+  server.on("/bme280", HTTP_GET, [](AsyncWebServerRequest *request) {
+    String data = wrDBtoWs("/BME280");
+    request->send(200, "text/plain", data);
+  });
   //   server.onSslFileRequest([](void * arg, const char *filename, uint8_t **buf) -> int {
   //    Serial.printf("SSL File: %s\n", filename);
   //    File file = SPIFFS.open(filename, "r");
@@ -264,8 +331,16 @@ void setup() {
   //  }, NULL);
   //  server.beginSecure("/server.cer", "/server.key", NULL);
   server.begin();
+  Task *firstLpmTask = new Task(10000, 1, []() {
+    LPM(30000);
+  });
+  userSched.addTask(*firstLpmTask);
+  firstLpmTask->enable();
 }
 
 void loop() {
-  mesh.update();
+  userSched.execute();
+  if (!lowPowerMode) {
+    mesh.update();
+  }
 }
