@@ -8,6 +8,12 @@ let y_axe_length = 0;
 let y_point_length = 0;
 let x_point_length = 0;
 
+//variables for occuring data flow, like bme, hpp, etc.
+let data_bme = "";
+let data_hpp = "";
+let data_ozon = "";
+let data_temp = "";
+
 function apply_button(){ //applying the filter options on the graph
 
 }
@@ -503,7 +509,39 @@ function HTTP_SET(){ //here i will set and save the values for the sensor data
 
 }
 
-function Read_from_bme(){
-
+function Read_from_bme(){ //this method will later be implemented in HTTP_SET
+    fetchUserInfo(data_bme);
     
+    if (data_bme != ""){
+        //here i will start to take the data from the string
+
+        //...
+    }
+}
+
+//method for reading my data from bme, hpp, ...
+const fetchUserInfo = async(data_type)=>{ 
+    const ip = "192.168.0.0"; //this ip is only test-wise constructed
+    const response = await fetch(`http://${ip}/bme`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain'
+        }
+    });
+
+    if (!response.ok){ //response.ok == 200
+        throw new Error('Data was not found');
+    }
+
+    //parse our json
+    const userData = await response.text(); //i have to do asyn, because its parsing at the same when receiving the msg
+                                            //when a method returns a promise, u have to use "await"
+    data_type = userData; //saving my data
+    //console.log(userData);
+
+    /* This Format should be readable from this website
+    server.on("/bme", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(200, "text/plain", msgBME);
+    });
+    */
 }
