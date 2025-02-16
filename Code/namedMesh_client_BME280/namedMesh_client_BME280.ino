@@ -9,8 +9,8 @@
 BME280 bme280Sensor;
 
 #define cs_pin 5
-#define sda_pin 19
-#define scl_pin 20
+#define sda_pin 21
+#define scl_pin 22
 
 #define BUF_SIZE 2048
 byte buf[BUF_SIZE];
@@ -26,7 +26,7 @@ Scheduler userSched;
 namedMesh mesh;
 
 String nodeName = "BME280";
-int hour, minute, second;
+int hour, minute, second = 0;
 
 int32_t read_fn_wctx(struct dblog_write_context *ctx, void *buf, uint32_t pos, size_t len) {
   if (fseek(myFile, pos, SEEK_SET))
@@ -132,36 +132,29 @@ float readBme() {
 }
 
 void logSensorData() {
-  myFile = fopen(filename, "a+b");
+  File myFile = SD.open(filename, FILE_APPEND);
   if (!myFile) {
     Serial.println("Open Error");
     return;
   }
-  struct dblog_write_context ctx;
-  ctx.buf = buf;
-  ctx.col_count = 2;
-  ctx.page_resv_bytes = 0;
-  ctx.page_size_exp = 12;
-  ctx.max_pages_exp = 0;
-  ctx.read_fn = read_fn_wctx;
-  ctx.flush_fn = flush_fn;
-  ctx.write_fn = write_fn;
-  int res = dblog_write_init(&ctx);
-  if (!res) {
-    char ts[24];
-    sprintf(ts, "%02d:%02d:%02d", hour, minute, second);
-    res = dblog_set_col_val(&ctx, 0, DBLOG_TYPE_TEXT, ts, strlen(ts));
-    float pressure = readBme();
-    res = dblog_set_col_val(&ctx, 1, DBLOG_TYPE_REAL, &pressure, sizeof(pressure));
-    res = dblog_append_empty_row(&ctx);
+
+  char ts[24];
+  sprintf(ts, "%02d:%02d:%02d", hour, minute, second);
+  float pressure = readBme();
+
+  if (pressure != -1) {
+    myFile.print("Time: ");
+    myFile.print(ts);
+    myFile.print(", Pressure: ");
+    myFile.println(pressure, 2);
+    Serial.println("Data logged to file");
+  } else {
+    Serial.println("Sensor read error");
   }
-  res = dblog_finalize(&ctx);
-  fclose(myFile);
-  if (res)
-    print_error(res);
-  else
-    Serial.println("Data logged to SQLite DB");
+
+  myFile.close();
 }
+
 
 
 int32_t read_fn_rctx(struct dblog_read_context *ctx, void *buf, uint32_t pos, size_t len) {
@@ -174,24 +167,23 @@ int32_t read_fn_rctx(struct dblog_read_context *ctx, void *buf, uint32_t pos, si
 }
 
 void sendDB() {
-  myFile = fopen(filename, "r+b");
+  File myFile = SD.open(filename, FILE_READ);
   if (!myFile) {
     Serial.println("Error opening DB for reading");
     return;
   }
 
   struct dblog_read_context rctx;
-  rctx.page_size_exp = 12;  // Must match the page_size_exp used during writing
+  rctx.page_size_exp = 12;
   rctx.read_fn = read_fn_rctx;
   rctx.buf = buf;
   int res = dblog_read_init(&rctx);
   if (res) {
     print_error(res);
-    fclose(myFile);
+    myFile.close();
     return;
   }
 
-  // Loop through each row in the database
   while (true) {
     uint32_t colType0, colType1;
     uint8_t *colVal0 = (uint8_t *)dblog_read_col_val(&rctx, 0, &colType0);
@@ -215,7 +207,7 @@ void sendDB() {
       break;
   }
 
-  fclose(myFile);
+  myFile.close();
 }
 
 void LPM(unsigned long durationMillis) {
