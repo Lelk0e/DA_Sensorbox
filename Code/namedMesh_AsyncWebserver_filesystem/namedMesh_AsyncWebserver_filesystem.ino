@@ -27,7 +27,7 @@ float sensorDataValue;
 
 volatile bool lowPowerMode = false;
 
-FILE *myFile;
+File myFile;
 
 #define BUF_SIZE 2048
 byte buf[BUF_SIZE];
@@ -84,7 +84,6 @@ void dataSplit(String s, char del) {
   int idx6 = s.indexOf(del, idx5 + 1);  // after sensor table name
   if (idx6 == -1) return;
 
-  // Extract time parts
   String hh = s.substring(idx2 + 1, idx3);
   String mm = s.substring(idx3 + 1, idx4);
   String ss = s.substring(idx4 + 1, idx5);
@@ -102,17 +101,16 @@ void logSensorData() {
   char dbFilename[32];
   sprintf(dbFilename, "/%s.db", sensorTable.c_str());
 
-
-  myFile = fopen(dbFilename, "a+b");
+  
+  myFile = SD.open(dbFilename, FILE_APPEND);
   if (!myFile) {
-    Serial.print("Open Error for ");
-    Serial.println(dbFilename);
+    Serial.println("Open Error");
     return;
   }
 
   struct dblog_write_context ctx;
   ctx.buf = buf;
-  ctx.col_count = 2;  // Two columns: Timestamp and Data
+  ctx.col_count = 2;  
   ctx.page_resv_bytes = 0;
   ctx.page_size_exp = 12;
   ctx.max_pages_exp = 0;
@@ -129,13 +127,12 @@ void logSensorData() {
     res = dblog_append_empty_row(&ctx);
   }
   res = dblog_finalize(&ctx);
-  fclose(myFile);
+  myFile.close();
   if (res)
     print_error(res);
   else
     Serial.println("Data logged");
 }
-
 
 void initSDCard() {
   if (!SD.begin(cs_pin)) {
@@ -147,45 +144,36 @@ void initSDCard() {
   Serial.printf("Size: %lluMB\n", cardSize);
 }
 
-void serveFile(AsyncWebServerRequest *request, const char *filename) {
-  File file = SD.open(filename, FILE_READ);
-
-  if (!file || file.isDirectory()) {
-    request->send(404, "text/plain", "File not found or is a directory");
-    return;
-  }
-
-  String fileContent;
-  while (file.available()) {
-    fileContent += char(file.read());
-  }
-  file.close();
-
-  request->send(200, "text/plain", fileContent);
-}
-
-
-int32_t read_fn_wctx(struct dblog_write_context *ctx, void *buf, uint32_t pos, size_t len) {
-  if (fseek(myFile, pos, SEEK_SET))
+int32_t read_fn_wctx(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len) {
+  if (!myFile.seek(pos))
     return DBLOG_RES_SEEK_ERR;
-  size_t ret = fread(buf, 1, len, myFile);
+  size_t ret = myFile.read((uint8_t *)buffer, len);
   if (ret != len)
     return DBLOG_RES_READ_ERR;
   return ret;
 }
 
 int flush_fn(struct dblog_write_context *ctx) {
+  myFile.flush();
   return DBLOG_RES_OK;
 }
 
-int32_t write_fn(struct dblog_write_context *ctx, void *buf, uint32_t pos, size_t len) {
-  if (fseek(myFile, pos, SEEK_SET))
+int32_t write_fn(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len) {
+  if (!myFile.seek(pos))
     return DBLOG_RES_SEEK_ERR;
-  size_t ret = fwrite(buf, 1, len, myFile);
+  size_t ret = myFile.write((const uint8_t *)buffer, len);
   if (ret != len)
     return DBLOG_RES_ERR;
-  fflush(myFile);
-  fsync(fileno(myFile));
+  myFile.flush();
+  return ret;
+}
+
+int32_t read_fn_rctx(struct dblog_read_context *ctx, void *buffer, uint32_t pos, size_t len) {
+  if (!myFile.seek(pos))
+    return DBLOG_RES_SEEK_ERR;
+  size_t ret = myFile.read((uint8_t *)buffer, len);
+  if (ret != len)
+    return DBLOG_RES_READ_ERR;
   return ret;
 }
 
@@ -200,15 +188,6 @@ String messageType(String msg) {
     return msg.substring(0, firstDel);
   }
   return "";
-}
-
-int32_t read_fn_rctx(struct dblog_read_context *ctx, void *buf, uint32_t pos, size_t len) {
-  if (fseek(myFile, pos, SEEK_SET))
-    return DBLOG_RES_SEEK_ERR;
-  size_t ret = fread(buf, 1, len, myFile);
-  if (ret != len)
-    return DBLOG_RES_READ_ERR;
-  return ret;
 }
 
 void LPM(unsigned long durationMillis) {
@@ -235,25 +214,25 @@ void exitLPM() {
 }
 
 String wrDBtoWs(char *filename) {
-  String data = "";  // Accumulate all rows here
-  myFile = fopen(filename, "r+b");
+  String data = "";  
+  myFile = SD.open(filename, FILE_READ);
   if (!myFile) {
     Serial.println("Error opening DB for reading");
     return data;
   }
 
   struct dblog_read_context rctx;
-  rctx.page_size_exp = 12;  // Must match the page_size_exp used during writing
+  rctx.page_size_exp = 12;  
   rctx.read_fn = read_fn_rctx;
   rctx.buf = buf;
   int res = dblog_read_init(&rctx);
   if (res) {
     print_error(res);
-    fclose(myFile);
+    myFile.close();
     return data;
   }
 
-  // Loop through each row in the database
+  
   while (true) {
     uint32_t colType0, colType1;
     uint8_t *colVal0 = (uint8_t *)dblog_read_col_val(&rctx, 0, &colType0);
@@ -268,7 +247,7 @@ String wrDBtoWs(char *filename) {
     float pressure;
     memcpy(&pressure, colVal1, sizeof(float));
 
-    // Append the data to the string
+   
     data += "Time:" + String(ts) + ":BME280:" + String(pressure, 2) + "\n";
 
     delay(5);
@@ -276,7 +255,7 @@ String wrDBtoWs(char *filename) {
       break;
   }
 
-  fclose(myFile);
+  myFile.close();
   return data;
 }
 
