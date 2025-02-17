@@ -11435,7 +11435,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1500pF"
+		(property "Value" "1500pF - 50V"
 			(at 53.34 55.8799 0)
 			(effects
 				(font
