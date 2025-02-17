@@ -64,11 +64,12 @@ void loop() {
     Serial.println("Received data: " + data);
  
     // Parse JSON data
-    int data = data.indexOf("time:");
-    int time = data.indexOf("BME:");
- 
-    float data_slip = data.substring(data, data.indexOf(",", data)).toFloat();
-    float time_slip = data.substring(time, data.indexOf(",", time)).toFloat();
+    int data_index = data.indexOf("BME:");
+    int time__index = data.indexOf("Time:");
+    int time_end_index = data.indexof(":BME");
+
+    String data_slip = data.substring(data_index); //get information out of string
+    String time_slip = data.substring(time_index, time_end_index); //same here
  
     // Print parsed data
     Serial.print("data: ");
