@@ -521,7 +521,7 @@ function Read_from_bme(){ //this method will later be implemented in HTTP_SET
 
 //method for reading my data from bme, hpp, ...
 const fetchUserInfo = async(data_type)=>{ 
-    const ip = "192.168.0.0"; //this ip is only test-wise constructed
+    const ip = "192.168.4.1"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp
     const response = await fetch(`http://${ip}/bme`,{
         method: 'POST',
         headers: {
