@@ -15,7 +15,7 @@ let data_ozon = "";
 let data_temp = "";
 
 function apply_button(){ //applying the filter options on the graph
-
+    Read_from_bme();
 }
 
 function update(){
@@ -151,6 +151,29 @@ function time_setting(){
     const x_axe_name_diff = width * 0.005; //dif ... difference
     const height_for_x_lapses = height*0.01;
     switch (zone) { //changes --> before it was x_axe_lenght - 1 in clearRect etc. --> But i found out that it is too much trouble, to implement it in that way all the time. So i gave the time and sensor axes each unique length, so that i have no trouble with line conflictions
+        case "2 hours in a row":
+            lapse = 2; //1, because of 0 time
+            unit = x_point_length / lapse; //for each time lapse
+
+            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
+                                                              //we are beginning at 1, because line with
+            measure_text_x_axe_and_delete(); //deleting the text
+
+            for (let i = 0; i <= lapse; i++) {    
+                ctx.beginPath();
+                ctx.moveTo(i * unit, 0);
+                ctx.lineTo(i*unit, height_for_x_lapses);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#000000';
+                ctx.stroke();
+                //lapses naming
+                ctx.font = "12px serif";
+                ctx.fillText([i], [i*unit - unit/150], height_for_x_lapses + 0.02*height);
+            }
+            ctx.font = "20px serif";
+            ctx.fillText("x in hours", x_whole_axe_length + x_axe_name_diff,1);
+        break;
+
         case "Today":
             lapse = 24; //1, because of 0 time
             unit = x_point_length / lapse;
@@ -209,6 +232,55 @@ function time_setting(){
             ctx.fillText("x in hours", x_whole_axe_length + x_axe_name_diff,1);
         break;
 
+        case "2 Days in a row":
+            lapse = 24; //1, because of 0 time
+            unit = x_point_length / lapse; //for each time lapse
+
+            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
+                                                              //we are beginning at 1, because line with
+            measure_text_x_axe_and_delete(); //deleting the text
+
+            for (let i = 0; i <= lapse; i++) {    
+                ctx.beginPath();
+                ctx.moveTo(i * unit, 0);
+                ctx.lineTo(i*unit, height_for_x_lapses);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#000000';
+                ctx.stroke();
+                //lapses naming
+                ctx.font = "12px serif";
+
+                if (i <= 12){
+                    if (i <= 6){
+                        if (i <= 4){
+                            ctx.fillText( "0" + [i]*2 + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
+                        }
+                        else{
+                            ctx.fillText( [i]*2 + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
+                        }
+                    }
+                    else{
+                        ctx.fillText( [i]*2 + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
+                    }
+                }
+                else if (i > 12){
+                    if (i <= 18){
+                        if (i <= 16){
+                            ctx.fillText( "0" + (2 + ([i] - 13)*2) + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
+                        }
+                        else{
+                            ctx.fillText( (2 + ([i] - 13)*2) + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
+                        }
+                    }
+                    else{
+                        ctx.fillText( (2 + ([i] - 13)*2) + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
+                    }
+                }
+            }
+            ctx.font = "20px serif";
+            ctx.fillText("x in hours", x_whole_axe_length + x_axe_name_diff,1);
+        break;
+
         case "This Week":
             lapse = 7; //1, because of 0 time
             unit = x_point_length / lapse; //for each time lapse
@@ -255,8 +327,8 @@ function time_setting(){
             ctx.fillText("x in days", x_whole_axe_length + x_axe_name_diff,1);
         break;
 
-        case "This Month":
-            lapse = 30; //1, because of 0 time
+        case "2 Weeks in a row":
+            lapse = 14; //1, because of 0 time
             unit = x_point_length / lapse; //for each time lapse
 
             ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
@@ -276,75 +348,6 @@ function time_setting(){
             }
             ctx.font = "20px serif";
             ctx.fillText("x in days", x_whole_axe_length + x_axe_name_diff,1);
-        break;
-
-        case "Last Month":
-            lapse = 30; //1, because of 0 time
-            unit = x_point_length / lapse; //for each time lapse
-
-            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
-                                                              //we are beginning at 1, because line with
-            measure_text_x_axe_and_delete(); //deleting the text
-
-            for (let i = 0; i <= lapse; i++) {    
-                ctx.beginPath();
-                ctx.moveTo(i * unit, 0);
-                ctx.lineTo(i*unit, height_for_x_lapses);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-                //lapses naming
-                ctx.font = "12px serif";
-                ctx.fillText([i], [i*unit - unit/10], height_for_x_lapses + 0.02*height);
-            }
-            ctx.font = "20px serif";
-            ctx.fillText("x in days", x_whole_axe_length + x_axe_name_diff,1);
-        break;
-
-        case "This Year":
-            lapse = 12; //--> it was 365, i changed it to 12, i want to display the months, the idea came from a friend, i found it quite genious
-            unit = x_point_length / lapse; //for each time lapse
-
-            ctx.clearRect(-unit/2 , 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
-                                                              //we are beginning at 1, because line with
-            measure_text_x_axe_and_delete(); //deleting the text
-
-            for (let i = 0; i <= lapse; i++) {    
-                ctx.beginPath();
-                ctx.moveTo(i * unit, 0);
-                ctx.lineTo(i*unit, height_for_x_lapses);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-                //lapses naming
-                ctx.font = "12px serif";
-                ctx.fillText([i], [i*unit - unit/22], height_for_x_lapses + 0.02*height);
-            }
-            ctx.font = "20px serif";
-            ctx.fillText("x in months", x_whole_axe_length + x_axe_name_diff,1);
-        break;
-
-        case "Last Year":
-            lapse = 12; //1, because of 0 time --> etc. the same works here 
-            unit = x_point_length / lapse; //for each time lapse
-
-            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
-                                                              //we are beginning at 1, because line with
-            measure_text_x_axe_and_delete(); //deleting the text
-
-            for (let i = 0; i <= lapse; i++) {    
-                ctx.beginPath();
-                ctx.moveTo(i * unit, 0);
-                ctx.lineTo(i*unit, height_for_x_lapses);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-                //lapses naming
-                ctx.font = "12px serif";
-                ctx.fillText([i], [i*unit - unit/22], height_for_x_lapses + 0.02*height);
-            }
-            ctx.font = "20px serif";
-            ctx.fillText("x in months", x_whole_axe_length + x_axe_name_diff,1);
         break;
     }
 }
@@ -523,7 +526,7 @@ function Read_from_bme(){ //this method will later be implemented in HTTP_SET
 const fetchUserInfo = async(data_type)=>{ 
     const ip = "192.168.4.1"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp
     const response = await fetch(`http://${ip}/bme`,{
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'text/plain'
         }
@@ -534,14 +537,23 @@ const fetchUserInfo = async(data_type)=>{
     }
 
     //parse our json
-    const userData = await response.text(); //i have to do asyn, because its parsing at the same when receiving the msg
-                                            //when a method returns a promise, u have to use "await"
-    data_type = userData; //saving my data
-    //console.log(userData);
 
+    if (response.ok == 200){
+        const userData = await response.text(); //i have to do asyn, because its parsing at the same when receiving the msg
+        //when a method returns a promise, u have to use "await"
+        data_type = userData; //saving my data
+        console.log(userData);
+    }
+    
     /* This Format should be readable from this website
     server.on("/bme", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", msgBME);
     });
     */
 }
+
+//month, years is not important
+
+//1 hour show, 2 days in row
+
+//csv save and graph save
