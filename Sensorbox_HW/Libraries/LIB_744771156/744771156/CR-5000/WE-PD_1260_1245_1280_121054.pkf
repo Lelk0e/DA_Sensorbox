@@ -1,0 +1,10 @@
+(unit MM)
+
+(package "WE-PD_1260_1245_1280_121054"
+    (type UNDEF)
+    (uver 2)
+    (mountForm default
+        (footprintRef "WE-PD_1260_1245_1280_121054")
+        (spec "default")
+    )
+)

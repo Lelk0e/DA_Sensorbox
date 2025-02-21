@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART '744771156'
+CLASS = DISCRETE
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "DESCRIPTION", "DATASHEET";
+{========================================================================================}
+ "Wurth Elektronik", "744771156" (!) = "", "WE-PD_1260/1245/1280/121054", "Other", "710-744771156", "https://www.mouser.co.uk/ProductDetail/Wurth-Elektronik/744771156?qs=E%2F%2FhvbtCqpMc%2F29JH%252BKd8Q%3D%3D", "Wurth WE-PD Series Shielded Wire-wound SMD Inductor 56 uH +/-20% 2.01A Idc", ""
+END_PART
+
+END.

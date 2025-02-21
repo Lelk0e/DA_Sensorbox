@@ -13912,76 +13912,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:L")
-		(at 97.79 36.83 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "6cf44358-14a8-4691-a32f-f9751689d1ca")
-		(property "Reference" "L1"
-			(at 99.06 35.5599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "56µH - 2.1A"
-			(at 99.06 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Inductor_SMD:L_0805_2012Metric_Pad1.05x1.20mm_HandSolder"
-			(at 97.79 36.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 97.79 36.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Inductor"
-			(at 97.79 36.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "5346aaf9-e985-47e0-b46e-cb5cda4a0a10")
-		)
-		(pin "1"
-			(uuid "b2c54353-82be-46c6-9bef-8c964bf01929")
-		)
-		(instances
-			(project "SensorBox"
-				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
-					(reference "L1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Diode:1N4148WS")
 		(at 297.18 125.73 270)
 		(unit 1)
@@ -16767,6 +16697,76 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "#PWR017")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:L")
+		(at 97.79 36.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c0487782-4f43-486d-b01d-2ba3d50b89cd")
+		(property "Reference" "L1"
+			(at 99.06 35.5599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "56 uH - 2.1A"
+			(at 99.06 38.0999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "L1_Spule:L1"
+			(at 97.79 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 97.79 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Inductor"
+			(at 97.79 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "7c594d66-ea14-4146-b847-c1729af5c6a3")
+		)
+		(pin "1"
+			(uuid "fa04f7e5-33f5-420a-b172-cc114348c039")
+		)
+		(instances
+			(project ""
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "L1")
 					(unit 1)
 				)
 			)
