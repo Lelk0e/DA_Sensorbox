@@ -1,0 +1,17 @@
+@hostname = api.OberMayer.com
+@port = 8080
+@host = {{hostname}}:{{port}}
+@contentType = text/plain
+@createdAt = {{datetime iso8601}}
+@modifiedBy = {{$processEnv  USERNAME}}
+
+# @prompt username 
+# @prompt refCode 3435
+# @prompt otp Your
+
+POST http://{{host}}/verify-otp/{{refCode}} HTTP/1.1
+Content-Type: {{contentType}}
+{
+    "username": "{{username}}",
+    "otp": "{{otp}}"
+}
