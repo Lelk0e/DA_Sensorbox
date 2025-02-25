@@ -15,7 +15,7 @@ let data_ozon = "";
 let data_temp = "";
 
 function apply_button(){ //applying the filter options on the graph
-    Read_from_bme();
+    
 }
 
 function update(){
@@ -522,10 +522,13 @@ function Read_from_bme(){ //this method will later be implemented in HTTP_SET
     }
 }
 
+
 //method for reading my data from bme, hpp, ...
 const fetchUserInfo = async(data_type)=>{ 
-    const ip = "192.168.4.1"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp
-    const response = await fetch(`http://${ip}/bme`,{
+    const address = "localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp
+    const first = "Diplomarbeit";
+    const second = "Website";
+    const response = await fetch(`http://${address}/${first}/${second}/website.html`,{
         method: 'GET',
         headers: {
             'Content-Type': 'text/plain'
@@ -538,19 +541,24 @@ const fetchUserInfo = async(data_type)=>{
 
     //parse our json
 
-    if (response.ok == 200){
-        const userData = await response.text(); //i have to do asyn, because its parsing at the same when receiving the msg
-        //when a method returns a promise, u have to use "await"
-        data_type = userData; //saving my data
-        console.log(userData);
-    }
+    const userData = await response.text(); //i have to do asyn, because its parsing at the same when receiving the msg
+    //when a method returns a promise, u have to use "await"
+    data_type = userData; //saving my data
+    console.log(userData);
     
+    const params = new URLSearchParams(userData);
+    const BMEmsg = params.get('msgBME');
+    
+    console.log(BMEmsg + "yessssssssssssss");
+
     /* This Format should be readable from this website
     server.on("/bme", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", msgBME);
     });
     */
 }
+
+setInterval(Read_from_bme(), 1000); //testing, if my requests are succesfull
 
 //month, years is not important
 
