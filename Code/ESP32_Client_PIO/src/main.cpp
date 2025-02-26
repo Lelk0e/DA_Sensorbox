@@ -152,7 +152,7 @@ void logSensorData() {
   int sensorValue = static_cast<int>(readBme());  
 
   char timestamp[24];
-  snprintf(timestamp, sizeof(timestamp), "%04d-%02d-%02d %02d:%02d:%02d.000", 
+  snprintf(timestamp, sizeof(timestamp), "%04d:%02d:%02d:%02d:%02d:%02d.000", 
            year, month, day, hour, minute, second);
 
   int res = dblog_set_col_val(&sqliteLogger, 0, DBLOG_TYPE_TEXT, timestamp, strlen(timestamp));

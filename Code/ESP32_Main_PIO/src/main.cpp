@@ -12,13 +12,16 @@ Scheduler userSched;
 namedMesh mesh;
 
 String nodeName = "mainESP";
-String msgBME = "";
-String msgOzon = "";
-String msgPT = "";
-String msgInter = "";
+
+int year;
+int month;
+int day;
 int hour;
 int minute;
 int second;
+int dyear;
+int dmonth;
+int dday;
 int dhour;
 int dminute;
 int dsecond;
@@ -28,7 +31,8 @@ float sensorDataValue;
 
 volatile bool lowPowerMode = false;
 
-File myFile;
+FILE *dbFile;
+FILE *readDbFile = NULL;
 
 #define BUF_SIZE 2048
 byte buf[BUF_SIZE];
@@ -48,6 +52,7 @@ void logSensorData();
 int32_t read_fn_wctx(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len);
 int flush_fn(struct dblog_write_context *ctx);
 int32_t write_fn(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len);
+int32_t read_fn_rctx(struct dblog_read_context *ctx, void *buffer, uint32_t pos, size_t len);
 void print_error(int res);
 void exitLPM();
 String wrDBtoWs(const char *filename);
@@ -92,50 +97,52 @@ void newConnectionCallback(uint32_t nodeId)
 
 void dataSplit(String s, char del)
 {
-
-  int idx1 = s.indexOf(del); // after "data"
-  if (idx1 == -1)
-    return;
-  int idx2 = s.indexOf(del, idx1 + 1); // after "Time"
-  if (idx2 == -1)
-    return;
-  int idx3 = s.indexOf(del, idx2 + 1); // after hh
-  if (idx3 == -1)
-    return;
-  int idx4 = s.indexOf(del, idx3 + 1); // after mm
-  if (idx4 == -1)
-    return;
-  int idx5 = s.indexOf(del, idx4 + 1); // after ss
-  if (idx5 == -1)
-    return;
-  int idx6 = s.indexOf(del, idx5 + 1); // after sensor table name
-  if (idx6 == -1)
-    return;
-
-  String hh = s.substring(idx2 + 1, idx3);
-  String mm = s.substring(idx3 + 1, idx4);
-  String ss = s.substring(idx4 + 1, idx5);
-  dhour = hh.toInt();
-  dminute = mm.toInt();
-  dsecond = ss.toInt();
-
-  sensorTable = s.substring(idx5 + 1, idx6);
-  String sensorValStr = s.substring(idx6 + 1);
+  int idx1 = s.indexOf(del);
+  if (idx1 == -1) return;
+  int idx2 = s.indexOf(del, idx1 + 1);
+  if (idx2 == -1) return;
+  int idx3 = s.indexOf(del, idx2 + 1);
+  if (idx3 == -1) return;
+  int idx4 = s.indexOf(del, idx3 + 1);
+  if (idx4 == -1) return;
+  int idx5 = s.indexOf(del, idx4 + 1);
+  if (idx5 == -1) return;
+  int idx6 = s.indexOf(del, idx5 + 1);
+  if (idx6 == -1) return;
+  int idx7 = s.indexOf(del, idx6 + 1);
+  if (idx7 == -1) return;
+  int idx8 = s.indexOf(del, idx7 + 1);
+  if (idx8 == -1) return;
+  int idx9 = s.indexOf(del, idx8 + 1);
+  if (idx9 == -1) return;
+  String yearStr = s.substring(idx2 + 1, idx3);
+  String monthStr = s.substring(idx3 + 1, idx4);
+  String dayStr = s.substring(idx4 + 1, idx5);
+  String hourStr = s.substring(idx5 + 1, idx6);
+  String minuteStr = s.substring(idx6 + 1, idx7);
+  String secondStr = s.substring(idx7 + 1, idx8);
+  dyear = yearStr.toInt();
+  dmonth = monthStr.toInt();
+  dday = dayStr.toInt();
+  dhour = hourStr.toInt();
+  dminute = minuteStr.toInt();
+  dsecond = secondStr.toInt();
+  sensorTable = s.substring(idx8 + 1, idx9);
+  String sensorValStr = s.substring(idx9 + 1);
   sensorDataValue = sensorValStr.toFloat();
 }
+
 
 void logSensorData()
 {
   char dbFilename[32];
   sprintf(dbFilename, "/%s.db", sensorTable.c_str());
-
-  myFile = SD.open(dbFilename, FILE_APPEND);
-  if (!myFile)
+  dbFile = fopen(dbFilename, "a+b");
+  if (!dbFile)
   {
-    Serial.println("Open Error");
+    Serial.println("Failed to open SQLite DB file!");
     return;
   }
-
   struct dblog_write_context ctx;
   ctx.buf = buf;
   ctx.col_count = 2;
@@ -143,25 +150,26 @@ void logSensorData()
   ctx.page_size_exp = 12;
   ctx.max_pages_exp = 0;
   ctx.read_fn = read_fn_wctx;
-  ctx.flush_fn = flush_fn;
   ctx.write_fn = write_fn;
-
+  ctx.flush_fn = flush_fn;
   int res = dblog_write_init(&ctx);
   if (!res)
   {
-    char ts[24];
-    sprintf(ts, "%02d:%02d:%02d", dhour, dminute, dsecond);
+    char ts[32];
+    sprintf(ts, "%04d:%02d:%02d:%02d:%02d:%02d", dyear, dmonth, dday, dhour, dminute, dsecond);
+    int sensorValue = (int)sensorDataValue;
     res = dblog_set_col_val(&ctx, 0, DBLOG_TYPE_TEXT, ts, strlen(ts));
-    res = dblog_set_col_val(&ctx, 1, DBLOG_TYPE_REAL, &sensorDataValue, sizeof(sensorDataValue));
+    res = dblog_set_col_val(&ctx, 1, DBLOG_TYPE_INT, &sensorValue, sizeof(sensorValue));
     res = dblog_append_empty_row(&ctx);
   }
   res = dblog_finalize(&ctx);
-  myFile.close();
+  fclose(dbFile);
   if (res)
     print_error(res);
   else
     Serial.println("Data logged");
 }
+
 
 void initSDCard()
 {
@@ -177,36 +185,37 @@ void initSDCard()
 
 int32_t read_fn_wctx(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len)
 {
-  if (!myFile.seek(pos))
+  if (fseek(dbFile, pos, SEEK_SET))
     return DBLOG_RES_SEEK_ERR;
-  size_t ret = myFile.read((uint8_t *)buffer, len);
+  size_t ret = fread(buffer, 1, len, dbFile);
   if (ret != len)
     return DBLOG_RES_READ_ERR;
   return ret;
 }
 
-int flush_fn(struct dblog_write_context *ctx)
-{
-  myFile.flush();
-  return DBLOG_RES_OK;
-}
-
 int32_t write_fn(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len)
 {
-  if (!myFile.seek(pos))
+  if (fseek(dbFile, pos, SEEK_SET))
     return DBLOG_RES_SEEK_ERR;
-  size_t ret = myFile.write((const uint8_t *)buffer, len);
+  size_t ret = fwrite(buffer, 1, len, dbFile);
   if (ret != len)
     return DBLOG_RES_ERR;
-  myFile.flush();
+  if (fflush(dbFile))
+    return DBLOG_RES_FLUSH_ERR;
+  fsync(fileno(dbFile));
   return ret;
+}
+
+int flush_fn(struct dblog_write_context *ctx)
+{
+  return DBLOG_RES_OK;
 }
 
 int32_t read_fn_rctx(struct dblog_read_context *ctx, void *buffer, uint32_t pos, size_t len)
 {
-  if (!myFile.seek(pos))
+  if (fseek(dbFile, pos, SEEK_SET))
     return DBLOG_RES_SEEK_ERR;
-  size_t ret = myFile.read((uint8_t *)buffer, len);
+  size_t ret = fread(buffer, 1, len, dbFile);
   if (ret != len)
     return DBLOG_RES_READ_ERR;
   return ret;
@@ -254,13 +263,12 @@ void exitLPM()
 String wrDBtoWs(const char *filename)
 {
   String data = "";
-  myFile = SD.open(filename, FILE_READ);
-  if (!myFile)
+  dbFile = fopen(filename, "rb");
+  if (!dbFile)
   {
     Serial.println("Error opening DB for reading");
     return data;
   }
-
   struct dblog_read_context rctx;
   rctx.page_size_exp = 12;
   rctx.read_fn = read_fn_rctx;
@@ -269,10 +277,9 @@ String wrDBtoWs(const char *filename)
   if (res)
   {
     print_error(res);
-    myFile.close();
+    fclose(dbFile);
     return data;
   }
-
   while (true)
   {
     uint32_t colType0, colType1;
@@ -280,103 +287,70 @@ String wrDBtoWs(const char *filename)
     uint8_t *colVal1 = (uint8_t *)dblog_read_col_val(&rctx, 1, &colType1);
     if (!colVal0 || !colVal1)
       break;
-
     char ts[32];
     strncpy(ts, (const char *)colVal0, sizeof(ts) - 1);
     ts[sizeof(ts) - 1] = '\0';
-
-    float pressure;
-    memcpy(&pressure, colVal1, sizeof(float));
-
-    data += "Time:" + String(ts) + ":BME280:" + String(pressure, 2) + "\n";
-
-    delay(5);
+    int sensorValue;
+    memcpy(&sensorValue, colVal1, sizeof(sensorValue));
+    data += "Time:" + String(ts) + ":"+ filename + ":" + String(sensorValue) + "\n";
     if (dblog_read_next_row(&rctx) != 0)
       break;
   }
-
-  myFile.close();
+  fclose(dbFile);
   return data;
 }
 
 void setup()
 {
-
   Serial.begin(115200);
-
-  dnsServer.start(DNS_PORT, "sensorbox.com", mesh.getAPIP());
-
   initMesh();
-
   initSDCard();
-
+  dnsServer.start(DNS_PORT, "sensorbox.com", mesh.getAPIP());
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SD, "/webpage/website.html", "text/html"); });
-
   server.on("/set-time", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    if (request->hasParam("hour") && request->hasParam("minute") && request->hasParam("second")) {
-      hour = request->getParam("hour")->value().toInt();
-      minute = request->getParam("minute")->value().toInt();
-      second = request->getParam("second")->value().toInt();
-      Serial.print("Received time: ");
-      Serial.print(hour);
-      Serial.print(":");
-      Serial.print(minute);
-      Serial.print(":");
-      Serial.println(second);
-      request->send(200, "text/plain", "Time received successfully");
-    } else {
-      request->send(400, "text/plain", "Missing time parameters");
-    } });
+  if(request->hasParam("year") && request->hasParam("month") && request->hasParam("day") && request->hasParam("hour") && request->hasParam("minute") && request->hasParam("second")){
+    year = request->getParam("year")->value().toInt();
+    month = request->getParam("month")->value().toInt();
+    day = request->getParam("day")->value().toInt();
+    hour = request->getParam("hour")->value().toInt();
+    minute = request->getParam("minute")->value().toInt();
+    second = request->getParam("second")->value().toInt();
+    Serial.print("Received time: ");
+    Serial.print(year); Serial.print("-");
+    Serial.print(month); Serial.print("-");
+    Serial.print(day); Serial.print(" ");
+    Serial.print(hour); Serial.print(":");
+    Serial.print(minute); Serial.print(":");
+    Serial.println(second);
+    request->send(200, "text/plain", "Time received successfully");
+  } else {
+    request->send(400, "text/plain", "Missing time parameters");
+  } });
+
   server.on("/OnOff", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     if(request->hasParam("On") || request->hasParam("Off")){
-      if (request->hasParam("On")){
+      if(request->hasParam("On")){
         toggleOnOff = true;
-      }
-      else
-      {
+      } else {
         toggleOnOff = false;
+        
       }
-    }
-    else
-    {
+    } else {
       request->send(400, "text/plain", "error toggle on off");
     } });
   server.on("/bme280", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     String data = wrDBtoWs("/BME280");
     request->send(200, "text/plain", data); });
-  //   server.onSslFileRequest([](void * arg, const char *filename, uint8_t **buf) -> int {
-  //    Serial.printf("SSL File: %s\n", filename);
-  //    File file = SPIFFS.open(filename, "r");
-  //    if(file){
-  //      size_t size = file.size();
-  //      uint8_t * nbuf = (uint8_t*)malloc(size);
-  //      if(nbuf){
-  //        size = file.read(nbuf, size);
-  //        file.close();
-  //        *buf = nbuf;
-  //        return size;
-  //      }
-  //      file.close();
-  //    }
-  //    *buf = 0;
-  //    return 0;
-  //  }, NULL);
-  //  server.beginSecure("/server.cer", "/server.key", NULL);
   server.begin();
-  //Task *firstLpmTask = new Task(10000, 1, []()
-  //                              { LPM(30000); });
-  //userSched.addTask(*firstLpmTask);
-  //firstLpmTask->enable();
 }
 
 void loop()
 {
   dnsServer.processNextRequest();
-  
   if (toggleOnOff == true)
   {
     userSched.execute();
