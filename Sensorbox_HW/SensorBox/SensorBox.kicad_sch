@@ -5386,6 +5386,12 @@
 		(uuid "a8fd631a-987e-45ce-9097-4aa52b5439a5")
 	)
 	(junction
+		(at 96.52 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a988ef43-c519-4e2e-ba06-c483767552d5")
+	)
+	(junction
 		(at 128.27 64.77)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5486,6 +5492,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "dd91a253-e3c3-4c0f-9e9f-7df9691812bc")
+	)
+	(junction
+		(at 83.82 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e2680096-b606-4c83-87ff-8c43c6f36af6")
 	)
 	(junction
 		(at 109.22 246.38)
@@ -6125,7 +6137,7 @@
 	)
 	(wire
 		(pts
-			(xy 92.71 60.96) (xy 97.79 60.96)
+			(xy 92.71 60.96) (xy 96.52 60.96)
 		)
 		(stroke
 			(width 0)
@@ -6252,6 +6264,16 @@
 			(type default)
 		)
 		(uuid "44a66685-4f1a-4f55-9d0f-78ac7731873e")
+	)
+	(wire
+		(pts
+			(xy 96.52 60.96) (xy 97.79 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "44dc40b7-d39c-4ffb-8345-3245bbb84e02")
 	)
 	(wire
 		(pts
@@ -6515,6 +6537,16 @@
 	)
 	(wire
 		(pts
+			(xy 93.98 55.88) (xy 96.52 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5e107bc5-07ef-48d8-9866-0643d0ced65d")
+	)
+	(wire
+		(pts
 			(xy 44.45 205.74) (xy 44.45 210.82)
 		)
 		(stroke
@@ -6735,6 +6767,16 @@
 	)
 	(wire
 		(pts
+			(xy 83.82 60.96) (xy 85.09 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "73bc33fb-ffb4-42e0-a7b3-d9c0159a6750")
+	)
+	(wire
+		(pts
 			(xy 316.23 190.5) (xy 314.96 190.5)
 		)
 		(stroke
@@ -6792,6 +6834,16 @@
 			(type default)
 		)
 		(uuid "7841dc14-ee72-4b3b-8ce5-c0d3b1fa0249")
+	)
+	(wire
+		(pts
+			(xy 86.36 55.88) (xy 83.82 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "794b14d4-f623-4a5f-b692-59513d75d856")
 	)
 	(wire
 		(pts
@@ -7355,6 +7407,16 @@
 	)
 	(wire
 		(pts
+			(xy 83.82 55.88) (xy 83.82 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b5edc01d-0f3c-4830-a88c-baf3eababf86")
+	)
+	(wire
+		(pts
 			(xy 88.9 41.91) (xy 88.9 40.64)
 		)
 		(stroke
@@ -7455,7 +7517,7 @@
 	)
 	(wire
 		(pts
-			(xy 80.01 60.96) (xy 85.09 60.96)
+			(xy 80.01 60.96) (xy 83.82 60.96)
 		)
 		(stroke
 			(width 0)
@@ -7802,6 +7864,16 @@
 			(type default)
 		)
 		(uuid "ddd25528-fde9-405d-8f7d-d1ef518a29c6")
+	)
+	(wire
+		(pts
+			(xy 96.52 55.88) (xy 96.52 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "df701365-ff2f-4150-9621-235d6c7fcec7")
 	)
 	(wire
 		(pts
@@ -9910,6 +9982,74 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "#PWR04")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 90.17 55.88 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0178cf7a-4e81-46e9-9451-ca652e775bc2")
+		(property "Reference" "R2_2"
+			(at 90.17 49.53 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "47k"
+			(at 90.17 52.07 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
+			(at 90.17 57.658 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 90.17 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 90.17 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "dfe22222-8a15-4fbc-b02e-8fa8ed05ca9c")
+		)
+		(pin "2"
+			(uuid "1d93b380-c2fa-4f98-89a1-e92f87275b19")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "R2_2")
 					(unit 1)
 				)
 			)
@@ -13022,10 +13162,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "492a3e0f-45e4-4f8d-8c2b-dc5ba221a9e7")
 		(property "Reference" "R2_1"
-			(at 88.9 54.61 90)
+			(at 92.71 58.928 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13033,7 +13172,7 @@
 			)
 		)
 		(property "Value" "6k8"
-			(at 88.9 57.15 90)
+			(at 88.392 58.42 90)
 			(effects
 				(font
 					(size 1.27 1.27)
