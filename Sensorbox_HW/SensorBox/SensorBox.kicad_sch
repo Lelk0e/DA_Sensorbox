@@ -5188,12 +5188,6 @@
 		(uuid "1babfc6d-a546-47ea-9290-ee113e4201eb")
 	)
 	(junction
-		(at 294.64 34.29)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "202bc274-be64-406b-8333-d9cc474d6c3a")
-	)
-	(junction
 		(at 52.07 143.51)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5258,12 +5252,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "48f75b76-dbad-4fb5-bbdb-bf414445159a")
-	)
-	(junction
-		(at 294.64 31.75)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "51702118-5d25-45be-bdfa-bcf41ebec86d")
 	)
 	(junction
 		(at 36.83 166.37)
@@ -5386,6 +5374,12 @@
 		(uuid "a8fd631a-987e-45ce-9097-4aa52b5439a5")
 	)
 	(junction
+		(at 96.52 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a988ef43-c519-4e2e-ba06-c483767552d5")
+	)
+	(junction
 		(at 128.27 64.77)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5486,6 +5480,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "dd91a253-e3c3-4c0f-9e9f-7df9691812bc")
+	)
+	(junction
+		(at 83.82 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e2680096-b606-4c83-87ff-8c43c6f36af6")
 	)
 	(junction
 		(at 109.22 246.38)
@@ -5695,7 +5695,7 @@
 	)
 	(wire
 		(pts
-			(xy 294.64 31.75) (xy 297.18 31.75)
+			(xy 281.94 31.75) (xy 297.18 31.75)
 		)
 		(stroke
 			(width 0)
@@ -5845,7 +5845,7 @@
 	)
 	(wire
 		(pts
-			(xy 294.64 34.29) (xy 297.18 34.29)
+			(xy 281.94 34.29) (xy 297.18 34.29)
 		)
 		(stroke
 			(width 0)
@@ -6085,16 +6085,6 @@
 	)
 	(wire
 		(pts
-			(xy 281.94 31.75) (xy 294.64 31.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "370794cf-9fe8-4ab5-8dee-a9175f58999d")
-	)
-	(wire
-		(pts
 			(xy 378.46 99.06) (xy 378.46 88.9)
 		)
 		(stroke
@@ -6125,7 +6115,7 @@
 	)
 	(wire
 		(pts
-			(xy 92.71 60.96) (xy 97.79 60.96)
+			(xy 92.71 60.96) (xy 96.52 60.96)
 		)
 		(stroke
 			(width 0)
@@ -6252,6 +6242,16 @@
 			(type default)
 		)
 		(uuid "44a66685-4f1a-4f55-9d0f-78ac7731873e")
+	)
+	(wire
+		(pts
+			(xy 96.52 60.96) (xy 97.79 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "44dc40b7-d39c-4ffb-8345-3245bbb84e02")
 	)
 	(wire
 		(pts
@@ -6515,6 +6515,16 @@
 	)
 	(wire
 		(pts
+			(xy 93.98 55.88) (xy 96.52 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5e107bc5-07ef-48d8-9866-0643d0ced65d")
+	)
+	(wire
+		(pts
 			(xy 44.45 205.74) (xy 44.45 210.82)
 		)
 		(stroke
@@ -6735,6 +6745,16 @@
 	)
 	(wire
 		(pts
+			(xy 83.82 60.96) (xy 85.09 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "73bc33fb-ffb4-42e0-a7b3-d9c0159a6750")
+	)
+	(wire
+		(pts
 			(xy 316.23 190.5) (xy 314.96 190.5)
 		)
 		(stroke
@@ -6792,6 +6812,16 @@
 			(type default)
 		)
 		(uuid "7841dc14-ee72-4b3b-8ce5-c0d3b1fa0249")
+	)
+	(wire
+		(pts
+			(xy 86.36 55.88) (xy 83.82 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "794b14d4-f623-4a5f-b692-59513d75d856")
 	)
 	(wire
 		(pts
@@ -7355,6 +7385,16 @@
 	)
 	(wire
 		(pts
+			(xy 83.82 55.88) (xy 83.82 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b5edc01d-0f3c-4830-a88c-baf3eababf86")
+	)
+	(wire
+		(pts
 			(xy 88.9 41.91) (xy 88.9 40.64)
 		)
 		(stroke
@@ -7455,7 +7495,7 @@
 	)
 	(wire
 		(pts
-			(xy 80.01 60.96) (xy 85.09 60.96)
+			(xy 80.01 60.96) (xy 83.82 60.96)
 		)
 		(stroke
 			(width 0)
@@ -7695,16 +7735,6 @@
 	)
 	(wire
 		(pts
-			(xy 281.94 34.29) (xy 294.64 34.29)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d6f20fb5-fd1b-469e-ba5f-d6fd3d6fd473")
-	)
-	(wire
-		(pts
 			(xy 41.91 156.21) (xy 41.91 158.75)
 		)
 		(stroke
@@ -7802,6 +7832,16 @@
 			(type default)
 		)
 		(uuid "ddd25528-fde9-405d-8f7d-d1ef518a29c6")
+	)
+	(wire
+		(pts
+			(xy 96.52 55.88) (xy 96.52 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "df701365-ff2f-4150-9621-235d6c7fcec7")
 	)
 	(wire
 		(pts
@@ -9910,6 +9950,74 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "#PWR04")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 90.17 55.88 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0178cf7a-4e81-46e9-9451-ca652e775bc2")
+		(property "Reference" "R2_2"
+			(at 90.17 49.53 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "47k"
+			(at 90.17 52.07 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
+			(at 90.17 57.658 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 90.17 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 90.17 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "dfe22222-8a15-4fbc-b02e-8fa8ed05ca9c")
+		)
+		(pin "2"
+			(uuid "1d93b380-c2fa-4f98-89a1-e92f87275b19")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "R2_2")
 					(unit 1)
 				)
 			)
@@ -12381,73 +12489,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 294.64 31.75 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "41ba03c1-7c8b-43d8-840b-d0b3fbb37479")
-		(property "Reference" "TP5"
-			(at 298.45 27.1779 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TestPoint"
-			(at 298.45 29.7179 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D1.80mm_Drill1.0mm_Beaded"
-			(at 299.72 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 299.72 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "test point"
-			(at 294.64 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "f09add2c-813a-4aec-a4d1-4e4c81e43074")
-		)
-		(instances
-			(project "SensorBox"
-				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
-					(reference "TP5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R")
 		(at 25.4 215.9 180)
 		(unit 1)
@@ -13022,10 +13063,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "492a3e0f-45e4-4f8d-8c2b-dc5ba221a9e7")
 		(property "Reference" "R2_1"
-			(at 88.9 54.61 90)
+			(at 92.71 58.928 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13033,7 +13073,7 @@
 			)
 		)
 		(property "Value" "6k8"
-			(at 88.9 57.15 90)
+			(at 88.392 58.42 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13706,73 +13746,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 375.92 43.18 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "64286aeb-828c-4bb7-b475-dbae426909ab")
-		(property "Reference" "TP7"
-			(at 379.73 38.6079 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TestPoint"
-			(at 379.73 41.1479 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D1.80mm_Drill1.0mm_Beaded"
-			(at 381 43.18 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 381 43.18 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "test point"
-			(at 375.92 43.18 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "a2f9dd91-bac4-4bf8-8387-7888c64a7411")
-		)
-		(instances
-			(project "SensorBox"
-				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
-					(reference "TP7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 375.92 19.05 180)
 		(unit 1)
@@ -14328,73 +14301,6 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "TP4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 294.64 34.29 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "7becbdd4-ae96-4848-8e67-1d4a16d0705d")
-		(property "Reference" "TP6"
-			(at 297.18 36.3219 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "TestPoint"
-			(at 297.18 38.8619 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D1.80mm_Drill1.0mm_Beaded"
-			(at 289.56 34.29 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 289.56 34.29 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "test point"
-			(at 294.64 34.29 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "45e7a2c1-db3b-4e00-9b5c-12265977d8a4")
-		)
-		(instances
-			(project "SensorBox"
-				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
-					(reference "TP6")
 					(unit 1)
 				)
 			)
