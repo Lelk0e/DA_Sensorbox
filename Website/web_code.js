@@ -14,6 +14,31 @@ let data_hpp = "";
 let data_ozon = "";
 let data_temp = "";
 
+//the same, but without any symbols
+let data_bme_no_sym = "";
+let data_hpp_no_sym = "";
+let data_ozon_no_sym = "";
+let data_temp_no_sym = "";
+
+//split sensor info
+let bme_split = [];
+let hpp_split = [];
+let ozon_split = [];
+let temp_split = [];
+
+//data and time of the corrosponding sensor
+let bme_time = [];
+let bme_data = [];
+
+let hpp_time = [];
+let hpp_data = [];
+
+let ozon_time = [];
+let ozon_data = [];
+
+let temp_time = [];
+let temp_data = [];
+
 function apply_button(){ //applying the filter options on the graph
     
 }
@@ -528,7 +553,7 @@ const fetchUserInfo = async(data_type)=>{
     const address = "localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp
     const first = "Diplomarbeit";
     const second = "Website";
-    const response = await fetch(`http://${address}/${first}/${second}/website.html`,{
+    const response = await fetch(`http://${address}/${first}/${second}/test_send.http`,{
         method: 'GET',
         headers: {
             'Content-Type': 'text/plain'
@@ -545,11 +570,45 @@ const fetchUserInfo = async(data_type)=>{
     //when a method returns a promise, u have to use "await"
     data_type = userData; //saving my data
     console.log(userData);
-    
-    const params = new URLSearchParams(userData);
-    const BMEmsg = params.get('msgBME');
-    
-    console.log(BMEmsg + "yessssssssssssss");
+
+    const BMEmsg = userData.split(`${'"msgBME":'}`)[1]?.trim(); //prevents error messages "?" ... plus '...', with that i can even extract " this symbols 
+
+    //now i will split all the uneccessary data
+    const without_symbols = BMEmsg.split(`"`)[1]?.trim();
+
+    console.log(BMEmsg + "\n\nfirst"); //it worksssssssssssssss, yeeeaaa men
+
+    console.log(without_symbols + "\n\nsecond"); //it worksssssssssssssss, yeeeaaa men
+
+    data_bme_no_sym = without_symbols;
+
+    //first lets take split the data with \n
+
+    const split_data = without_symbols.split('@');
+
+    //checking
+    console.log("-------------------------------\n"); ///it workssssss
+    for (let i = 0; i < split_data.length; i++) {
+        console.log(split_data[i] + "\n\n");
+    }
+    console.log("-------------------------------\n");
+
+    bme_split = split_data;
+    //select time and data
+    for (let i = 0; i < split_data.length; i++) {
+        const split_again = (split_data[i].split(`${'Time:'}`)[1]?.trim()).split(`${':BME:'}`);
+        bme_time[i] = split_again[0];
+        bme_data[i] = split_again[1];
+    }
+
+    //checking
+    console.log("-------------------------------\n"); ///it workssssss
+    for (let i = 0; i < bme_data.length; i++) {
+        console.log(bme_time[i] + "\n");
+        console.log(bme_data[i] + "\n");
+        
+    }
+    console.log("-------------------------------\n");
 
     /* This Format should be readable from this website
     server.on("/bme", HTTP_GET, [](AsyncWebServerRequest *request) {
