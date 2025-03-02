@@ -38,8 +38,8 @@
         "other_text_upright": false,
         "pads": {
           "drill": 0.0,
-          "height": 1.8,
-          "width": 1.325
+          "height": 0.4072,
+          "width": 0.757199
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -80,7 +80,7 @@
         "hole_clearance": "error",
         "hole_near_hole": "error",
         "holes_co_located": "warning",
-        "invalid_outline": "error",
+        "invalid_outline": "ignore",
         "isolated_copper": "warning",
         "item_on_disabled_layer": "error",
         "items_not_allowed": "error",
