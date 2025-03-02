@@ -4,17 +4,22 @@
 #include <Wire.h>
 #include "SparkFunBME280.h"
 #include "ulog_sqlite.h"
+#include "RTClib.h"
 
 #define BME280_ADDRESS 0x77
 BME280 bme280Sensor;
+
+RTC_DS3231 rtc;
+char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 #define cs_pin 5
 #define sda_pin 21
 #define scl_pin 22
 
 const char *dbFileName = "/sd/sensor_data.db";
+char lastSentTs[32] = "0000:00:00:00:00:00";
 
-#define BUF_SIZE 4096
+#define BUF_SIZE 2048
 byte buf[BUF_SIZE];
 
 FILE *dbFile;               // Used for writing/finalizing the DB
@@ -22,6 +27,7 @@ FILE *readDbFile = NULL;    // Used exclusively for reading in sendDB
 struct dblog_write_context sqliteLogger;
 int sqliteMeasurementCount = 0;
 
+volatile bool toggleOnOff;
 volatile bool lowPowerMode = false;
 volatile bool LPMsig = false;
 bool finalizeSignal = false;
@@ -34,6 +40,7 @@ Scheduler userSched;
 namedMesh mesh;
 
 String nodeName = "BME280";
+String rootName;
 int hour = 0, minute = 0, second = 0;
 int year = 2025, month = 2, day = 23;
 
@@ -106,6 +113,13 @@ void receivedCallback(String &from, String &msg) {
     if (type == "Reset") {
       resetLogging();
     }
+    if (type == "OnOff") {
+      toggleOnOff != toggleOnOff;
+    }
+    if (type == "Root") {
+      int pos = msg.indexOf(':');
+      rootName = msg.substring(pos + 1);
+    }
   }
 }
 
@@ -124,12 +138,33 @@ void initSDCard() {
 void timeSplit(String s, char del) {
   int prefixEnd = s.indexOf(':');
   if (prefixEnd != -1) {
-    String timePortion = s.substring(prefixEnd + 1);
-    int firstDel = timePortion.indexOf(del);
-    int secondDel = timePortion.indexOf(del, firstDel + 1);
-    hour = timePortion.substring(0, firstDel).toInt();
-    minute = timePortion.substring(firstDel + 1, secondDel).toInt();
-    second = timePortion.substring(secondDel + 1).toInt();
+    String datePortion = s.substring(prefixEnd + 1);
+    
+    // Parse year
+    int firstDel = datePortion.indexOf(del);
+    year = datePortion.substring(0, firstDel).toInt();
+    
+    // Parse month
+    int secondDel = datePortion.indexOf(del, firstDel + 1);
+    month = datePortion.substring(firstDel + 1, secondDel).toInt();
+    
+    // Parse day
+    int thirdDel = datePortion.indexOf(del, secondDel + 1);
+    day = datePortion.substring(secondDel + 1, thirdDel).toInt();
+    
+    // Parse hour
+    int fourthDel = datePortion.indexOf(del, thirdDel + 1);
+    hour = datePortion.substring(thirdDel + 1, fourthDel).toInt();
+    
+    // Parse minute
+    int fifthDel = datePortion.indexOf(del, fourthDel + 1);
+    minute = datePortion.substring(fourthDel + 1, fifthDel).toInt();
+    
+    // Parse second
+    second = datePortion.substring(fifthDel + 1).toInt();
+
+    DateTime newDateTime(year, month, day, hour, minute, second);
+    rtc.adjust(newDateTime);
   }
 }
 
@@ -151,9 +186,10 @@ float readBme()
 void logSensorData() {
   int sensorValue = static_cast<int>(readBme());  
 
+  DateTime now = rtc.now();
   char timestamp[24];
   snprintf(timestamp, sizeof(timestamp), "%04d:%02d:%02d:%02d:%02d:%02d.000", 
-           year, month, day, hour, minute, second);
+           now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
 
   int res = dblog_set_col_val(&sqliteLogger, 0, DBLOG_TYPE_TEXT, timestamp, strlen(timestamp));
   if (res != 0) {
@@ -179,7 +215,6 @@ void logSensorData() {
   }
 }
 
-
 void sendDB() {
   readDbFile = fopen(dbFileName, "rb");
   if (!readDbFile) {
@@ -200,16 +235,25 @@ void sendDB() {
     uint32_t colType0, colType1;
     uint8_t *colVal0 = (uint8_t *)dblog_read_col_val(&rctx, 0, &colType0);
     uint8_t *colVal1 = (uint8_t *)dblog_read_col_val(&rctx, 1, &colType1);
-    if (!colVal0 || !colVal1) break;
+    if (!colVal0 || !colVal1)
+      break;
+      
     char ts[32];
     strncpy(ts, (const char *)colVal0, sizeof(ts) - 1);
     ts[sizeof(ts) - 1] = '\0';
-    int sensorValue;
-    memcpy(&sensorValue, colVal1, sizeof(sensorValue));
-    String msg = "Data:Time:" + String(ts) + ":BME280:" + String(sensorValue);
-    mesh.sendSingle((uint32_t)0, msg);
-    delay(50);
-    if (dblog_read_next_row(&rctx) != 0) break;
+    
+    if (strcmp(ts, lastSentTs) <= 0) {
+    } else {
+      int BMEValue;
+      memcpy(&BMEValue, colVal1, sizeof(BMEValue));
+      String msg = "Data:Time:" + String(ts) + ":BME280:" + String(BMEValue);
+      mesh.sendSingle((uint32_t)0, msg);
+      delay(50);
+      strcpy(lastSentTs, ts);
+    }
+    
+    if (dblog_read_next_row(&rctx) != 0)
+      break;
   }
   fclose(readDbFile);
 }
@@ -307,14 +351,17 @@ void loop() {
   if (!lowPowerMode) mesh.update();
   if ((millis() - startTime >= 50000) && !finalized) {
     finalizeSignal = true;
-    Serial.println("Finalize signal set to true automatically.");
+    Serial.println("Finalize signal set to true automatically");
   }
   if (finalizeSignal && !finalized) {
     logTask->disable();
     dblog_finalize(&sqliteLogger);
     fclose(dbFile);
-    Serial.println("Database file finalized successfully.");
+    Serial.println("Database file finalized successfully");
     finalized = true;
     finalizeSignal = false;
+  }
+  if (toggleOnOff && finalized && mesh.isConnected("MainESP")){
+    sendDB();
   }
 }

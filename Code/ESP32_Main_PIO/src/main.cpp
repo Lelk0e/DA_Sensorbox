@@ -1,12 +1,16 @@
+#include <SPI.h>
 #include "namedMesh.h"
 // #define ASYNC_TCP_SSL_ENABLED 1
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
-#include <SPI.h>
 #include <SD.h>
 #include "ulog_sqlite.h"
 #include "DNSServer.h"
+#include "RTClib.h"
 #define cs_pin 5
+
+RTC_DS3231 rtc;
+char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 Scheduler userSched;
 namedMesh mesh;
@@ -73,7 +77,7 @@ void initMesh()
 
 void sendRoot()
 {
-  mesh.sendBroadcast(nodeName);
+  mesh.sendBroadcast("Root:" + nodeName);
 }
 
 void receivedCallback(String &from, String &msg)
@@ -92,29 +96,47 @@ void receivedCallback(String &from, String &msg)
 void newConnectionCallback(uint32_t nodeId)
 {
   sendRoot();
-  mesh.sendBroadcast(String(hour) + ":" + String(minute) + ":" + String(second));
+
+  DateTime now = rtc.now();
+  String timeMessage = "Time:" +
+                       String(now.year()) + ":" +
+                       String(now.month()) + ":" +
+                       String(now.day()) + ":" +
+                       String(now.hour()) + ":" +
+                       String(now.minute()) + ":" +
+                       String(now.second());
+  mesh.sendBroadcast(timeMessage);
 }
 
 void dataSplit(String s, char del)
 {
   int idx1 = s.indexOf(del);
-  if (idx1 == -1) return;
+  if (idx1 == -1)
+    return;
   int idx2 = s.indexOf(del, idx1 + 1);
-  if (idx2 == -1) return;
+  if (idx2 == -1)
+    return;
   int idx3 = s.indexOf(del, idx2 + 1);
-  if (idx3 == -1) return;
+  if (idx3 == -1)
+    return;
   int idx4 = s.indexOf(del, idx3 + 1);
-  if (idx4 == -1) return;
+  if (idx4 == -1)
+    return;
   int idx5 = s.indexOf(del, idx4 + 1);
-  if (idx5 == -1) return;
+  if (idx5 == -1)
+    return;
   int idx6 = s.indexOf(del, idx5 + 1);
-  if (idx6 == -1) return;
+  if (idx6 == -1)
+    return;
   int idx7 = s.indexOf(del, idx6 + 1);
-  if (idx7 == -1) return;
+  if (idx7 == -1)
+    return;
   int idx8 = s.indexOf(del, idx7 + 1);
-  if (idx8 == -1) return;
+  if (idx8 == -1)
+    return;
   int idx9 = s.indexOf(del, idx8 + 1);
-  if (idx9 == -1) return;
+  if (idx9 == -1)
+    return;
   String yearStr = s.substring(idx2 + 1, idx3);
   String monthStr = s.substring(idx3 + 1, idx4);
   String dayStr = s.substring(idx4 + 1, idx5);
@@ -131,7 +153,6 @@ void dataSplit(String s, char del)
   String sensorValStr = s.substring(idx9 + 1);
   sensorDataValue = sensorValStr.toFloat();
 }
-
 
 void logSensorData()
 {
@@ -169,7 +190,6 @@ void logSensorData()
   else
     Serial.println("Data logged");
 }
-
 
 void initSDCard()
 {
@@ -292,7 +312,7 @@ String wrDBtoWs(const char *filename)
     ts[sizeof(ts) - 1] = '\0';
     int sensorValue;
     memcpy(&sensorValue, colVal1, sizeof(sensorValue));
-    data += "Time:" + String(ts) + ":"+ filename + ":" + String(sensorValue) + "\n";
+    data += "Time:" + String(ts) + ":" + filename + ":" + String(sensorValue) + "\n";
     if (dblog_read_next_row(&rctx) != 0)
       break;
   }
@@ -306,6 +326,13 @@ void setup()
   initMesh();
   initSDCard();
   dnsServer.start(DNS_PORT, "sensorbox.com", mesh.getAPIP());
+  if (!rtc.begin())
+  {
+    Serial.println("Couldn't find RTC");
+    Serial.flush();
+    while (1)
+      delay(10);
+  }
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SD, "/webpage/website.html", "text/html"); });
   server.on("/set-time", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -324,6 +351,8 @@ void setup()
     Serial.print(hour); Serial.print(":");
     Serial.print(minute); Serial.print(":");
     Serial.println(second);
+    DateTime newDateTime(year, month, day, hour, minute, second);
+    rtc.adjust(newDateTime);
     request->send(200, "text/plain", "Time received successfully");
   } else {
     request->send(400, "text/plain", "Missing time parameters");
