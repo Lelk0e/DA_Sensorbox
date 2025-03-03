@@ -1,6 +1,5 @@
 #include <SPI.h>
 #include "namedMesh.h"
-// #define ASYNC_TCP_SSL_ENABLED 1
 #include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
 #include <SD.h>
@@ -17,6 +16,7 @@ namedMesh mesh;
 
 String nodeName = "mainESP";
 
+// Time variables
 int year;
 int month;
 int day;
@@ -31,7 +31,8 @@ int dminute;
 int dsecond;
 
 String sensorTable;
-float sensorDataValue;
+float BMEDataValue;
+float HTUDataValue;
 
 volatile bool lowPowerMode = false;
 
@@ -83,9 +84,9 @@ void sendRoot()
 void receivedCallback(String &from, String &msg)
 {
   Serial.printf("Received from=%s msg=%s\n", from.c_str(), msg.c_str());
-  if (from.equals("BME280"))
+  if (messageType(msg) == "Data")
   {
-    if (messageType(msg) == "Data")
+    if (from.equals("BME280"))
     {
       dataSplit(msg, ':');
       logSensorData();
@@ -137,6 +138,9 @@ void dataSplit(String s, char del)
   int idx9 = s.indexOf(del, idx8 + 1);
   if (idx9 == -1)
     return;
+  int idx10 = s.indexOf(del, idx9 + 1);
+  if (idx10 == -1)
+    return;
   String yearStr = s.substring(idx2 + 1, idx3);
   String monthStr = s.substring(idx3 + 1, idx4);
   String dayStr = s.substring(idx4 + 1, idx5);
@@ -150,20 +154,29 @@ void dataSplit(String s, char del)
   dminute = minuteStr.toInt();
   dsecond = secondStr.toInt();
   sensorTable = s.substring(idx8 + 1, idx9);
-  String sensorValStr = s.substring(idx9 + 1);
-  sensorDataValue = sensorValStr.toFloat();
+  String BMEValStr = s.substring(idx9 + 1);
+  String HTUValStr = s.substring(idx10 + 1);
+  BMEDataValue = BMEValStr.toFloat();
 }
 
 void logSensorData()
 {
+  if (sensorTable.length() == 0)
+  {
+    Serial.println("No table id");
+    return;
+  }
+
   char dbFilename[32];
-  sprintf(dbFilename, "/%s.db", sensorTable.c_str());
+  sprintf(dbFilename, "/sd/%s.db", sensorTable.c_str());
+
   dbFile = fopen(dbFilename, "a+b");
   if (!dbFile)
   {
     Serial.println("Failed to open SQLite DB file!");
     return;
   }
+
   struct dblog_write_context ctx;
   ctx.buf = buf;
   ctx.col_count = 2;
@@ -173,14 +186,17 @@ void logSensorData()
   ctx.read_fn = read_fn_wctx;
   ctx.write_fn = write_fn;
   ctx.flush_fn = flush_fn;
+
   int res = dblog_write_init(&ctx);
   if (!res)
   {
     char ts[32];
     sprintf(ts, "%04d:%02d:%02d:%02d:%02d:%02d", dyear, dmonth, dday, dhour, dminute, dsecond);
-    int sensorValue = (int)sensorDataValue;
+    int BMEValue = (int)BMEDataValue;
+    int HTUValue = (int)HTUDataValue;
     res = dblog_set_col_val(&ctx, 0, DBLOG_TYPE_TEXT, ts, strlen(ts));
-    res = dblog_set_col_val(&ctx, 1, DBLOG_TYPE_INT, &sensorValue, sizeof(sensorValue));
+    res = dblog_set_col_val(&ctx, 1, DBLOG_TYPE_INT, &BMEValue, sizeof(BMEValue));
+    res = dblog_set_col_val(&ctx, 2, DBLOG_TYPE_INT, &HTUValue, sizeof(HTUValue));
     res = dblog_append_empty_row(&ctx);
   }
   res = dblog_finalize(&ctx);
@@ -363,9 +379,10 @@ void setup()
     if(request->hasParam("On") || request->hasParam("Off")){
       if(request->hasParam("On")){
         toggleOnOff = true;
-      } else {
+        mesh.sendBroadcast("");
+      } else if (request->hasParam("Off")) {
         toggleOnOff = false;
-        
+        mesh.sendBroadcast("Finalize");
       }
     } else {
       request->send(400, "text/plain", "error toggle on off");
