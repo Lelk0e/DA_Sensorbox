@@ -389,7 +389,7 @@ void setup()
     } });
   server.on("/bme280", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    String data = wrDBtoWs("/BME280");
+    String data = wrDBtoWs("/sd/BME280");
     request->send(200, "text/plain", data); });
   server.begin();
 }
@@ -400,9 +400,10 @@ void loop()
   if (toggleOnOff == true)
   {
     userSched.execute();
-    if (!lowPowerMode)
-    {
-      mesh.update();
-    }
+    
+  }
+  if (!lowPowerMode)
+  {
+    mesh.update();
   }
 }
