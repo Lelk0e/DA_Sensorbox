@@ -7,7 +7,7 @@
 #include "RTClib.h"
 #include "Adafruit_HTU21DF.h"
 
-#define BME280_ADDRESS 0x77
+#define BME280_ADDRESS 0x76
 BME280 bme280Sensor;
 
 Adafruit_HTU21DF htu = Adafruit_HTU21DF();
@@ -19,10 +19,10 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 #define sda_pin 21
 #define scl_pin 22
 
-const char *dbFileName = "/sd/sensor_data.db";
+const char *dbFileName = "/sensor_data.db";
 char lastSentTs[32] = "0000:00:00:00:00:00";
 
-#define BUF_SIZE 2048
+#define BUF_SIZE 1024
 byte buf[BUF_SIZE];
 
 FILE *dbFile;            // Used for writing/finalizing the DB
@@ -361,9 +361,9 @@ void resetLogging()
     return;
   }
   sqliteLogger.buf = buf;
-  sqliteLogger.col_count = 2;
+  sqliteLogger.col_count = 3;
   sqliteLogger.page_resv_bytes = 0;
-  sqliteLogger.page_size_exp = 12;
+  sqliteLogger.page_size_exp = 10;
   sqliteLogger.max_pages_exp = 0;
   sqliteLogger.read_fn = read_fn;
   sqliteLogger.write_fn = write_fn;
@@ -395,26 +395,26 @@ void setup()
   if (!bme280Sensor.beginI2C(Wire))
   {
     Serial.println("Failed to initialize");
-    while (1);
+    while (1)
+      ;
   }
-  if (!htu.begin()) {
-    Serial.println("Couldn't find sensor!");
-    while (1);
-  }
-  
-  initMesh();
+  // if (!htu.begin()) {
+  // Serial.println("Couldn't find sensor!");
+  // while (1);
+  //}
   delay(500);
+  initMesh();
+
   dbFile = fopen(dbFileName, "w+b");
   if (!dbFile)
   {
     Serial.println("Failed to open SQLite DB file!");
-    while (true)
-      ;
+    //while (true);
   }
   sqliteLogger.buf = buf;
-  sqliteLogger.col_count = 2;
+  sqliteLogger.col_count = 3;
   sqliteLogger.page_resv_bytes = 0;
-  sqliteLogger.page_size_exp = 12;
+  sqliteLogger.page_size_exp = 10;
   sqliteLogger.max_pages_exp = 0;
   sqliteLogger.read_fn = read_fn;
   sqliteLogger.write_fn = write_fn;
@@ -428,11 +428,21 @@ void setup()
 
 void loop()
 {
-  userSched.execute();
   if (LPMsig)
     LPM(30000);
   if (!lowPowerMode)
-    mesh.update();
+  {
+    try
+    {
+      mesh.update();
+    }
+    catch (std::exception &e)
+    {
+      Serial.print("Mesh update error: ");
+      Serial.println(e.what());
+    }
+  }
+
   if (finalizeSignal && !finalized)
   {
     logTask->disable();
@@ -441,6 +451,10 @@ void loop()
     Serial.println("Database file finalized successfully");
     finalized = true;
     finalizeSignal = false;
+  }
+  else
+  {
+    // userSched.execute();
   }
   if (toggleOnOff && finalized && mesh.isConnected("MainESP"))
   {
