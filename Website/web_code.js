@@ -13,19 +13,16 @@ let data_bme = "";
 let data_hpp = "";
 let data_ozon = "";
 let data_temp = "";
-
 //the same, but without any symbols
 let data_bme_no_sym = "";
 let data_hpp_no_sym = "";
 let data_ozon_no_sym = "";
 let data_temp_no_sym = "";
-
 //split sensor info
 let bme_split = [];
 let hpp_split = [];
 let ozon_split = [];
 let temp_split = [];
-
 //data and time of the corrosponding sensor
 let bme_time = [];
 let bme_data = [];
@@ -107,6 +104,7 @@ function measure_off_on_button(){
     else{ //nothing will be happening here
         count_button_off_on = 0;
         button_off_on.style.backgroundColor = "dimgray";
+        console.log("No Measurement is going on");
     }
 }
 
@@ -561,8 +559,32 @@ function HTTP_SET(){ //here i will set and save the values for the sensor data
 
 }
 
-function Read_from_bme(){ //this method will later be implemented in HTTP_SET
-    fetchUserInfo(data_bme);
+function Read_from_hpp_and_draw(){
+    fetchUserInfo(data_hpp, "", data_hpp_no_sym, hpp_split, hpp_time, hpp_data);
+
+    if(data_hpp != ""){
+        
+    }
+}
+
+function Read_from_Ozon_and_draw(){
+    fetchUserInfo(data_ozon, "", data_ozon_no_sym, ozon_split, ozon_time, ozon_data);
+
+    if(data_ozon != ""){
+        
+    }
+}
+
+function Read_from_temp_and_draw(){
+    fetchUserInfo(data_temp, "", data_temp_no_sym, temp_split, temp_time, temp_data);
+
+    if(data_temp != ""){
+
+    }
+}
+
+function Read_from_bme_and_draw(){ //this method will later be implemented in HTTP_SET
+    fetchUserInfo(data_bme, "bme280", data_bme_no_sym, bme_split, bme_time, bme_data);
     
     if (data_bme != ""){
         //here i will start to take the data from the string
@@ -571,12 +593,13 @@ function Read_from_bme(){ //this method will later be implemented in HTTP_SET
     }
 }
 
+
 //method for reading my data from bme, hpp, ...
-const fetchUserInfo = async(data_type)=>{ 
-    const address = "sensorbox.com"; //"localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp
+const fetchUserInfo = async(data_sensor, second_address, data_sensor_no_sym, sensor_split, sensor_time, sensor_data)=>{ 
+    const address = "sensorbox.com"; //"localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp --> update: we have implented a dns address for our esp's, so we'll be using those
     const first = "sd"; //"Diplomarbeit";
-    const second = "bme280"; //"Website";
-    const response = await fetch(`http://${address}/${first}/${second}`,{ //`http://${address}/${first}/${second}/test_send.http`
+    const second = `${second_address}`; //"Website";
+    const response = await fetch(`http://${address}/${first}/${second}`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
         method: 'GET',
         headers: {
             'Content-Type': 'text/plain'
@@ -587,63 +610,77 @@ const fetchUserInfo = async(data_type)=>{
         throw new Error('Data was not found');
     }
 
-    //parse our json
-
     const userData = await response.text(); //i have to do asyn, because its parsing at the same when receiving the msg
-    //when a method returns a promise, u have to use "await"
-    data_type = userData; //saving my data
-    console.log(userData);
+                                            //when a method returns a promise, u have to use "await"
+    data_sensor = userData; //saving my data
 
+    //checking
+    //////////////////////////////////////////////////////////////////
+    console.log(userData);
+    //////////////////////////////////////////////////////////////////
+
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //example how we should extract the data -----> Time:11:30:08:BME:-6.16@Time:11:30:38:BME:31.97 
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    //extracting the beginning name of the sent message --> quite important, when I want to read the data
     const BMEmsg = userData.split(`${'"msgBME":'}`)[1]?.trim(); //prevents error messages "?" ... plus '...', with that i can even extract " this symbols 
 
     //now i will split all the uneccessary data
     const without_symbols = BMEmsg.split(`"`)[1]?.trim();
 
+    //checking
+    //////////////////////////////////////////////////////////////////
     console.log(BMEmsg + "\n\nfirst"); //it worksssssssssssssss, yeeeaaa men
-
     console.log(without_symbols + "\n\nsecond"); //it worksssssssssssssss, yeeeaaa men
+    //////////////////////////////////////////////////////////////////
 
-    data_bme_no_sym = without_symbols;
+    //saving without_symbols to a specific sensor save point
+    data_sensor_no_sym = without_symbols;
 
-    //first lets take split the data with \n
-
-    const split_data = without_symbols.split('@');
+    //first lets take split the data with @
+    const split_data = without_symbols.split('@'); 
 
     //checking
+    //////////////////////////////////////////////////////////////////
     console.log("-------------------------------\n"); ///it workssssss
     for (let i = 0; i < split_data.length; i++) {
         console.log(split_data[i] + "\n\n");
     }
     console.log("-------------------------------\n");
+    //////////////////////////////////////////////////////////////////
 
-    bme_split = split_data;
+    //saving split_data to a specific sensor
+    sensor_split = split_data;
+
     //select time and data
     for (let i = 0; i < split_data.length; i++) {
         const split_again = (split_data[i].split(`${'Time:'}`)[1]?.trim()).split(`${':BME:'}`);
-        bme_time[i] = split_again[0];
-        bme_data[i] = split_again[1];
+        sensor_time[i] = split_again[0];
+        sensor_data[i] = split_again[1];
     }
 
     //checking
+    //////////////////////////////////////////////////////////////////
     console.log("-------------------------------\n"); ///it workssssss
-    for (let i = 0; i < bme_data.length; i++) {
-        console.log(bme_time[i] + "\n");
-        console.log(bme_data[i] + "\n");
-        
+    for (let i = 0; i < sensor_data.length; i++) {
+        console.log(sensor_time[i] + "\n");
+        console.log(sensor_data[i] + "\n");
     }
     console.log("-------------------------------\n");
+    //////////////////////////////////////////////////////////////////
 
+    //////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
     /* This Format should be readable from this website
     server.on("/bme", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", msgBME);
     });
     */
+    //////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
 }
 
 setInterval(Read_from_bme(), 1000); //testing, if my requests are succesfull
 
-//month, years is not important
-
-//1 hour show, 2 days in row
-
-//csv save and graph save
+//To do --> csv save and graph save
