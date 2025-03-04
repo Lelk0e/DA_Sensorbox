@@ -39,6 +39,9 @@ let ozon_data = [];
 let temp_time = [];
 let temp_data = [];
 
+//for measure off/on button
+let count_button_off_on = 0;
+
 function apply_button(){ //applying the filter options on the graph
     
 }
@@ -53,6 +56,7 @@ function setTime() { //from phillip, some parts of it is from me, but it was kin
     try{
         // Get the current time from the client's device
         var currentTime = new Date();
+        var date = currentTime.getDate();
         var hour = currentTime.getHours();
         var minute = currentTime.getMinutes();
         var second = currentTime.getSeconds();
@@ -66,7 +70,9 @@ function setTime() { //from phillip, some parts of it is from me, but it was kin
               "&minute=" +
               minute +
               "&second=" +
-              second,
+              second +
+              "&date=" +
+              date,
             true
         );
         xhr.onload = function () {
@@ -84,6 +90,24 @@ function setTime() { //from phillip, some parts of it is from me, but it was kin
     catch(err){ //this catch wont necessary happen, because http request are kinda weird
       alert("It occurs a errors when sending the httprequest, please make sure, you are connected to your device!\n" + err);
     };
+}
+
+function measure_off_on_button(){
+    count_button_off_on += 1;
+    const button_off_on = document.getElementById("meas_ss_butt");
+    
+    if (count_button_off_on == 1){
+        button_off_on.style.backgroundColor = "green";
+        setTime();
+    }
+    else if (count_button_off_on == 2){
+        button_off_on.style.backgroundColor = "blue";
+        setTime();
+    }
+    else{ //nothing will be happening here
+        count_button_off_on = 0;
+        button_off_on.style.backgroundColor = "dimgray";
+    }
 }
 
 function canvas_setting(){
@@ -547,13 +571,12 @@ function Read_from_bme(){ //this method will later be implemented in HTTP_SET
     }
 }
 
-
 //method for reading my data from bme, hpp, ...
 const fetchUserInfo = async(data_type)=>{ 
-    const address = "localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp
-    const first = "Diplomarbeit";
-    const second = "Website";
-    const response = await fetch(`http://${address}/${first}/${second}/test_send.http`,{
+    const address = "sensorbox.com"; //"localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp
+    const first = "sd"; //"Diplomarbeit";
+    const second = "bme280"; //"Website";
+    const response = await fetch(`http://${address}/${first}/${second}`,{ //`http://${address}/${first}/${second}/test_send.http`
         method: 'GET',
         headers: {
             'Content-Type': 'text/plain'
