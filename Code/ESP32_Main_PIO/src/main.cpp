@@ -39,7 +39,7 @@ volatile bool lowPowerMode = false;
 FILE *dbFile;
 FILE *readDbFile = NULL;
 
-#define BUF_SIZE 2048
+#define BUF_SIZE 4096
 byte buf[BUF_SIZE];
 
 AsyncWebServer server(80);
@@ -179,9 +179,9 @@ void logSensorData()
 
   struct dblog_write_context ctx;
   ctx.buf = buf;
-  ctx.col_count = 2;
+  ctx.col_count = 3;
   ctx.page_resv_bytes = 0;
-  ctx.page_size_exp = 12;
+  ctx.page_size_exp = 11;
   ctx.max_pages_exp = 0;
   ctx.read_fn = read_fn_wctx;
   ctx.write_fn = write_fn;

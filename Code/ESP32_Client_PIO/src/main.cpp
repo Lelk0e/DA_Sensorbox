@@ -19,10 +19,10 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 #define sda_pin 21
 #define scl_pin 22
 
-const char *dbFileName = "/sensor_data.db";
+const char *dbFileName = "/data.db";
 char lastSentTs[32] = "0000:00:00:00:00:00";
 
-#define BUF_SIZE 1024
+#define BUF_SIZE 4096
 byte buf[BUF_SIZE];
 
 FILE *dbFile;            // Used for writing/finalizing the DB
@@ -229,8 +229,16 @@ void logSensorData()
 {
   int BMEValue = static_cast<int>(readBme());
   int HTUValue = static_cast<int>(readHTU());
-
-  DateTime now = rtc.now();
+  DateTime now;
+  try
+  {
+    now = rtc.now();
+  }
+  catch(const exception& e)
+  {
+    Serial.println(e.what());
+  }
+  
   char timestamp[24];
   snprintf(timestamp, sizeof(timestamp), "%04d:%02d:%02d:%02d:%02d:%02d",
            now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
@@ -279,7 +287,7 @@ void sendDB()
     return;
   }
   struct dblog_read_context rctx;
-  rctx.page_size_exp = 12;
+  rctx.page_size_exp = 11;
   rctx.read_fn = (int32_t (*)(struct dblog_read_context *, void *, uint32_t, size_t))db_read_fn_rctx;
   rctx.buf = buf;
   int res = dblog_read_init(&rctx);
@@ -351,19 +359,19 @@ void exitLPM()
 
 void resetLogging()
 {
-  Serial.println("Reset command received. Resetting logging...");
+  Serial.println("Reset command received. Resetting logging");
   // Remove the finalized file so that we start fresh
   SD.remove(dbFileName);
   dbFile = fopen(dbFileName, "w+b");
   if (!dbFile)
   {
-    Serial.println("Failed to open new SQLite DB file!");
+    Serial.println("Failed to open new SQLite DB file");
     return;
   }
   sqliteLogger.buf = buf;
   sqliteLogger.col_count = 3;
   sqliteLogger.page_resv_bytes = 0;
-  sqliteLogger.page_size_exp = 10;
+  sqliteLogger.page_size_exp = 11;
   sqliteLogger.max_pages_exp = 0;
   sqliteLogger.read_fn = read_fn;
   sqliteLogger.write_fn = write_fn;
@@ -408,13 +416,13 @@ void setup()
   dbFile = fopen(dbFileName, "w+b");
   if (!dbFile)
   {
-    Serial.println("Failed to open SQLite DB file!");
-    //while (true);
+    Serial.println("Failed to open SQLite DB file");
+    while (true);
   }
   sqliteLogger.buf = buf;
   sqliteLogger.col_count = 3;
   sqliteLogger.page_resv_bytes = 0;
-  sqliteLogger.page_size_exp = 10;
+  sqliteLogger.page_size_exp = 11;
   sqliteLogger.max_pages_exp = 0;
   sqliteLogger.read_fn = read_fn;
   sqliteLogger.write_fn = write_fn;
@@ -454,7 +462,14 @@ void loop()
   }
   else
   {
-    // userSched.execute();
+    try
+    {
+      userSched.execute();
+    }
+    catch(const std::exception& e)
+    {
+      Serial.println(e.what());
+    }
   }
   if (toggleOnOff && finalized && mesh.isConnected("MainESP"))
   {
