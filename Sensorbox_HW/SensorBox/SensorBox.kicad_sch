@@ -3994,6 +3994,306 @@
 				)
 			)
 		)
+		(symbol "Schalter_neu:ATE1D-2M3-10-Z"
+			(pin_names
+				(offset 1.016)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "S"
+				(at -2.54 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left bottom)
+				)
+			)
+			(property "Value" "ATE1D-2M3-10-Z"
+				(at 1.524 6.858 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left top)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "MF" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MAXIMUM_PACKAGE_HEIGHT" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Package" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Price" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Check_prices" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "STANDARD" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "PARTREV" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "SnapEDA_Link" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MP" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Description_1" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Availability" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MANUFACTURER" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(symbol "ATE1D-2M3-10-Z_0_0"
+				(polyline
+					(pts
+						(xy -2.54 0) (xy -5.08 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 0) (xy 2.794 2.1336)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 5.08 -2.54) (xy 2.921 -2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 5.08 2.54) (xy 2.921 2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.54 -2.54)
+					(radius 0.3302)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.54 2.54)
+					(radius 0.3302)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at 7.62 2.54 180)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -7.62 0 0)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 -2.54 180)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "Sensor:BME280"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -5302,12 +5602,6 @@
 		(uuid "7a097001-4981-4db7-8cef-bba5cdc13761")
 	)
 	(junction
-		(at 152.4 44.45)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "80280381-883a-4c16-ace4-37d76f86efe0")
-	)
-	(junction
 		(at 137.16 44.45)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5348,6 +5642,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "8fbbae64-adba-41b4-9503-8c9f8ccf42ba")
+	)
+	(junction
+		(at 171.45 44.45)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9a08256a-3a72-48ba-8e70-75a64da8e909")
 	)
 	(junction
 		(at 88.9 172.72)
@@ -5995,6 +6295,16 @@
 	)
 	(wire
 		(pts
+			(xy 246.38 72.39) (xy 246.38 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2d8aca95-634d-43b2-9655-a3e66dc547e4")
+	)
+	(wire
+		(pts
 			(xy 135.89 175.26) (xy 140.97 175.26)
 		)
 		(stroke
@@ -6012,6 +6322,16 @@
 			(type default)
 		)
 		(uuid "2f533a88-0096-4d4c-abcf-aaa52605ccc3")
+	)
+	(wire
+		(pts
+			(xy 161.29 44.45) (xy 161.29 41.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2f6d6c6d-0726-4378-bb44-81f8824239f8")
 	)
 	(wire
 		(pts
@@ -6125,7 +6445,7 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 44.45) (xy 157.48 44.45)
+			(xy 171.45 44.45) (xy 176.53 44.45)
 		)
 		(stroke
 			(width 0)
@@ -6545,16 +6865,6 @@
 	)
 	(wire
 		(pts
-			(xy 144.78 44.45) (xy 152.4 44.45)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5eb384b3-bab5-4648-b06d-6e41c65fe076")
-	)
-	(wire
-		(pts
 			(xy 97.79 60.96) (xy 97.79 57.15)
 		)
 		(stroke
@@ -6715,7 +7025,7 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 44.45) (xy 137.16 44.45)
+			(xy 138.43 44.45) (xy 137.16 44.45)
 		)
 		(stroke
 			(width 0)
@@ -6812,6 +7122,16 @@
 			(type default)
 		)
 		(uuid "7841dc14-ee72-4b3b-8ce5-c0d3b1fa0249")
+	)
+	(wire
+		(pts
+			(xy 143.51 44.45) (xy 146.05 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "78c1da32-2ecb-4158-86c5-65ebaf2647a9")
 	)
 	(wire
 		(pts
@@ -7425,7 +7745,7 @@
 	)
 	(wire
 		(pts
-			(xy 251.46 74.93) (xy 256.54 74.93)
+			(xy 228.6 74.93) (xy 231.14 74.93)
 		)
 		(stroke
 			(width 0)
@@ -8045,6 +8365,16 @@
 	)
 	(wire
 		(pts
+			(xy 171.45 44.45) (xy 161.29 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f61fed8f-af41-447d-b39f-453d957785e0")
+	)
+	(wire
+		(pts
 			(xy 334.01 35.56) (xy 349.25 35.56)
 		)
 		(stroke
@@ -8072,6 +8402,16 @@
 			(type default)
 		)
 		(uuid "f8563e1f-db63-4ce4-b72d-05a0b90045bc")
+	)
+	(wire
+		(pts
+			(xy 246.38 74.93) (xy 256.54 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f8a2cfac-a45a-4237-bfd2-54b3448f1e3f")
 	)
 	(wire
 		(pts
@@ -8178,8 +8518,8 @@
 		(uuid 5c3ced9c-4a59-4990-a5ed-3b18b6114fb2)
 	)
 	(rectangle
-		(start 224.79 12.7)
-		(end 312.42 77.47)
+		(start 215.9 12.7)
+		(end 312.42 81.28)
 		(stroke
 			(width 0)
 			(type default)
@@ -8791,7 +9131,7 @@
 	)
 	(global_label "VCC_Bat"
 		(shape output)
-		(at 157.48 44.45 0)
+		(at 176.53 44.45 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -8801,7 +9141,7 @@
 		)
 		(uuid "15884830-7ef1-477f-9b56-a572b01bac11")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 168.2061 44.45 0)
+			(at 187.2561 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8945,7 +9285,7 @@
 	)
 	(global_label "VDD_5V"
 		(shape input)
-		(at 251.46 74.93 180)
+		(at 228.6 74.93 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -8955,7 +9295,7 @@
 		)
 		(uuid "302bec0a-3614-4291-8ca8-1980ce280f51")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 241.5805 74.93 0)
+			(at 218.7205 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13525,16 +13865,15 @@
 	)
 	(symbol
 		(lib_id "Device:Polyfuse_Small")
-		(at 142.24 44.45 90)
+		(at 140.97 44.45 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "5e50fc36-17d7-4443-880b-d3b484ab1240")
 		(property "Reference" "F1"
-			(at 142.24 38.1 90)
+			(at 140.97 38.1 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13542,7 +13881,7 @@
 			)
 		)
 		(property "Value" "Polyfuse_Small"
-			(at 142.24 40.64 90)
+			(at 134.62 40.894 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13550,7 +13889,7 @@
 			)
 		)
 		(property "Footprint" "Fuse:Fuse_Littelfuse_372_D8.50mm"
-			(at 147.32 43.18 0)
+			(at 146.05 43.18 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13560,7 +13899,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 142.24 44.45 0)
+			(at 140.97 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13569,7 +13908,7 @@
 			)
 		)
 		(property "Description" "Resettable fuse, polymeric positive temperature coefficient, small symbol"
-			(at 142.24 44.45 0)
+			(at 140.97 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13740,6 +14079,198 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "U13")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Schalter_neu:ATE1D-2M3-10-Z")
+		(at 153.67 44.45 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "63a83b5f-8879-4d77-a585-4049c1ae00cc")
+		(property "Reference" "S1"
+			(at 153.67 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "ATE1D-2M3-10-Z"
+			(at 153.67 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Schalter_neu:SW_ATE1D-2M3-10-Z"
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MF" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MAXIMUM_PACKAGE_HEIGHT" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Package" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Price" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Check_prices" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "STANDARD" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "PARTREV" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "SnapEDA_Link" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MP" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Description_1" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Availability" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" ""
+			(at 153.67 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "fab6a912-ffc6-4d77-a327-5b5408ac4314")
+		)
+		(pin "1"
+			(uuid "b45162c2-7cd7-4462-bf28-a66520422438")
+		)
+		(pin "2"
+			(uuid "816dcd1d-8361-4eda-8a1c-29860c145cd4")
+		)
+		(instances
+			(project ""
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "S1")
 					(unit 1)
 				)
 			)
@@ -14235,6 +14766,198 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "#PWR037")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Schalter_neu:ATE1D-2M3-10-Z")
+		(at 238.76 74.93 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "73ca4ac8-055f-4257-a809-bc19b7c88e64")
+		(property "Reference" "S2"
+			(at 238.76 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "ATE1D-2M3-10-Z"
+			(at 238.76 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Schalter_neu:SW_ATE1D-2M3-10-Z"
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MF" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MAXIMUM_PACKAGE_HEIGHT" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Package" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Price" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Check_prices" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "STANDARD" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "PARTREV" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "SnapEDA_Link" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MP" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Description_1" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Availability" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" ""
+			(at 238.76 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "18e3b260-98f7-469a-97f1-ffa07432efb0")
+		)
+		(pin "1"
+			(uuid "440d9100-8c6c-493c-86a8-bfd8c2406898")
+		)
+		(pin "2"
+			(uuid "0082a827-82c5-4cc2-86d2-46550ae342ca")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "S2")
 					(unit 1)
 				)
 			)
@@ -16747,7 +17470,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 152.4 44.45 0)
+		(at 171.45 44.45 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -16756,7 +17479,7 @@
 		(fields_autoplaced yes)
 		(uuid "c4f9aa0f-2009-42d3-b3d5-29bbda7d0f3c")
 		(property "Reference" "TP3"
-			(at 156.21 39.8779 0)
+			(at 175.26 39.8779 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16765,7 +17488,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 156.21 42.4179 0)
+			(at 175.26 42.4179 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16774,7 +17497,7 @@
 			)
 		)
 		(property "Footprint" "TestPoint:TestPoint_Loop_D1.80mm_Drill1.0mm_Beaded"
-			(at 157.48 44.45 0)
+			(at 176.53 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16783,7 +17506,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 157.48 44.45 0)
+			(at 176.53 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16792,7 +17515,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 152.4 44.45 0)
+			(at 171.45 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
