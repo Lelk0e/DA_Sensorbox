@@ -19,7 +19,7 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 #define sda_pin 21
 #define scl_pin 22
 
-const char *dbFileName = "/data.db";
+const char *dbFileName = "/sd/data.db";
 char lastSentTs[32] = "0000:00:00:00:00:00";
 
 #define BUF_SIZE 4096

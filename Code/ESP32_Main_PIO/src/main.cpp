@@ -351,6 +351,7 @@ void setup()
   }
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SD, "/webpage/website.html", "text/html"); });
+            
   server.on("/set-time", HTTP_GET, [](AsyncWebServerRequest *request)
             {
   if(request->hasParam("year") && request->hasParam("month") && request->hasParam("day") && request->hasParam("hour") && request->hasParam("minute") && request->hasParam("second")){
@@ -387,10 +388,26 @@ void setup()
     } else {
       request->send(400, "text/plain", "error toggle on off");
     } });
+
   server.on("/bme280", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     String data = wrDBtoWs("/sd/BME280");
     request->send(200, "text/plain", data); });
+
+  server.on("/download", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+      if (request->hasParam("file")) {
+          String fileName = request->getParam("file")->value();
+          String filePath = "/" + fileName;
+
+          if (SD.exists(filePath)) {
+              request->send(SD, filePath, String(), true);
+          } else {
+              request->send(404, "text/plain", "File Not Found");
+          }
+      } else {
+          request->send(400, "text/plain", "Bad Request - No file specified");
+      } });
   server.begin();
 }
 
@@ -400,7 +417,6 @@ void loop()
   if (toggleOnOff == true)
   {
     userSched.execute();
-    
   }
   if (!lowPowerMode)
   {
