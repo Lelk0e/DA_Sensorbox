@@ -6085,6 +6085,16 @@
 	)
 	(wire
 		(pts
+			(xy 222.25 40.64) (xy 222.25 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "122b89f5-19db-4476-900b-efc2275f51a0")
+	)
+	(wire
+		(pts
 			(xy 271.78 190.5) (xy 273.05 190.5)
 		)
 		(stroke
@@ -6245,6 +6255,16 @@
 	)
 	(wire
 		(pts
+			(xy 222.25 44.45) (xy 256.54 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "29cae4f6-a45f-4aa4-9c3b-b03340996812")
+	)
+	(wire
+		(pts
 			(xy 191.77 248.92) (xy 195.58 248.92)
 		)
 		(stroke
@@ -6292,16 +6312,6 @@
 			(type default)
 		)
 		(uuid "2d54b2d6-8b88-4968-8ae3-93e17cbc3d34")
-	)
-	(wire
-		(pts
-			(xy 246.38 72.39) (xy 246.38 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2d8aca95-634d-43b2-9655-a3e66dc547e4")
 	)
 	(wire
 		(pts
@@ -6722,6 +6732,16 @@
 			(type default)
 		)
 		(uuid "52fa6e4c-1393-458e-bd8d-f0284c939c0c")
+	)
+	(wire
+		(pts
+			(xy 256.54 41.91) (xy 237.49 41.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "539e68e8-9805-4a6d-aa7d-430501b38bad")
 	)
 	(wire
 		(pts
@@ -7565,6 +7585,16 @@
 	)
 	(wire
 		(pts
+			(xy 237.49 41.91) (xy 237.49 43.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a377dd8f-cbb2-4a30-8d13-fb39dd6220ca")
+	)
+	(wire
+		(pts
 			(xy 370.84 104.14) (xy 386.08 104.14)
 		)
 		(stroke
@@ -7742,16 +7772,6 @@
 			(type default)
 		)
 		(uuid "ba94ce91-ad7c-4f17-90d5-3b1ed350ac55")
-	)
-	(wire
-		(pts
-			(xy 228.6 74.93) (xy 231.14 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bc572eb3-0855-43c9-8a1f-69b9e0ae78cc")
 	)
 	(wire
 		(pts
@@ -8225,6 +8245,16 @@
 	)
 	(wire
 		(pts
+			(xy 250.19 74.93) (xy 256.54 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e71022fa-54ba-40c8-80ba-4b6008262686")
+	)
+	(wire
+		(pts
 			(xy 359.41 24.13) (xy 359.41 30.48)
 		)
 		(stroke
@@ -8402,16 +8432,6 @@
 			(type default)
 		)
 		(uuid "f8563e1f-db63-4ce4-b72d-05a0b90045bc")
-	)
-	(wire
-		(pts
-			(xy 246.38 74.93) (xy 256.54 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f8a2cfac-a45a-4237-bfd2-54b3448f1e3f")
 	)
 	(wire
 		(pts
@@ -9285,7 +9305,7 @@
 	)
 	(global_label "VDD_5V"
 		(shape input)
-		(at 228.6 74.93 180)
+		(at 250.19 74.93 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -9295,7 +9315,7 @@
 		)
 		(uuid "302bec0a-3614-4291-8ca8-1980ce280f51")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 218.7205 74.93 0)
+			(at 240.3105 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14773,7 +14793,7 @@
 	)
 	(symbol
 		(lib_id "Schalter_neu:ATE1D-2M3-10-Z")
-		(at 238.76 74.93 0)
+		(at 229.87 40.64 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -14782,7 +14802,7 @@
 		(fields_autoplaced yes)
 		(uuid "73ca4ac8-055f-4257-a809-bc19b7c88e64")
 		(property "Reference" "S2"
-			(at 238.76 67.31 0)
+			(at 229.87 33.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14790,7 +14810,7 @@
 			)
 		)
 		(property "Value" "ATE1D-2M3-10-Z"
-			(at 238.76 69.85 0)
+			(at 229.87 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14798,7 +14818,7 @@
 			)
 		)
 		(property "Footprint" "Schalter_neu:SW_ATE1D-2M3-10-Z"
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14808,7 +14828,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14817,7 +14837,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14826,7 +14846,7 @@
 			)
 		)
 		(property "MF" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14836,7 +14856,7 @@
 			)
 		)
 		(property "MAXIMUM_PACKAGE_HEIGHT" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14846,7 +14866,7 @@
 			)
 		)
 		(property "Package" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14856,7 +14876,7 @@
 			)
 		)
 		(property "Price" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14866,7 +14886,7 @@
 			)
 		)
 		(property "Check_prices" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14876,7 +14896,7 @@
 			)
 		)
 		(property "STANDARD" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14886,7 +14906,7 @@
 			)
 		)
 		(property "PARTREV" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14896,7 +14916,7 @@
 			)
 		)
 		(property "SnapEDA_Link" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14906,7 +14926,7 @@
 			)
 		)
 		(property "MP" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14916,7 +14936,7 @@
 			)
 		)
 		(property "Description_1" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14926,7 +14946,7 @@
 			)
 		)
 		(property "Availability" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14936,7 +14956,7 @@
 			)
 		)
 		(property "MANUFACTURER" ""
-			(at 238.76 74.93 0)
+			(at 229.87 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
