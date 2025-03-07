@@ -584,7 +584,7 @@ function Read_from_temp_and_draw(){
 }
 
 function Read_from_bme_and_draw(){ //this method will later be implemented in HTTP_SET
-    fetchUserInfo(data_bme, "bme280", data_bme_no_sym, bme_split, bme_time, bme_data);
+    fetchUserInfo("sensorbox.com", "sd", "bme280", data_bme, data_bme_no_sym, bme_split, bme_time, bme_data);
     
     if (data_bme != ""){
         //here i will start to take the data from the string
@@ -595,9 +595,9 @@ function Read_from_bme_and_draw(){ //this method will later be implemented in HT
 
 
 //method for reading my data from bme, hpp, ...
-const fetchUserInfo = async(data_sensor, second_address, data_sensor_no_sym, sensor_split, sensor_time, sensor_data)=>{ 
-    const address = "sensorbox.com"; //"localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp --> update: we have implented a dns address for our esp's, so we'll be using those
-    const first = "sd"; //"Diplomarbeit";
+const fetchUserInfo = async(DNS_address, first_address, second_address, data_sensor, data_sensor_no_sym, sensor_split, sensor_time, sensor_data)=>{ 
+    const address = DNS_address; //"localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp --> update: we have implented a dns address for our esp's, so we'll be using those
+    const first = first_address; //"Diplomarbeit";
     const second = `${second_address}`; //"Website";
     const response = await fetch(`http://${address}/${first}/${second}`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
         method: 'GET',
