@@ -8,6 +8,26 @@ let y_axe_length = 0;
 let y_point_length = 0;
 let x_point_length = 0;
 
+//sensor max values
+const bme_max_value = 1100; //1100hPa
+const hpp_max_value = 0;
+const ozon_max_value = 0
+const temp_max_value = 0;
+
+//coordnates for the drawn data-objects
+//canvas bme data & time
+let bme_canvas_x = []; //for those, who will be drawn on the canvas, so that I can delete them without any problems
+let bme_canvas_y = [];
+//canvas hpp data & time
+let hpp_canvas_x = []; 
+let hpp_canvas_y = [];
+//canvas ozon data & time
+let ozon_canvas_x = []; 
+let ozon_canvas_y = [];
+//canvas temp data & time
+let temp_canvas_x = []; 
+let temp_canvas_y = [];
+
 //variables for occuring data flow, like bme, hpp, etc.
 let data_bme = "";
 let data_hpp = "";
@@ -24,15 +44,16 @@ let hpp_split = [];
 let ozon_split = [];
 let temp_split = [];
 //data and time of the corrosponding sensor
+//bme
 let bme_time = [];
 let bme_data = [];
-
+//hpp
 let hpp_time = [];
 let hpp_data = [];
-
+//ozon
 let ozon_time = [];
 let ozon_data = [];
-
+//temp
 let temp_time = [];
 let temp_data = [];
 
@@ -40,10 +61,51 @@ let temp_data = [];
 let count_button_off_on = 0;
 
 function apply_button(){ //applying the filter options on the graph
-    
+    draw_bme();
 }
 
 function update(){
+
+}
+
+function draw_bme(){
+    //read bme_data
+    save_drawing_data_for_bme();
+    //here i will draw a xy Graph with legends
+    const canvas = document.getElementById('graph');
+    const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
+
+    if (bme_canvas_x.length == bme_canvas_y.length){
+        const draw_till = bme_canvas_x.length;
+        for (let i = 0; i < draw_till; i++) { //drawing the points --> SSSR Rank
+            ctx.beginPath();
+            ctx.fillStyle = "pink";
+            //console.log(Math.PI); //lets see if pi-pi is working xD
+            ctx.ellipse(bme_canvas_x[i], -bme_canvas_y[i], 3, 3, 0, 0, 2 * Math.PI, false);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        ctx.beginPath();
+        ctx.fillStyle = "darkblue";
+        ctx.moveTo(bme_canvas_x[0], -bme_canvas_y[0]);
+        ctx.fill();
+
+        for (let i = 0; i < bme_canvas_x.length; i++) { //drawing the lines --> same rank
+            ctx.lineTo(bme_canvas_x[i], -bme_canvas_y[i]);
+        }
+        ctx.stroke();
+    }
+}
+
+function draw_hpp(){
+}
+
+function draw_ozon(){
+
+}
+
+function draw_temp(){
 
 }
 
@@ -127,10 +189,20 @@ function canvas_setting(){
     sensor_setting();
 }
 
+function testing(){
+    const canvas = document.getElementById('graph');
+    const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
+    
+    //getting the height and width
+    const width = canvas.width;
+    const height = canvas.height;
+
+}
+
 function create_graph_xy(){
     const canvas = document.getElementById('graph');
     const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
-
+    
     //getting the height and width
     const width = canvas.width;
     const height = canvas.height;
@@ -142,18 +214,20 @@ function create_graph_xy(){
     //giving the lines a color and stroke width
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#000000';
-
+    
     //beginnig to draw main lines
     //y line
     ctx.beginPath(); 
     ctx.moveTo(0, 0); //0, 0 because we have a starting point ... translate(...)
     ctx.lineTo(0, -height*0.8);
     ctx.stroke(); //drawing the elements
+    y_whole_axe_length = height*0.8; //saving the whole length of the y axe
     //x line
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(width*0.7, 0);
     ctx.stroke(); //drawing the elements
+    x_whole_axe_length = width*0.7; //saving the whole length of the x axe
 
     //beginning to draw arrows of the main lines
     //arrow y
@@ -163,7 +237,6 @@ function create_graph_xy(){
     ctx.lineTo(-width*0.01, -height*0.75);
     ctx.lineTo(0, -height*0.8);
     ctx.stroke();
-    y_whole_axe_length = height*0.8; //saving the whole length of the y axe
     y_axe_length = height*0.75; //saving the length for later
     y_point_length = y_axe_length*0.93; //important time data-showing
     //arrow x
@@ -173,7 +246,6 @@ function create_graph_xy(){
     ctx.lineTo(width*0.65, height*0.02);
     ctx.lineTo(width*0.7, 0);
     ctx.stroke();
-    x_whole_axe_length = width*0.7; //saving the whole length of the x axe
     x_axe_length = width*0.65; //saving the length for later
                                //In addition, it depends on the arrow, because the lines of axe (x,y), 
                                //would cross over the arrow, this would look ugly
@@ -559,47 +631,152 @@ function HTTP_SET(){ //here i will set and save the values for the sensor data
 
 }
 
-function Read_from_hpp_and_draw(){
+function Read_from_hpp(){
     fetchUserInfo(data_hpp, "", data_hpp_no_sym, hpp_split, hpp_time, hpp_data);
-
-    if(data_hpp != ""){
-        
-    }
 }
 
-function Read_from_Ozon_and_draw(){
+function Read_from_Ozon(){
     fetchUserInfo(data_ozon, "", data_ozon_no_sym, ozon_split, ozon_time, ozon_data);
-
-    if(data_ozon != ""){
-        
-    }
 }
 
-function Read_from_temp_and_draw(){
+function Read_from_temp(){
     fetchUserInfo(data_temp, "", data_temp_no_sym, temp_split, temp_time, temp_data);
-
-    if(data_temp != ""){
-
-    }
 }
 
-function Read_from_bme_and_draw(){ //this method will later be implemented in HTTP_SET
-    fetchUserInfo("sensorbox.com", "sd", "bme280", data_bme, data_bme_no_sym, bme_split, bme_time, bme_data);
+function Read_from_bme(){ //this method will later be implemented in HTTP_SET
+    const sensor_name = '"msgBME":'; //for splitting the name of the sensor from the sensor-data
+    //fetchUserInfo("sensorbox.com", "sd", "bme280", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data);
+    fetchUserInfo("localhost", "Diplomarbeit", "Website", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data);
+}
+function save_drawing_data_for_ozon(){
     
-    if (data_bme != ""){
-        //here i will start to take the data from the string
+}
+function save_drawing_data_for_temp(){
+    
+}
+function save_drawing_data_for_hpp(){
+    
+}
+function save_drawing_data_for_bme(){
+    if (bme_time.length >= 1){
+        //reseting those arrays
+        bme_canvas_x = [];
+        bme_canvas_y = [];
 
-        //...
+        let y_coordinates = []; //saving the coords, for drawing, or else it will be way too complicated
+        
+        //the max difference for hPa value is 800hPa --> 1100hPa - 300hPa, very important
+        const hPa_800 = y_point_length; //800hPa measurement
+        const hPa_80 = hPa_800 / 10; //80hPa measurement
+        const hPa_8 = hPa_80 / 10; //8hPa measurement
+        const hPa_1 = hPa_8 / 8; //1hPa measurement --> with this method i can clearly draw it, without it's extremely difficult to draw stuff like that
+        
+        for (let i = 0; i < bme_data.length; i++) { //y-coordinates
+            let dy_bme = bme_max_value - bme_data[i];
+
+            switch (dy_bme) { // 0 and 800 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
+                case 0: //max value of 1100hPa reached
+                    y_coordinates[i] = hPa_800;
+                    bme_canvas_y[i] = y_coordinates[i];
+                break;
+
+                case 800: //lowes value of 300hPa reached
+                    y_coordinates[i] = 0;
+                    bme_canvas_y[i] = y_coordinates[i];
+                break;
+
+                default:
+                    if (bme_data[i] > 300){
+                        y_coordinates[i] = hPa_1 * (bme_data[i] - 300); // -300, because we beging to drawing at 300hPa
+                        bme_canvas_y[i] = y_coordinates[i];
+                    }
+                break;
+            }
+
+            //////////////////check///////////////////////
+            //////////////////////////////////////////////       
+            console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+            //////////////////////////////////////////////
+        }
+
+        sensor_time_calculate_their_Coordinates(bme_canvas_x, bme_time);
+        //bme_canvas_y = y_coordinates; //please dont ask me, why this line of code is not working
+    }
+    else{
+        console.log("Could not retrieve the corrosponding sensor data");
     }
 }
+function sensor_time_calculate_their_Coordinates(x_coord, sensor_time){
+    let x_coord_temp = [];
 
+    //the max time value for the sensors -- i concluded, that a day-time zone will be programmed first and the other participants like 2 weeks shown line, etc. will be connected to this 24-hour data
+    const time_24h = x_point_length; //24 hour - coordinate
+    const time_1h = time_24h / 24; //1 hour - coordinate
+
+    //important for the time show
+    let hour_the_chosen = 0;
+    let min_the_chosen = 0;
+    let sec_the_chosen = 0;
+
+    for (let i = 0; i < sensor_time.length; i++) { //x-coordinates
+        let current_time = sensor_time[i].split(":"); //01:10:00 - [h]:[min]:[s]
+        let hour_string = current_time[0];
+        let min_string = current_time[1];
+        let sec_string = current_time[2];
+
+        if (Number(hour_string) >= 10){ //thats good
+            hour_the_chosen = hour_string;
+        }
+        if (Number(min_string) >= 10){
+            min_the_chosen = min_string;
+        }
+        if (Number(sec_string) >= 10){
+            sec_the_chosen = sec_string;
+        }
+        if (Number(hour_string) < 10){
+            hour_the_chosen = hour_string.split("0")[1]; //like 01 -->string[1] ... 1
+        }
+        if (Number(min_string) < 10){
+            min_the_chosen = min_string.split("0")[1];
+        }
+        if (Number(sec_string) < 10){
+            sec_the_chosen = sec_string.split("0")[1];
+        }
+
+        let calculate_per_1h_from_this = Number(hour_the_chosen) + Number(min_the_chosen/60) + Number(sec_the_chosen/360); //like 12.5h
+
+        const max_time = 24; //24h --> 24:00:00
+        const lowest_time = 0; //0h --> 00:00:00
+
+        let dx_time = max_time - calculate_per_1h_from_this;
+
+        switch (dx_time) { // 0 and 24 are not always there
+            case 0:
+                    x_coord_temp[i] = time_1h * max_time;
+                break;
+        
+            case 24:
+                    x_coord_temp[i] = time_1h * lowest_time;
+                break;
+
+            default:
+                    x_coord_temp[i] = time_1h * calculate_per_1h_from_this;
+                break;
+        }
+        x_coord[i] = x_coord_temp[i]; //i have absolutely noooo idea, why you have to write it, in that way and cant do x_coord = x_coord_temp. Yk, it worked fine before, but yeeah, thats fucking cringe.
+        //////////////////check////////////////
+        ///////////////////////////////////////
+        console.log(i + " . " + x_coord_temp[i] + " - X-Values");
+        ///////////////////////////////////////
+    }
+}
 
 //method for reading my data from bme, hpp, ...
-const fetchUserInfo = async(DNS_address, first_address, second_address, data_sensor, data_sensor_no_sym, sensor_split, sensor_time, sensor_data)=>{ 
+const fetchUserInfo = async(DNS_address, first_address, second_address, data_sensor, split_sensor_name, data_sensor_no_sym, sensor_split, sensor_time, sensor_data)=>{ 
     const address = DNS_address; //"localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp --> update: we have implented a dns address for our esp's, so we'll be using those
     const first = first_address; //"Diplomarbeit";
     const second = `${second_address}`; //"Website";
-    const response = await fetch(`http://${address}/${first}/${second}`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
+    const response = await fetch(`http://${address}/${first}/${second}/test_send.http`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
         method: 'GET',
         headers: {
             'Content-Type': 'text/plain'
@@ -616,7 +793,7 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, data_sen
 
     //checking
     //////////////////////////////////////////////////////////////////
-    console.log(userData);
+    //console.log(userData);
     //////////////////////////////////////////////////////////////////
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -624,15 +801,15 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, data_sen
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     //extracting the beginning name of the sent message --> quite important, when I want to read the data
-    const BMEmsg = userData.split(`${'"msgBME":'}`)[1]?.trim(); //prevents error messages "?" ... plus '...', with that i can even extract " this symbols 
-
+    const BMEmsg = userData.split(`${split_sensor_name}`)[1]?.trim(); //prevents error messages "?" ... plus '...', with that i can even extract " this symbols 
+    
     //now i will split all the uneccessary data
     const without_symbols = BMEmsg.split(`"`)[1]?.trim();
 
     //checking
     //////////////////////////////////////////////////////////////////
-    console.log(BMEmsg + "\n\nfirst"); //it worksssssssssssssss, yeeeaaa men
-    console.log(without_symbols + "\n\nsecond"); //it worksssssssssssssss, yeeeaaa men
+    //console.log(BMEmsg + "\n\nsplit BMEmsg"); //it worksssssssssssssss, yeeeaaa men
+    //console.log(without_symbols + "\n\nsplit symbols"); //it worksssssssssssssss, yeeeaaa men
     //////////////////////////////////////////////////////////////////
 
     //saving without_symbols to a specific sensor save point
@@ -643,11 +820,11 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, data_sen
 
     //checking
     //////////////////////////////////////////////////////////////////
-    console.log("-------------------------------\n"); ///it workssssss
-    for (let i = 0; i < split_data.length; i++) {
-        console.log(split_data[i] + "\n\n");
-    }
-    console.log("-------------------------------\n");
+    //console.log("-------------------------------\n"); ///it workssssss
+    //for (let i = 0; i < split_data.length; i++) {
+    //    console.log(split_data[i] + "\n\nsplit @ symbols");
+    //}
+    //console.log("-------------------------------\n");
     //////////////////////////////////////////////////////////////////
 
     //saving split_data to a specific sensor
@@ -664,8 +841,8 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, data_sen
     //////////////////////////////////////////////////////////////////
     console.log("-------------------------------\n"); ///it workssssss
     for (let i = 0; i < sensor_data.length; i++) {
-        console.log(sensor_time[i] + "\n");
-        console.log(sensor_data[i] + "\n");
+        console.log(i + " . " + sensor_time[i] + "\ntime");
+        console.log(i + " . " + sensor_data[i] + "\ndata");
     }
     console.log("-------------------------------\n");
     //////////////////////////////////////////////////////////////////
@@ -681,6 +858,6 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, data_sen
     //////////////////////////////////////////////////////////////////
 }
 
-setInterval(Read_from_bme(), 1000); //testing, if my requests are succesfull
+setInterval(Read_from_bme(), 100); //testing, if my requests are succesfull
 
 //To do --> csv save and graph save
