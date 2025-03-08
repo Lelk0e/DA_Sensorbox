@@ -37,6 +37,10 @@ bool finalizeSignal = false;
 bool finalized = false; // flag: true when finalization has occurred
 Task *logTask;
 
+bool rtcStat;
+bool bmeStat;
+bool htuStat;
+
 using namespace std;
 
 Scheduler userSched;
@@ -234,11 +238,11 @@ void logSensorData()
   {
     now = rtc.now();
   }
-  catch(const exception& e)
+  catch (const exception &e)
   {
     Serial.println(e.what());
   }
-  
+
   char timestamp[24];
   snprintf(timestamp, sizeof(timestamp), "%04d:%02d:%02d:%02d:%02d:%02d",
            now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
@@ -275,6 +279,8 @@ void logSensorData()
     Serial.print(timestamp);
     Serial.print(": ");
     Serial.println(BMEValue);
+    Serial.print(": ");
+    Serial.println(HTUValue);
   }
 }
 
@@ -400,24 +406,52 @@ void setup()
   Wire.begin(sda_pin, scl_pin);
   delay(100);
   initSDCard();
+  if (!rtc.begin(&Wire))
+  {
+    Serial.println("RTC not working");
+    rtcStat = false;
+  }
+  else
+  {
+    Serial.println("RTC working");
+  }
+  bme280Sensor.setI2CAddress(0x76);
   if (!bme280Sensor.beginI2C(Wire))
   {
-    Serial.println("Failed to initialize");
+    Serial.println("BME not working");
     while (1)
       ;
   }
-  // if (!htu.begin()) {
-  // Serial.println("Couldn't find sensor!");
-  // while (1);
-  //}
+  else
+  {
+    Serial.println("BME working");
+  }
+  if (!htu.begin())
+  {
+    Serial.println("Couldn't find sensor!");
+    while (1)
+      ;
+  }
   delay(500);
   initMesh();
 
-  dbFile = fopen(dbFileName, "w+b");
+  if (SD.exists(dbFileName))
+  {
+    dbFile = fopen(dbFileName, "r+b");
+    Serial.println("Opening existing database file");
+  }
+  else
+  {
+    // Create a new database file
+    dbFile = fopen(dbFileName, "w+b");
+    Serial.println("Creating new database file");
+  }
+
   if (!dbFile)
   {
     Serial.println("Failed to open SQLite DB file");
-    while (true);
+    // Handle error appropriately
+    return;
   }
   sqliteLogger.buf = buf;
   sqliteLogger.col_count = 3;
@@ -466,13 +500,20 @@ void loop()
     {
       userSched.execute();
     }
-    catch(const std::exception& e)
+    catch (const std::exception &e)
     {
       Serial.println(e.what());
     }
   }
   if (toggleOnOff && finalized && mesh.isConnected("MainESP"))
   {
-    sendDB();
+    try
+    {
+      sendDB();
+    }
+    catch (const std::exception &e)
+    {
+      Serial.println(e.what());
+    }
   }
 }
