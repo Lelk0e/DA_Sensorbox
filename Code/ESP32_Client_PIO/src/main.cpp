@@ -17,7 +17,7 @@ BME280 bme280Sensor;
 #define cs_pin 5
 #define sda_pin 21
 #define scl_pin 22
-#define ozon_pin 27
+#define ozon_pin 32
 #define external_analogIn 33
 Adafruit_HTU21DF htu = Adafruit_HTU21DF();
 Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
@@ -241,11 +241,18 @@ float readTypK()
   return temperatureK;
 }
 
+uint16_t readOzon()
+{
+  uint16_t ppmValue = analogRead(ozon_pin);
+  return ppmValue / 0.805;
+}
+
 void logSensorData()
 {
   int BMEValue = static_cast<int>(readBme());
   int HTUValue = static_cast<int>(readHTU());
   int TypKValue = static_cast<int>(readTypK());
+  int OzonValue = static_cast<int>(readOzon());
   DateTime now;
   try
   {
@@ -279,6 +286,12 @@ void logSensorData()
     Serial.print("Error setting sensor value: ");
     Serial.println(res);
   }
+  res = dblog_set_col_val(&sqliteLogger, 3, DBLOG_TYPE_INT, &TypKValue, sizeof(TypKValue));
+  if (res != 0)
+  {
+    Serial.print("Error setting sensor value: ");
+    Serial.println(res);
+  }
   res = dblog_append_empty_row(&sqliteLogger);
   if (res != 0)
   {
@@ -291,6 +304,7 @@ void logSensorData()
     Serial.println("BME: " + String(BMEValue) + "Pa");
     Serial.println("HTU: " + String(HTUValue) + "%");
     Serial.println("TypK: " + String(TypKValue) + "°C");
+    Serial.println("Ozon: " + String(OzonValue) + "mV");
   }
 }
 
@@ -385,7 +399,7 @@ void resetLogging()
     return;
   }
   sqliteLogger.buf = buf;
-  sqliteLogger.col_count = 3;
+  sqliteLogger.col_count = 4;
   sqliteLogger.page_resv_bytes = 0;
   sqliteLogger.page_size_exp = 11;
   sqliteLogger.max_pages_exp = 0;
@@ -412,6 +426,7 @@ void resetLogging()
 
 void setup()
 {
+  pinMode(ozon_pin, INPUT);
   Serial.begin(115200);
   Wire.begin(sda_pin, scl_pin);
   delay(100);
@@ -469,7 +484,7 @@ void setup()
     return;
   }
   sqliteLogger.buf = buf;
-  sqliteLogger.col_count = 3;
+  sqliteLogger.col_count = 4;
   sqliteLogger.page_resv_bytes = 0;
   sqliteLogger.page_size_exp = 11;
   sqliteLogger.max_pages_exp = 0;
