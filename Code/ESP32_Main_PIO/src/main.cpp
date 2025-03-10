@@ -382,8 +382,11 @@ void setup()
         toggleOnOff = true;
         mesh.sendBroadcast("");
       } else if (request->hasParam("Off")) {
+        if (toggleOnOff == true)
+        {
+          mesh.sendBroadcast("Finalize");
+        }
         toggleOnOff = false;
-        mesh.sendBroadcast("Finalize");
       }
     } else {
       request->send(400, "text/plain", "error toggle on off");
@@ -391,7 +394,7 @@ void setup()
 
   server.on("/bme280", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    String data = wrDBtoWs("/sd/BME280");
+    String data = wrDBtoWs("/sd/BME280.db");
     request->send(200, "text/plain", data); });
 
   server.on("/download", HTTP_GET, [](AsyncWebServerRequest *request)

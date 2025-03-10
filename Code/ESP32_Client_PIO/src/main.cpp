@@ -6,18 +6,25 @@
 #include "ulog_sqlite.h"
 #include "RTClib.h"
 #include "Adafruit_HTU21DF.h"
+#include "Adafruit_MAX31855.h"
 
 #define BME280_ADDRESS 0x76
 BME280 bme280Sensor;
 
+#define MAXCLK 14
+#define MAXCS 15
+#define MAXDO 12
+#define cs_pin 5
+#define sda_pin 21
+#define scl_pin 22
+#define ozon_pin 27
+#define external_analogIn 33
 Adafruit_HTU21DF htu = Adafruit_HTU21DF();
+Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 
 RTC_DS3231 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-#define cs_pin 5
-#define sda_pin 21
-#define scl_pin 22
 
 const char *dbFileName = "/sd/data.db";
 char lastSentTs[32] = "0000:00:00:00:00:00";
@@ -228,11 +235,17 @@ float readBme()
     return -1;
   return pressure;
 }
+float readTypK()
+{
+  float temperatureK = thermocouple.readCelsius();
+  return temperatureK;
+}
 
 void logSensorData()
 {
   int BMEValue = static_cast<int>(readBme());
   int HTUValue = static_cast<int>(readHTU());
+  int TypKValue = static_cast<int>(readTypK());
   DateTime now;
   try
   {
@@ -266,7 +279,6 @@ void logSensorData()
     Serial.print("Error setting sensor value: ");
     Serial.println(res);
   }
-
   res = dblog_append_empty_row(&sqliteLogger);
   if (res != 0)
   {
@@ -275,12 +287,10 @@ void logSensorData()
   }
   else
   {
-    Serial.print("Logged BME sensor reading at ");
-    Serial.print(timestamp);
-    Serial.print(": ");
-    Serial.println(BMEValue);
-    Serial.print(": ");
-    Serial.println(HTUValue);
+    Serial.println("Time: " + String(timestamp));
+    Serial.println("BME: " + String(BMEValue) + "Pa");
+    Serial.println("HTU: " + String(HTUValue) + "%");
+    Serial.println("TypK: " + String(TypKValue) + "°C");
   }
 }
 
@@ -431,6 +441,11 @@ void setup()
     Serial.println("Couldn't find sensor!");
     while (1)
       ;
+  }
+  Serial.print("Initializing sensor...");
+  if (!thermocouple.begin()) {
+    Serial.println("ERROR.");
+    while (1) delay(10);
   }
   delay(500);
   initMesh();
