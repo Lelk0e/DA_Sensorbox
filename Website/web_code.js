@@ -61,52 +61,79 @@ let temp_data = [];
 let count_button_off_on = 0;
 
 function apply_button(){ //applying the filter options on the graph
-    draw_bme();
+    update();
 }
 
-function update(){
+function update(){ //changing the data, which shall be shown to the user
+    const sensor = document.getElementById("box_sens").value;
+    switch (sensor) {
+        case "Temperature":
+            draw_temp();
+        break;
+    
+        case "Airmoisure":
+            draw_hpp();
+        break;
 
+        case "Airpressure":
+            draw_bme();
+        break;
+
+        case "Gas":
+            draw_ozon();
+        break;
+    }
 }
 
 function draw_bme(){
     //read bme_data
     save_drawing_data_for_bme();
+    draw_general(bme_canvas_x, bme_canvas_y);
+}
+
+function draw_hpp(){
+    //read hpp data
+    save_drawing_data_for_hpp();
+    draw_general(hpp_canvas_x, hpp_canvas_y);
+}
+
+function draw_ozon(){
+    save_drawing_data_for_ozon();
+    draw_general(ozon_canvas_x, ozon_canvas_y);
+}
+
+function draw_temp(){
+    save_drawing_data_for_temp();
+    draw_general(temp_canvas_x, temp_canvas_y);
+}
+
+function draw_general(coord_canvas_sensor_x, coord_canvas_sensor_y){
     //here i will draw a xy Graph with legends
     const canvas = document.getElementById('graph');
     const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
 
-    if (bme_canvas_x.length == bme_canvas_y.length){
-        const draw_till = bme_canvas_x.length;
-        for (let i = 0; i < draw_till; i++) { //drawing the points --> SSSR Rank
+    if (coord_canvas_sensor_x.length == coord_canvas_sensor_y.length){
+        const draw_till_u_die = coord_canvas_sensor_x.length;
+        for (let i = 0; i < draw_till_u_die; i++) { //drawing the points --> SSSR Rank
             ctx.beginPath();
             ctx.fillStyle = "pink";
             //console.log(Math.PI); //lets see if pi-pi is working xD
-            ctx.ellipse(bme_canvas_x[i], -bme_canvas_y[i], 3, 3, 0, 0, 2 * Math.PI, false);
+            ctx.ellipse(coord_canvas_sensor_x[i], -coord_canvas_sensor_y[i], 3, 3, 0, 0, 2 * Math.PI, false);
             ctx.fill();
             ctx.stroke();
         }
 
+        //Line creating
         ctx.beginPath();
         ctx.fillStyle = "darkblue";
-        ctx.moveTo(bme_canvas_x[0], -bme_canvas_y[0]);
+        ctx.moveTo(coord_canvas_sensor_x[0], -coord_canvas_sensor_y[0]);
         ctx.fill();
 
-        for (let i = 0; i < bme_canvas_x.length; i++) { //drawing the lines --> same rank
-            ctx.lineTo(bme_canvas_x[i], -bme_canvas_y[i]);
+        for (let i = 0; i < coord_canvas_sensor_x.length; i++) { //drawing the lines --> same rank
+            ctx.lineTo(coord_canvas_sensor_x[i], -coord_canvas_sensor_y[i]);
         }
         ctx.stroke();
     }
-}
-
-function draw_hpp(){
-}
-
-function draw_ozon(){
-
-}
-
-function draw_temp(){
-
 }
 
 function setTime() { //from phillip, some parts of it is from me, but it was kinda changed
@@ -187,16 +214,6 @@ function canvas_setting(){
     //why, you ask. Very simple, because these methods will update the graph x and y axe lines, the comboxes are sometimes bugged, and dont update at the beginning if you dont change the current item. I had several problems with that, maybe i will change this line of code in the future, but now
     time_setting();
     sensor_setting();
-}
-
-function testing(){
-    const canvas = document.getElementById('graph');
-    const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
-    
-    //getting the height and width
-    const width = canvas.width;
-    const height = canvas.height;
-
 }
 
 function create_graph_xy(){
@@ -622,36 +639,34 @@ function sensor_setting(){
 
 function HTTP_SET(){ //here i will set and save the values for the sensor data
     //bme should also measure temperature 
-
     //ozon in ppm, does it change
+    //first i will get the generated data, which is --> og's comments from me
 
-
-    //first i will get the generated data, which is 
-
-
+    Read_from_Ozon();
+    Read_from_bme();
+    Read_from_hpp();
+    Read_from_temp();
 }
 
 function Read_from_hpp(){
-    const sensor_name = '"msgInter":'; //for splitting the name of the sensor from the sensor-data
-
-    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_hpp.http", data_hpp, sensor_name, data_hpp_no_sym, hpp_split, hpp_time, hpp_data); //test data
+    const sensor_name = '"msgHPP":'; //for splitting the name of the sensor from the sensor-data
+    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_hpp.http", data_hpp, sensor_name, data_hpp_no_sym, hpp_split, hpp_time, hpp_data, ":HPP:"); //test data
 }
 
 function Read_from_Ozon(){
-    const sensor_name = '"msgBME":'; //for splitting the name of the sensor from the sensor-data
-
-    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_ozon.http", data_ozon, sensor_name, data_ozon_no_sym, ozon_split, ozon_time, ozon_data); //test data
+    const sensor_name = '"msgOZON":'; //for splitting the name of the sensor from the sensor-data
+    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_ozon.http", data_ozon, sensor_name, data_ozon_no_sym, ozon_split, ozon_time, ozon_data, ":OZON:"); //test data
 }
 
 function Read_from_temp(){
-    const sensor_name = '"msgPT":'; //for splitting the name of the sensor from the sensor-data
-    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_temp.http", data_temp, sensor_name, data_temp_no_sym, temp_split, temp_time, temp_data); //test data
+    const sensor_name = '"msgTEMP":'; //for splitting the name of the sensor from the sensor-data
+    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_temp.http", data_temp, sensor_name, data_temp_no_sym, temp_split, temp_time, temp_data, ":PT:"); //test data
 }
 
 function Read_from_bme(){ //this method will later be implemented in HTTP_SET
     const sensor_name = '"msgBME":'; //for splitting the name of the sensor from the sensor-data
     //fetchUserInfo("sensorbox.com", "sd", "bme280", "", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data); //test data
-    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_bme.http", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data);
+    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_bme.http", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data, ":BME:");
 }
 function save_drawing_data_for_ozon(){
     //Range --> [0-100]ppm
@@ -910,7 +925,7 @@ function sensor_time_calculate_their_Coordinates(x_coord, sensor_time){
 }
 
 //method for reading my data from bme, hpp, ...
-const fetchUserInfo = async(DNS_address, first_address, second_address, where_is_it_saved, data_sensor, split_sensor_name, data_sensor_no_sym, sensor_split, sensor_time, sensor_data)=>{ 
+const fetchUserInfo = async(DNS_address, first_address, second_address, where_is_it_saved, data_sensor, split_sensor_name, data_sensor_no_sym, sensor_split, sensor_time, sensor_data, split_sensor_frame_msg)=>{ 
     const address = DNS_address; //"localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp --> update: we have implented a dns address for our esp's, so we'll be using those
     const first = first_address; //"Diplomarbeit";
     const second = `${second_address}`; //"Website";
@@ -929,9 +944,18 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
                                             //when a method returns a promise, u have to use "await"
     data_sensor = userData; //saving my data
 
+    console.log(`"BRACE FOOOR IMPACT - ${where_is_it_saved}"`);
+    console.log("!!!!!!!!!!!!!!!!!!");
+    console.log("!!!!!!!!!!!!!!!!!!");
+    console.log("!!!!!!!!!!!!!!!!!!");
+    console.log("!!!!!!!!!!!!!!!!!!");
+    console.log("!!!!!!!!!!!!!!!!!!");
+    console.log("!!!!!!!!!!!!!!!!!!");
+    console.log("!!!!!!!!!!!!!!!!!!");
+
     //checking
     //////////////////////////////////////////////////////////////////
-    //console.log(userData);
+    console.log(userData);
     //////////////////////////////////////////////////////////////////
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -946,8 +970,8 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
     //checking
     //////////////////////////////////////////////////////////////////
-    //console.log(BMEmsg + "\n\nsplit BMEmsg"); //it worksssssssssssssss, yeeeaaa men
-    //console.log(without_symbols + "\n\nsplit symbols"); //it worksssssssssssssss, yeeeaaa men
+    console.log(BMEmsg + "\n\nsplit BMEmsg"); //it worksssssssssssssss, yeeeaaa men
+    console.log(without_symbols + "\n\nsplit symbols"); //it worksssssssssssssss, yeeeaaa men
     //////////////////////////////////////////////////////////////////
 
     //saving without_symbols to a specific sensor save point
@@ -958,11 +982,11 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
     //checking
     //////////////////////////////////////////////////////////////////
-    //console.log("-------------------------------\n"); ///it workssssss
-    //for (let i = 0; i < split_data.length; i++) {
-    //    console.log(split_data[i] + "\n\nsplit @ symbols");
-    //}
-    //console.log("-------------------------------\n");
+    console.log("-------------------------------\n"); ///it workssssss
+    for (let i = 0; i < split_data.length; i++) {
+        console.log(split_data[i] + "\n\nsplit @ symbols");
+    }
+    console.log("-------------------------------\n");
     //////////////////////////////////////////////////////////////////
 
     //saving split_data to a specific sensor
@@ -970,7 +994,7 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
     //select time and data
     for (let i = 0; i < split_data.length; i++) {
-        const split_again = (split_data[i].split(`${'Time:'}`)[1]?.trim()).split(`${':BME:'}`);
+        const split_again = (split_data[i].split(`${'Time:'}`)[1]?.trim()).split(`${split_sensor_frame_msg}`);
         sensor_time[i] = split_again[0];
         sensor_data[i] = split_again[1];
     }
@@ -996,6 +1020,6 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
     //////////////////////////////////////////////////////////////////
 }
 
-setInterval(Read_from_bme(), 100); //testing, if my requests are succesfull
+setInterval(HTTP_SET(), 100); //testing, if my requests are succesfull
 
 //To do --> csv save and graph save
