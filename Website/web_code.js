@@ -10,9 +10,9 @@ let x_point_length = 0;
 
 //sensor max values
 const bme_max_value = 1100; //1100hPa
-const hpp_max_value = 0;
-const ozon_max_value = 0
-const temp_max_value = 0;
+const hpp_max_value = 100; //100% is the max value
+const ozon_max_value = 100; //100ppm is the max value
+const temp_max_value = 250; //250°C is the max value
 
 //coordnates for the drawn data-objects
 //canvas bme data & time
@@ -632,33 +632,171 @@ function HTTP_SET(){ //here i will set and save the values for the sensor data
 }
 
 function Read_from_hpp(){
-    fetchUserInfo(data_hpp, "", data_hpp_no_sym, hpp_split, hpp_time, hpp_data);
+    const sensor_name = '"msgInter":'; //for splitting the name of the sensor from the sensor-data
+
+    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_hpp.http", data_hpp, sensor_name, data_hpp_no_sym, hpp_split, hpp_time, hpp_data); //test data
 }
 
 function Read_from_Ozon(){
-    fetchUserInfo(data_ozon, "", data_ozon_no_sym, ozon_split, ozon_time, ozon_data);
+    const sensor_name = '"msgBME":'; //for splitting the name of the sensor from the sensor-data
+
+    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_ozon.http", data_ozon, sensor_name, data_ozon_no_sym, ozon_split, ozon_time, ozon_data); //test data
 }
 
 function Read_from_temp(){
-    fetchUserInfo(data_temp, "", data_temp_no_sym, temp_split, temp_time, temp_data);
+    const sensor_name = '"msgPT":'; //for splitting the name of the sensor from the sensor-data
+    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_temp.http", data_temp, sensor_name, data_temp_no_sym, temp_split, temp_time, temp_data); //test data
 }
 
 function Read_from_bme(){ //this method will later be implemented in HTTP_SET
     const sensor_name = '"msgBME":'; //for splitting the name of the sensor from the sensor-data
-    //fetchUserInfo("sensorbox.com", "sd", "bme280", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data);
-    fetchUserInfo("localhost", "Diplomarbeit", "Website", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data);
+    //fetchUserInfo("sensorbox.com", "sd", "bme280", "", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data); //test data
+    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_bme.http", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data);
 }
 function save_drawing_data_for_ozon(){
-    
+    //Range --> [0-100]ppm
+    if (ozon_data.length >= 1){
+        ozon_canvas_x = [];
+        ozon_canvas_y = [];
+
+        let y_coordinates = []; //saving the coords, for drawing, or else it will be way too complicated
+
+        //the max difference for % value is 100 --> 100% - 0%, very important
+        const ozon_100 = y_point_length; //100% measurement
+        const ozon_10 = ozon_100 / 10; //10% measurement
+        const ozon_1 = ozon_10 / 10; //1% measurement
+        
+        for (let i = 0; i < ozon_data.length; i++) { //y-coordinates
+            let dy_ozon = ozon_max_value - ozon_data[i];
+
+            switch (dy_ozon) { // 0 and 100 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
+                case 0: //max value of 100% reached
+                    y_coordinates[i] = ozon_100;
+                    ozon_canvas_y[i] = y_coordinates[i];
+                break;
+
+                case 100: //lowest value of 0% reached
+                    y_coordinates[i] = 0;
+                    ozon_canvas_y[i] = y_coordinates[i];
+                break;
+
+                default:
+                    y_coordinates[i] = ozon_1 * ozon_data[i];
+                    ozon_canvas_y[i] = y_coordinates[i];        
+                break;
+            }
+
+            //////////////////check///////////////////////
+            //////////////////////////////////////////////       
+            console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+            //////////////////////////////////////////////
+        }
+
+        sensor_time_calculate_their_Coordinates(ozon_canvas_x, ozon_time);
+    }
+    else{
+        console.log("Could not retrieve the corrosponding OZON-sensor data");
+    }
 }
 function save_drawing_data_for_temp(){
-    
+    //Range --> -75°C...250°C
+    if (temp_data.length >= 1){
+        temp_canvas_x = [];
+        temp_canvas_y = [];
+
+        let y_coordinates = []; //saving the coords, for drawing, or else it will be way too complicated
+
+        //the max difference for % value is 100 --> 100% - 0%, very important
+        const temp_325 = y_point_length; //325°C measurement
+        const temp_32_5 = temp_325 / 10; //32.5°C measurement
+        const temp_3_25 = temp_32_5 / 10; //3.25°C measurement
+        const temp_1 = temp_3_25 / 3.25; //1°C measurement
+        
+        for (let i = 0; i < temp_data.length; i++) { //y-coordinates
+            let dy_temp = temp_max_value - temp_data[i];
+
+            switch (dy_temp) { // 0 and 100 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
+                case 0: //max value of 250°C reached
+                    y_coordinates[i] = temp_325;
+                    temp_canvas_y[i] = y_coordinates[i];
+                break;
+
+                case 175: //lowest value of -75°C reached
+                    y_coordinates[i] = 0;
+                    temp_canvas_y[i] = y_coordinates[i];
+                break;
+
+                default:
+                    if (temp_data[i] < 0){
+                        y_coordinates[i] = temp_1 * (Math.abs(temp_data[i])); //beginning at -75°C
+                        temp_canvas_y[i] = y_coordinates[i];
+                    }
+                    else{
+                        y_coordinates[i] = temp_1 * (temp_data[i] + 75); //beginning at 0°C
+                        temp_canvas_y[i] = y_coordinates[i];
+                    }
+                break;
+            }
+
+            //////////////////check///////////////////////
+            //////////////////////////////////////////////       
+            console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+            //////////////////////////////////////////////
+        }
+
+        sensor_time_calculate_their_Coordinates(temp_canvas_x, temp_time);
+    }
+    else{
+        console.log("Could not retrieve the corrosponding Temp-sensor data");
+    }
 }
 function save_drawing_data_for_hpp(){
-    
+    //Range --> [0-100]%
+    if (hpp_data.length >= 1){ 
+        hpp_canvas_x = [];
+        hpp_canvas_y = [];
+
+        let y_coordinates = []; //saving the coords, for drawing, or else it will be way too complicated
+
+        //the max difference for % value is 100 --> 100% - 0%, very important
+        const hpp_100 = y_point_length; //100%
+        const hpp_10 = hpp_100 / 10; //10%
+        const hpp_1 = hpp_10 / 10; //1%
+        
+        for (let i = 0; i < hpp_data.length; i++) { //y-coordinates
+            let dy_hpp = hpp_max_value - hpp_data[i];
+
+            switch (dy_hpp) { // 0 and 100 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
+                case 0: //max value of 100% reached
+                    y_coordinates[i] = hpp_100;
+                    hpp_canvas_y[i] = y_coordinates[i];
+                break;
+
+                case 100: //lowest value of 0% reached
+                    y_coordinates[i] = 0;
+                    hpp_canvas_y[i] = y_coordinates[i];
+                break;
+
+                default:
+                    y_coordinates[i] = hpp_1 * hpp_data[i]; // -300, because we beging to drawing at 300hPa
+                    hpp_canvas_y[i] = y_coordinates[i];
+                break;
+            }
+
+            //////////////////check///////////////////////
+            //////////////////////////////////////////////       
+            console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+            //////////////////////////////////////////////
+        }
+
+        sensor_time_calculate_their_Coordinates(hpp_canvas_x, hpp_time);
+    }
+    else{
+        console.log("Could not retrieve the corrosponding HPP-sensor data");
+    }
 }
 function save_drawing_data_for_bme(){
-    if (bme_time.length >= 1){
+    if (bme_data.length >= 1){
         //reseting those arrays
         bme_canvas_x = [];
         bme_canvas_y = [];
@@ -680,7 +818,7 @@ function save_drawing_data_for_bme(){
                     bme_canvas_y[i] = y_coordinates[i];
                 break;
 
-                case 800: //lowes value of 300hPa reached
+                case 800: //lowest value of 300hPa reached
                     y_coordinates[i] = 0;
                     bme_canvas_y[i] = y_coordinates[i];
                 break;
@@ -703,7 +841,7 @@ function save_drawing_data_for_bme(){
         //bme_canvas_y = y_coordinates; //please dont ask me, why this line of code is not working
     }
     else{
-        console.log("Could not retrieve the corrosponding sensor data");
+        console.log("Could not retrieve the corrosponding BME-sensor data");
     }
 }
 function sensor_time_calculate_their_Coordinates(x_coord, sensor_time){
@@ -772,11 +910,11 @@ function sensor_time_calculate_their_Coordinates(x_coord, sensor_time){
 }
 
 //method for reading my data from bme, hpp, ...
-const fetchUserInfo = async(DNS_address, first_address, second_address, data_sensor, split_sensor_name, data_sensor_no_sym, sensor_split, sensor_time, sensor_data)=>{ 
+const fetchUserInfo = async(DNS_address, first_address, second_address, where_is_it_saved, data_sensor, split_sensor_name, data_sensor_no_sym, sensor_split, sensor_time, sensor_data)=>{ 
     const address = DNS_address; //"localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp --> update: we have implented a dns address for our esp's, so we'll be using those
     const first = first_address; //"Diplomarbeit";
     const second = `${second_address}`; //"Website";
-    const response = await fetch(`http://${address}/${first}/${second}/test_send.http`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
+    const response = await fetch(`http://${address}/${first}/${second}/${where_is_it_saved}`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
         method: 'GET',
         headers: {
             'Content-Type': 'text/plain'

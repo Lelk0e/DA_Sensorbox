@@ -11,7 +11,7 @@
 # @prompt username 
 # great for me, haha
 
-POST http://{{host}}/{{first}}/{{second}}/test_send.http HTTP/1.1
+POST http://{{host}}/{{first}}/{{second}}/test_bme.http HTTP/1.1
 
 Content-Type: @{{contentType}}
 {

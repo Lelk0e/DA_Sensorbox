@@ -1,0 +1,22 @@
+@hostname = localhost
+@port = 80
+@first = Diplomarbeit
+@second = Website
+
+@host = {{hostname}}:{{port}}
+@contentType = text/plain
+@createdAt = {{datetime iso8601}}
+@modifiedBy = {{$processEnv  USERNAME}}
+
+# @prompt username 
+# great for me, haha
+
+POST http://{{host}}/{{first}}/{{second}}/test_temp.http HTTP/1.1
+
+Content-Type: @{{contentType}}
+{
+    "username": "{{username}}",
+    "{{createdAt}}": "{{createdAt}}",
+    "{{modifiedBy}}": "{{modifiedBy}}",
+    "msgPT": "Time:05:00:00:PT:-75.00@Time:05:30:00:PT:187.60@Time:06:00:00:PT:48.18@Time:06:30:00:PT:-10.68@Time:07:00:00:PT:78.67@Time:07:30:00:PT:236.61@Time:08:00:00:PT:201.37@Time:08:30:00:PT:122.60@Time:09:00:00:PT:178.12@Time:09:30:00:PT:134.44@Time:10:00:00:PT:95.88@Time:10:30:00:PT:-75.00@Time:11:00:00:PT:-19.96@Time:11:30:00:PT:156.16@Time:12:00:00:PT:250.00@Time:12:30:00:PT:73.12@Time:13:00:00:PT:110.80@Time:13:30:00:PT:-22.59@Time:14:00:00:PT:225.64@Time:14:30:00:PT:-28.32@Time:15:00:00:PT:60.84@Time:15:30:00:PT:245.75@Time:16:00:00:PT:150.86@Time:16:30:00:PT:242.96@Time:17:00:00:PT:-75.00@Time:17:30:00:PT:52.85@Time:18:00:00:PT:158.50@Time:18:30:00:PT:-37.98@Time:19:00:00:PT:105.07@Time:19:30:00:PT:131.48@Time:20:00:00:PT:36.93@Time:20:30:00:PT:98.35@Time:21:00:00:PT:-72.36@Time:21:30:00:PT:108.50@Time:22:00:00:PT:-53.13@Time:22:30:00:PT:212.46@Time:23:00:00:PT:119.95@Time:23:30:00:PT:-70.55@Time:24:00:00:PT:220.70@Time:00:00:00:PT:241.23@Time:00:30:00:PT:-29.38@Time:01:00:00:PT:124.82@Time:01:30:00:PT:126.76@Time:02:00:00:PT:-75.00@Time:02:30:00:PT:43.79@Time:03:00:00:PT:225.55@Time:03:30:00:PT:129.51@Time:04:00:00:PT:13.56@Time:04:30:00:PT:132.42"
+}
