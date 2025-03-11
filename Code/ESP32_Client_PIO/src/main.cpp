@@ -292,6 +292,12 @@ void logSensorData()
     Serial.print("Error setting sensor value: ");
     Serial.println(res);
   }
+  res = dblog_set_col_val(&sqliteLogger, 4, DBLOG_TYPE_INT, &OzonValue, sizeof(OzonValue));
+  if (res != 0)
+  {
+    Serial.print("Error setting sensor value: ");
+    Serial.println(res);
+  }
   res = dblog_append_empty_row(&sqliteLogger);
   if (res != 0)
   {
@@ -399,7 +405,7 @@ void resetLogging()
     return;
   }
   sqliteLogger.buf = buf;
-  sqliteLogger.col_count = 4;
+  sqliteLogger.col_count = 5;
   sqliteLogger.page_resv_bytes = 0;
   sqliteLogger.page_size_exp = 11;
   sqliteLogger.max_pages_exp = 0;
@@ -484,7 +490,7 @@ void setup()
     return;
   }
   sqliteLogger.buf = buf;
-  sqliteLogger.col_count = 4;
+  sqliteLogger.col_count = 5;
   sqliteLogger.page_resv_bytes = 0;
   sqliteLogger.page_size_exp = 11;
   sqliteLogger.max_pages_exp = 0;
