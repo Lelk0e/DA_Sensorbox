@@ -60,29 +60,36 @@ let temp_data = [];
 //for measure off/on button
 let count_button_off_on = 0;
 
+//after deleting the graph, data should shown/calculated --> without it, graph data will be shown in a wrong pattern.
+let u_can_calculate_now = false;
+
 function apply_button(){ //applying the filter options on the graph
     update();
 }
 
 function update(){ //changing the data, which shall be shown to the user
+    canvas_setting();
+
     const sensor = document.getElementById("box_sens").value;
-    switch (sensor) {
-        case "Temperature":
-            draw_temp();
-        break;
+    if (u_can_calculate_now == true){
+        switch (sensor) {
+            case "Temperature":
+                draw_temp();
+            break;
+        
+            case "Airmoisure":
+                draw_hpp();
+            break;
     
-        case "Airmoisure":
-            draw_hpp();
-        break;
-
-        case "Airpressure":
-            draw_bme();
-        break;
-
-        case "Gas":
-            draw_ozon();
-        break;
-    }
+            case "Airpressure":
+                draw_bme();
+            break;
+    
+            case "Gas":
+                draw_ozon();
+            break;
+        }
+    } 
 }
 
 function draw_bme(){
@@ -119,7 +126,6 @@ function draw_general(coord_canvas_sensor_x, coord_canvas_sensor_y){
             ctx.fillStyle = "pink";
             //console.log(Math.PI); //lets see if pi-pi is working xD
             ctx.ellipse(coord_canvas_sensor_x[i], -coord_canvas_sensor_y[i], 3, 3, 0, 0, 2 * Math.PI, false);
-            ctx.fill();
             ctx.stroke();
         }
 
@@ -127,7 +133,6 @@ function draw_general(coord_canvas_sensor_x, coord_canvas_sensor_y){
         ctx.beginPath();
         ctx.fillStyle = "darkblue";
         ctx.moveTo(coord_canvas_sensor_x[0], -coord_canvas_sensor_y[0]);
-        ctx.fill();
 
         for (let i = 0; i < coord_canvas_sensor_x.length; i++) { //drawing the lines --> same rank
             ctx.lineTo(coord_canvas_sensor_x[i], -coord_canvas_sensor_y[i]);
@@ -198,6 +203,8 @@ function measure_off_on_button(){
 }
 
 function canvas_setting(){
+    u_can_calculate_now = false;
+
     //here i will draw a xy Graph with legends
     const canvas = document.getElementById('graph');
     const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
@@ -205,15 +212,21 @@ function canvas_setting(){
     //getting the height and width
     const width = canvas.width;
     const height = canvas.height;
-    
+
     //clearing the canvas
     ctx.clearRect(0, 0, width, height);
+
+    ctx.save(); //saving the current process
 
     create_graph_xy();
 
     //why, you ask. Very simple, because these methods will update the graph x and y axe lines, the comboxes are sometimes bugged, and dont update at the beginning if you dont change the current item. I had several problems with that, maybe i will change this line of code in the future, but now
     time_setting();
     sensor_setting();
+
+    u_can_calculate_now = true;
+
+    ctx.restore(); //restoring everything to the save point
 }
 
 function create_graph_xy(){
@@ -1021,5 +1034,4 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 }
 
 setInterval(HTTP_SET(), 100); //testing, if my requests are succesfull
-
 //To do --> csv save and graph save
