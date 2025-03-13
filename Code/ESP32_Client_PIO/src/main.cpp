@@ -335,11 +335,13 @@ void sendDB()
   }
   while (true)
   {
-    uint32_t colType0, colType1, colType2;
+    uint32_t colType0, colType1, colType2,colType3,colType4;
     uint8_t *colVal0 = (uint8_t *)dblog_read_col_val(&rctx, 0, &colType0);
     uint8_t *colVal1 = (uint8_t *)dblog_read_col_val(&rctx, 1, &colType1);
     uint8_t *colVal2 = (uint8_t *)dblog_read_col_val(&rctx, 2, &colType2);
-    if (!colVal0 || !colVal1 || !colVal2)
+    uint8_t *colVal3 = (uint8_t *)dblog_read_col_val(&rctx, 3, &colType3);
+    uint8_t *colVal4 = (uint8_t *)dblog_read_col_val(&rctx, 4, &colType4);
+    if (!colVal0 || !colVal1 || !colVal2|| !colVal3 || !colVal4)
       break;
 
     char ts[32];
@@ -353,9 +355,13 @@ void sendDB()
     {
       int BMEValue;
       int HTUValue;
+      int TypKValue;
+      int OzonValue;
       memcpy(&BMEValue, colVal1, sizeof(BMEValue));
       memcpy(&HTUValue, colVal2, sizeof(HTUValue));
-      String msg = "Data:Time:" + String(ts) + ":BME280:" + String(BMEValue) + ":" + String(HTUValue);
+      memcpy(&TypKValue, colVal3, sizeof(TypKValue));
+      memcpy(&OzonValue, colVal4, sizeof(OzonValue));
+      String msg = "Data:Time:" + String(ts) + String(nodeName) + String(BMEValue) + ":" + String(HTUValue);
       mesh.sendSingle(rootName, msg);
       delay(10);
       strcpy(lastSentTs, ts);
@@ -396,7 +402,6 @@ void exitLPM()
 void resetLogging()
 {
   Serial.println("Reset command received. Resetting logging");
-  // Remove the finalized file so that we start fresh
   SD.remove(dbFileName);
   dbFile = fopen(dbFileName, "w+b");
   if (!dbFile)
