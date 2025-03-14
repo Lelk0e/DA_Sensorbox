@@ -360,26 +360,36 @@ function time_setting(){
 
             if (read_data_bool == true && save_data_bool == true){
 
-                lapse = max_time_zone; //it can be a dot number, so yeaaah
-                unit = division_time_zone; //for each time lapse
+                lapse = max_time_zone - min_time_zone; //it can be a dot number, so yeaaah
+                unit = division_time_zone; //for each time lapse --> x_point.length / max_time_zone 
 
                 ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
                                                               //we are beginning at 1, because line with
                 measure_text_x_axe_and_delete(); //deleting the text
 
-                for (let i = 0; i <= Math.round(lapse); i++) {    
+                //because js is kinda bad, i have to do this method, to make the graph line accuracy better
+                const steps = lapse / 10;
+                let steps_array = [];
+
+                for (let i = 0; i <= 10; i++){ //i ignore the double numbers, and with that way, i can draw the lines perfectly
+                    steps_array[i] = steps * i;
+                }
+                
+                for (let i = 0; i <= steps_array.length; i++) { // i = 0.0, so we can make sure, that we work with double numbers 
                     ctx.beginPath();
-                    ctx.moveTo(i * unit, 0);
-                    ctx.lineTo(i*unit, height_for_x_lapses);
+                    ctx.moveTo(steps_array[i] * unit, 0);
+                    ctx.lineTo(steps_array[i] * unit, height_for_x_lapses);
                     ctx.lineWidth = 2;
                     ctx.strokeStyle = '#000000';
                     ctx.stroke();
                     //lapses naming
                     ctx.font = "12px serif";
                     if (i == 0){
-                        ctx.fillText(min_time_zone, [i*unit - unit/150], height_for_x_lapses + 0.02*height);
+                        ctx.fillText(min_time_zone, [steps_array[i] * unit] -unit/6, height_for_x_lapses + 0.02*height); //bro it works, omg
                     }
-                    ctx.fillText([min_time_zone + [(max_time_zone / i) * (division_time_zone)]], [i*unit - unit/150], height_for_x_lapses + 0.02*height); //extremely complicated, it depends on the definition of the general time zone
+                    else{
+                        ctx.fillText((min_time_zone + Math.round(steps_array[i] * 10)/10), steps_array[i] * unit -unit/6, height_for_x_lapses + 0.02*height); //extremely complicated, it depends on the definition of the general time zone
+                    }
                 }
                 ctx.font = "20px serif";
                 ctx.fillText("x in hours", x_whole_axe_length + x_axe_name_diff,1);
@@ -783,7 +793,10 @@ function save_drawing_data_for_ozon(){
 
         switch (zone) {
             case "Current-Data-Time":
-                sensor_time_calculate_actual_coordinates_universal(ozon_canvas_x, ozon_time, time_max_ozon, time_min_ozon, time_division_ozon);
+                let result_values = sensor_time_calculate_actual_coordinates_universal(ozon_canvas_x, ozon_time);
+                time_max_ozon = result_values[0];
+                time_min_ozon = result_values[1];
+                time_division_ozon = result_values[2];
             break;
 
             case "2 hours in a row":
@@ -859,7 +872,10 @@ function save_drawing_data_for_temp(){
 
         switch (zone) {
             case "Current-Data-Time":
-                sensor_time_calculate_actual_coordinates_universal(temp_canvas_x, temp_time, time_max_temp, time_min_temp, time_division_temp);
+                let result_values = sensor_time_calculate_actual_coordinates_universal(temp_canvas_x, temp_time);
+                time_max_temp = result_values[0];
+                time_min_temp = result_values[1];
+                time_division_temp = result_values[2];
             break;
 
             case "2 hours in a row":
@@ -928,7 +944,10 @@ function save_drawing_data_for_hpp(){
 
         switch (zone) {
             case "Current-Data-Time":
-                sensor_time_calculate_actual_coordinates_universal(hpp_canvas_x, hpp_time, time_max_hpp, time_min_hpp, time_division_hpp);
+                let result_values = sensor_time_calculate_actual_coordinates_universal(hpp_canvas_x, hpp_time);
+                time_max_hpp = result_values[0];
+                time_min_hpp = result_values[1];
+                time_division_hpp = result_values[2];
             break;
 
             case "2 hours in a row":
@@ -1000,7 +1019,7 @@ function save_drawing_data_for_bme(){
 
         switch (zone) {
             case "Current-Data-Time":
-                const result_values = sensor_time_calculate_actual_coordinates_universal(bme_canvas_x, bme_time);
+                let result_values = sensor_time_calculate_actual_coordinates_universal(bme_canvas_x, bme_time);
                 time_max_bme = result_values[0];
                 time_min_bme = result_values[1];
                 time_division_bme = result_values[2];
@@ -1081,7 +1100,7 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
 
         //the max time value for the sensors -- i concluded, that a day-time zone will be programmed first and the other participants like 2 weeks shown line, etc. will be connected to this 24-hour data
         let time_all = x_point_length; //general time - coordinate
-        time_divided = time_all / temp_max; //divided time  - coordinate
+        time_divided = time_all / (temp_max - temp_min); //divided time  - coordinate
 
 
         //check values
@@ -1110,12 +1129,13 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
         console.log(i + " . " + x_coord_temp[i] + " - X-Values");
         ///////////////////////////////////////
     }
+    return [Math.round(temp_max * 100)/100, Math.round(temp_min * 100)/100, Math.round(time_divided * 100)/100]; //returnig the values as a array
 
-    return{
-        temp_max, //saving the values, quite important for the graphical settings
-        temp_min, //same here
-        time_divided //saving the data, so that I can use it again
-    };   
+    //return{ //this way return my values as a object
+    //    temp_max, //saving the values, quite important for the graphical settings
+    //    temp_min, //same here
+    //    time_divided //saving the data, so that I can use it again
+    //};   
 }
 
 function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
