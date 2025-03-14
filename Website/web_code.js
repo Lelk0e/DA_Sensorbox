@@ -63,8 +63,9 @@ let count_button_off_on = 0;
 //after deleting the graph, data should shown/calculated --> without it, graph data will be shown in a wrong pattern.
 let u_can_calculate_now = false;
 
-//alerting me as a programer, if http-set was read pefectly 
+//alerting me as a programer, if http-set was read/saved pefectly 
 let read_data_bool = false;
+let save_data_bool = false;
 
 //bme
 let time_max_bme = 0; //time max and divided time of the general time division
@@ -86,12 +87,19 @@ let time_max_temp= 0; //time max and divided time of the general time division
 let time_min_temp = 0;
 let time_division_temp = 0; //general time division ... number
 
+//important values for drawing --- FOR ALL SENSORS
+let max_time_zone = 0;
+let min_time_zone = 0;
+let division_time_zone = 0;
+
 function apply_button(){ //applying the filter options on the graph
     update();
 }
 
 function update(){ //changing the data, which shall be shown to the user
-    canvas_setting();
+    HTTP_SAVE(); //saving sensor-data
+
+    canvas_setting(); //reseting everything
 
     const sensor = document.getElementById("box_sens").value;
     if (u_can_calculate_now == true){
@@ -117,23 +125,23 @@ function update(){ //changing the data, which shall be shown to the user
 
 function draw_bme(){
     //read bme_data
-    save_drawing_data_for_bme();
+    //save_drawing_data_for_bme();
     draw_general(bme_canvas_x, bme_canvas_y);
 }
 
 function draw_hpp(){
     //read hpp data
-    save_drawing_data_for_hpp();
+    //save_drawing_data_for_hpp();
     draw_general(hpp_canvas_x, hpp_canvas_y);
 }
 
 function draw_ozon(){
-    save_drawing_data_for_ozon();
+    //save_drawing_data_for_ozon();
     draw_general(ozon_canvas_x, ozon_canvas_y);
 }
 
 function draw_temp(){
-    save_drawing_data_for_temp();
+    //save_drawing_data_for_temp();
     draw_general(temp_canvas_x, temp_canvas_y);
 }
 
@@ -322,44 +330,35 @@ function time_setting(){
     switch (zone) { //changes --> before it was x_axe_lenght - 1 in clearRect etc. --> But i found out that it is too much trouble, to implement it in that way all the time. So i gave the time and sensor axes each unique length, so that i have no trouble with line conflictions
         case "Current-Data-Time":
 
-            //important values for drawing
-            let max_time_zone = 0;
-            let min_time_zone = 0;
-            let division_time_zone = 0;
-
             const sensor = document.getElementById("box_sens").value;
 
             switch (sensor) {
                 case "Temperature":
-                    sensor_time_calculate_actual_coordinates_universal(temp_canvas_x, temp_time, time_max_temp, time_min_temp, time_division_temp);
                     max_time_zone = time_max_temp;
                     min_time_zone = time_min_temp;
                     division_time_zone = time_division_temp;
                 break;
             
                 case "Airmoisure":
-                    sensor_time_calculate_actual_coordinates_universal(hpp_canvas_x, hpp_time, time_max_hpp, time_min_hpp, time_division_hpp);
                     max_time_zone = time_max_hpp;
                     min_time_zone = time_min_hpp;
                     division_time_zone = time_division_hpp;
                 break;
 
                 case "Airpressure":
-                    sensor_time_calculate_actual_coordinates_universal(bme_canvas_x, bme_time, time_max_bme, time_min_bme, time_division_bme);
                     max_time_zone = time_max_bme;
                     min_time_zone = time_min_bme;
                     division_time_zone = time_division_bme;
                 break;
 
                 case "Gas":
-                    sensor_time_calculate_actual_coordinates_universal(ozon_canvas_x, ozon_time, time_max_ozon, time_min_ozon, time_division_ozon);
                     max_time_zone = time_max_ozon;
                     min_time_zone = time_min_ozon;
                     division_time_zone = time_division_ozon;
                 break;
             }
 
-            if (read_data_bool == true){
+            if (read_data_bool == true && save_data_bool == true){
 
                 lapse = max_time_zone; //it can be a dot number, so yeaaah
                 unit = division_time_zone; //for each time lapse
@@ -380,7 +379,7 @@ function time_setting(){
                     if (i == 0){
                         ctx.fillText(min_time_zone, [i*unit - unit/150], height_for_x_lapses + 0.02*height);
                     }
-                    ctx.fillText(min_time_zone + ((division_time_zone*i)/max_time_zone), [i*unit - unit/150], height_for_x_lapses + 0.02*height);
+                    ctx.fillText([min_time_zone + [(max_time_zone / i) * (division_time_zone)]], [i*unit - unit/150], height_for_x_lapses + 0.02*height); //extremely complicated, it depends on the definition of the general time zone
                 }
                 ctx.font = "20px serif";
                 ctx.fillText("x in hours", x_whole_axe_length + x_axe_name_diff,1);
@@ -691,7 +690,7 @@ function sensor_setting(){
     }
 }
 
-function HTTP_SET(){ //here i will set and save the values for the sensor data
+function HTTP_READ(){ //here i will set and save the values for the sensor data
     //bme should also measure temperature 
     //ozon in ppm, does it change
     //first i will get the generated data, which is --> og's comments from me
@@ -705,6 +704,18 @@ function HTTP_SET(){ //here i will set and save the values for the sensor data
     Read_from_temp();
 
     read_data_bool = true;
+}
+
+function HTTP_SAVE(){ //for saving the whole data, so i can extract the coordinates (canvas)
+    //saving the data
+    save_data_bool = false; //for the time zone
+
+    save_drawing_data_for_ozon();
+    save_drawing_data_for_bme();
+    save_drawing_data_for_hpp();
+    save_drawing_data_for_temp();
+
+    save_data_bool = true;
 }
 
 function Read_from_hpp(){
@@ -989,7 +1000,10 @@ function save_drawing_data_for_bme(){
 
         switch (zone) {
             case "Current-Data-Time":
-                sensor_time_calculate_actual_coordinates_universal(bme_canvas_x, bme_time, time_max_bme, time_min_bme, time_division_bme);
+                const result_values = sensor_time_calculate_actual_coordinates_universal(bme_canvas_x, bme_time);
+                time_max_bme = result_values[0];
+                time_min_bme = result_values[1];
+                time_division_bme = result_values[2];
             break;
 
             case "2 hours in a row":
@@ -1015,10 +1029,16 @@ function save_drawing_data_for_bme(){
     }
 }
 
-function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time, sensor_time_max, sensor_time_min, sensor_time_division){
+function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time){
     let x_coord_temp = [];
     let saved_hours = []; //saving the calculated hours 
 
+    let temp_max = 0; //setting values, so that i can start comparing
+    let temp_min = 0; //same here
+    let time_divided = 0; //same here
+
+    //main process
+    ////////////////////////
     for (let i = 0; i < sensor_time.length; i++) { //read sensor_time and save it
         let current_time = sensor_time[i].split(":"); //01:10:00 - [h]:[min]:[s]
         let hour_string = current_time[0]; //hour
@@ -1049,10 +1069,6 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
     }
 
     for (let i = 0; i < sensor_time.length; i++) { //read sensor_time and save it
-
-        let temp_max = 0; //setting values, so that i can start comparing
-        let temp_min = 0; //same here
-    
         //here i will select the biggest and the lowest time --> for the graph and for the calculations
         for (let i = 0; i < saved_hours.length; i++) { //for 2x method ---> yk what i am talking about. With that i can clearly select the biggest data and the smallest data. chad for method.
             if (temp_max <= saved_hours[i]){
@@ -1062,29 +1078,25 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
                 temp_min = saved_hours[i]; //same here, but the smallest value
             }
         }
-    
-        const max_time = temp_max; //max value ... e.g. 3h
-        const lowest_time = temp_min; //minimum value ... e.g. 1h
-
-        //saving the values, quite important for the graphical settings
-        sensor_time_max = max_time;
-        sensor_time_min = lowest_time;
 
         //the max time value for the sensors -- i concluded, that a day-time zone will be programmed first and the other participants like 2 weeks shown line, etc. will be connected to this 24-hour data
-        const time_all = x_point_length; //general time - coordinate
-        const time_divided = time_all / max_time; //divided time  - coordinate
+        let time_all = x_point_length; //general time - coordinate
+        time_divided = time_all / temp_max; //divided time  - coordinate
 
-        //saving the data, so that I can use it again
-        sensor_time_division = time_divided;
 
-        let dx_ultimate_time = max_time - saved_hours[i];
+        //check values
+        //////////////////////////////////////////////
+        console.log(`"Sensor max time: ${temp_max} | Sensor min time: ${temp_min} | Sensor time division: ${time_divided} --- ${sensor_time[1]}"`);
+        //////////////////////////////////////////////
+
+        let dx_ultimate_time = temp_max - saved_hours[i];
 
         switch (dx_ultimate_time) { // 0 and 24 are not always there
             case 0:
                     x_coord_temp[i] = time_all;
                 break;
         
-            case (max_time - lowest_time):
+            case (temp_max - temp_min):
                     x_coord_temp[i] = 0;
                 break;
 
@@ -1098,7 +1110,12 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
         console.log(i + " . " + x_coord_temp[i] + " - X-Values");
         ///////////////////////////////////////
     }
-    
+
+    return{
+        temp_max, //saving the values, quite important for the graphical settings
+        temp_min, //same here
+        time_divided //saving the data, so that I can use it again
+    };   
 }
 
 function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
@@ -1261,6 +1278,6 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
     //////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////
 }
-
-setInterval(HTTP_SET(), 100); //testing, if my requests are succesfull
 //To do --> csv save and graph save
+
+setInterval(HTTP_READ(), 100);
