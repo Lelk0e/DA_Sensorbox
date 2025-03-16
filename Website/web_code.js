@@ -1,3 +1,7 @@
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+//-----------------------------------------------------------------------------//
 //for axe naming
 let x_whole_axe_length = 0;
 let y_whole_axe_length = 0; 
@@ -7,13 +11,17 @@ let y_axe_length = 0;
 //important for the scaling naming of each axes
 let y_point_length = 0;
 let x_point_length = 0;
-
+//-----------------------------------------------------------------------------//
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+//-----------------------------------------------------------------------------//
 //sensor max values
 const bme_max_value = 1100; //1100hPa
 const hpp_max_value = 100; //100% is the max value
 const ozon_max_value = 100; //100ppm is the max value
 const temp_max_value = 250; //250°C is the max value
-
+//-----------------------------------------------------------------------------//
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+//-----------------------------------------------------------------------------//
 //coordnates for the drawn data-objects
 //canvas bme data & time
 let bme_canvas_x = []; //for those, who will be drawn on the canvas, so that I can delete them without any problems
@@ -27,7 +35,9 @@ let ozon_canvas_y = [];
 //canvas temp data & time
 let temp_canvas_x = []; 
 let temp_canvas_y = [];
-
+//-----------------------------------------------------------------------------//
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+//-----------------------------------------------------------------------------//
 //variables for occuring data flow, like bme, hpp, etc.
 let data_bme = "";
 let data_hpp = "";
@@ -56,17 +66,20 @@ let ozon_data = [];
 //temp
 let temp_time = [];
 let temp_data = [];
-
+//-----------------------------------------------------------------------------//
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+//-----------------------------------------------------------------------------//
 //for measure off/on button
 let count_button_off_on = 0;
 
-//after deleting the graph, data should shown/calculated --> without it, graph data will be shown in a wrong pattern.
+//after deleting the graph, data should be shown/calculated --> without it, graph data will be shown in a wrong pattern.
 let u_can_calculate_now = false;
 
 //alerting me as a programer, if http-set was read/saved pefectly 
 let read_data_bool = false;
 let save_data_bool = false;
-
+//-----------------------------------------------------------------------------//
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //-----------------------------------------------------------------------------//
 //bme
 let time_max_bme = 0; //time max and divided time of the general time division
@@ -113,7 +126,9 @@ let max_data_zone = 0;
 let min_data_zone = 0;
 let division_data_zone = 0;
 //-----------------------------------------------------------------------------//
-
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 
 function apply_button(){ //applying the filter options on the graph
     update();
@@ -126,8 +141,8 @@ function update(){ //changing the data, which shall be shown to the user
     canvas_setting(); //reseting everything
 
     const sensor = document.getElementById("box_sens").value;
-    if (u_can_calculate_now == true){
-        switch (sensor) {
+    if (u_can_calculate_now == true){ 
+        switch (sensor) { //draw the selected sensor
             case "Temperature":
                 draw_temp();
             break;
@@ -147,7 +162,7 @@ function update(){ //changing the data, which shall be shown to the user
     } 
 }
 
-function draw_bme(){
+function draw_bme(){ //previously i saved my sensor data here ... yeah i changed that, and added it to HTTP_SAVE(), it's saver
     //read bme_data
     //save_drawing_data_for_bme();
     draw_general(bme_canvas_x, bme_canvas_y);
@@ -172,14 +187,16 @@ function draw_temp(){
 function draw_general(coord_canvas_sensor_x, coord_canvas_sensor_y){
     //here i will draw a xy Graph with legends
     const canvas = document.getElementById('graph');
-    const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
+    const ctx = canvas.getContext("2d"); //getting the features of the canvas, so i can promptly edit it AKA the context ... ctx
 
-    if (coord_canvas_sensor_x.length == coord_canvas_sensor_y.length){
+    if (coord_canvas_sensor_x.length == coord_canvas_sensor_y.length){ //double check, that coordinates are correct
         const draw_till_u_die = coord_canvas_sensor_x.length;
-        for (let i = 0; i < draw_till_u_die; i++) { //drawing the points --> SSSR Rank
+
+        //drawing the points --> SSSR Rank
+        for (let i = 0; i < draw_till_u_die; i++) { 
             ctx.beginPath();
             ctx.fillStyle = "pink";
-            //console.log(Math.PI); //lets see if pi-pi is working xD
+            //console.log(Math.PI); //lets see if pi-pi is working xD --> well, that's a insider joke.
             ctx.ellipse(coord_canvas_sensor_x[i], -coord_canvas_sensor_y[i], 3, 3, 0, 0, 2 * Math.PI, false);
             ctx.stroke();
         }
@@ -204,7 +221,7 @@ function setTime() { //from phillip, some parts of it is from me, but it was kin
     try{
         // Get the current time from the client's device
         var currentTime = new Date();
-        var date = currentTime.getDate();
+        var date = currentTime.getDate(); //thats new, because we wanted to add dates to our time send routine
         var hour = currentTime.getHours();
         var minute = currentTime.getMinutes();
         var second = currentTime.getSeconds();
@@ -235,7 +252,7 @@ function setTime() { //from phillip, some parts of it is from me, but it was kin
             xhr.send();
         }
     }
-    catch(err){ //this catch wont necessary happen, because http request are kinda weird
+    catch(err){ //this catch wont necessary happen, because http request is kinda weird
       alert("It occurs a errors when sending the httprequest, please make sure, you are connected to your device!\n" + err);
     };
 }
@@ -244,11 +261,11 @@ function measure_off_on_button(){
     count_button_off_on += 1;
     const button_off_on = document.getElementById("meas_ss_butt");
     
-    if (count_button_off_on == 1){
+    if (count_button_off_on == 1){ //start measurement
         button_off_on.style.backgroundColor = "green";
         setTime();
     }
-    else if (count_button_off_on == 2){
+    else if (count_button_off_on == 2){ //stop measurement
         button_off_on.style.backgroundColor = "blue";
         setTime();
     }
@@ -264,7 +281,7 @@ function canvas_setting(){
 
     //here i will draw a xy Graph with legends
     const canvas = document.getElementById('graph');
-    const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
+    const ctx = canvas.getContext("2d"); //getting the features of the canvas, so i can promptly edit it AKA the context ... ctx
 
     //getting the height and width
     const width = canvas.width;
@@ -276,7 +293,7 @@ function canvas_setting(){
 
     create_graph_xy();
 
-    //why, you ask. Very simple, because these methods will update the graph x and y axe lines, the comboxes are sometimes bugged, and dont update at the beginning if you dont change the current item. I had several problems with that, maybe i will change this line of code in the future, but now
+    //why, you ask. Very simple, because these methods will update the graph's x and y axe-lines, the combo boxes are sometimes bugged, and dont update at the beginning if you dont change the current item. I had several problems with that, maybe i will change this line of code in the future, but now it will stay like that --> yeah it will stay like that
     time_setting();
     sensor_setting();
 
@@ -285,7 +302,7 @@ function canvas_setting(){
 
 function create_graph_xy(){
     const canvas = document.getElementById('graph');
-    const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
+    const ctx = canvas.getContext("2d"); //getting the features of the canvas, so i can promptly edit it AKA the context ... ctx
     
     //getting the height and width
     const width = canvas.width;
@@ -334,18 +351,18 @@ function create_graph_xy(){
                                //In addition, it depends on the arrow, because the lines of axe (x,y), 
                                //would cross over the arrow, this would look ugly
     x_point_length = x_axe_length*0.98; //important for the sensor data-showing
-    setTime(); //here i am sending httrequest, so our esp gets the current time
+    setTime(); //here i am sending httrequest, so our esp gets the current time --> OFC this was not test properly, will be done later
 }
 
 function time_setting(){   
-    //reading zone ... getting the element and reading the value, which currently used e.g. sellected
+    //reading zone ... getting the element and reading the value, which was currently used e.g. sellected
     const zone = document.getElementById("box_time").value;
     let lapse = 0; //whole line portions for the x axe, e.g. a day has 24 --> 24 hours, meaning 24 lines
     let unit = 0;  //for each time lapse
 
     //here i will draw a xy Graph with legends
     const canvas = document.getElementById('graph');
-    const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
+    const ctx = canvas.getContext("2d"); //getting the features of the canvas, so i can promptly edit it AKA the context ... ctx
     
     //getting the height and width
     const width = canvas.width;
@@ -353,7 +370,7 @@ function time_setting(){
 
     const x_axe_name_diff = width * 0.005; //dif ... difference
     const height_for_x_lapses = height*0.01;
-    switch (zone) { //changes --> before it was x_axe_lenght - 1 in clearRect etc. --> But i found out that it is too much trouble, to implement it in that way all the time. So i gave the time and sensor axes each unique length, so that i have no trouble with line conflictions
+    switch (zone) { //changes --> before it was x_axe_length - 1 in clearRect etc. --> But i found out that it is too much trouble, to implement it in that way all the time. So i gave the time and sensor axes each unique length, so that i have no trouble with line conflictions
         case "Current-Data-Time":
 
             const sensor = document.getElementById("box_sens").value;
@@ -390,10 +407,10 @@ function time_setting(){
                 unit = division_time_zone; //for each time lapse --> x_point.length / max_time_zone 
 
                 ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
-                                                              //we are beginning at 1, because line with
+                                                              //we are beginning at 1, because of line width
                 measure_text_x_axe_and_delete(); //deleting the text
 
-                //because js is kinda bad, i have to do this method, to make the graph line accuracy better
+                //because js is kinda bad, i have to do this method, to make the graph's line accuracy better
                 const steps = lapse / 10;
                 let steps_array = [];
 
@@ -401,7 +418,7 @@ function time_setting(){
                     steps_array[i] = steps * i;
                 }
                 
-                for (let i = 0; i <= steps_array.length; i++) { // i = 0.0, so we can make sure, that we work with double numbers 
+                for (let i = 0; i <= steps_array.length; i++) { // i = 0.0, so we can make sure, that we work with double numbers --> yeeeeah, i changed that, because i am working with steps_array, i dont need to look at double numbers anymore
                     ctx.beginPath();
                     ctx.moveTo(steps_array[i] * unit, 0);
                     ctx.lineTo(steps_array[i] * unit, height_for_x_lapses);
@@ -411,7 +428,7 @@ function time_setting(){
                     //lapses naming
                     ctx.font = "12px serif";
                     if (i == 0){
-                        ctx.fillText(min_time_zone, [steps_array[i] * unit] -unit/6, height_for_x_lapses + 0.02*height); //bro it works, omg
+                        ctx.fillText(min_time_zone, [steps_array[i] * unit] -unit/6, height_for_x_lapses + 0.02*height); //bro it works, omg --> you ask why, very simple, it took me like 15hours, to finish this shit
                     }
                     else{
                         ctx.fillText((min_time_zone + Math.round(steps_array[i] * 10)/10), steps_array[i] * unit -unit/6, height_for_x_lapses + 0.02*height); //extremely complicated, it depends on the definition of the general time zone
@@ -430,7 +447,7 @@ function time_setting(){
             unit = x_point_length / lapse;
             //clearRect(...,...,unit/2 + x_axe_length-1,...) --> +unit/2, because of the x-axe line shift, thats why, okay?
             ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
-                                                              //we are beginning at 1, because line with
+                                                              //we are beginning at 1, because of line width
             measure_text_x_axe_and_delete(); //deleting the text
 
             for (let i = 0; i <= lapse; i++) {    
@@ -459,7 +476,7 @@ function time_setting(){
             unit = x_point_length / lapse; //for each time lapse
 
             ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared --> 12, is the font size of the text
-                                                              //we are beginning at 1, because line with
+                                                              //we are beginning at 1, because of line width
             measure_text_x_axe_and_delete(); //deleting the text
 
             for (let i = 0; i <= lapse; i++) {    
@@ -488,7 +505,7 @@ function time_setting(){
             unit = x_point_length / lapse; //for each time lapse
 
             ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
-                                                              //we are beginning at 1, because line with
+                                                              //we are beginning at 1, because of line width
             measure_text_x_axe_and_delete(); //deleting the text
 
             for (let i = 0; i <= lapse; i++) {    
@@ -536,7 +553,7 @@ function time_setting(){
 
 function measure_text_x_axe_and_delete(){ //for x-axe arrow naming
     const canvas = document.getElementById('graph');
-    const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
+    const ctx = canvas.getContext("2d"); //getting the features of the canvas, so i can promptly edit it AKA the context ... ctx
     
     //getting the width
     const width = canvas.width;
@@ -544,7 +561,7 @@ function measure_text_x_axe_and_delete(){ //for x-axe arrow naming
     const x_axe_name_diff = width * 0.005; //dif ... difference
 
     ctx.lineWidth = 0.5;
-    ctx.strokeStyle = '#000000'; //if strokestyle was not set, it will now be set in the occupied function
+    ctx.strokeStyle = '#000000'; //if strokestyle was not set correctly --> changes: it will now be set in the occupied function AKA in this function
     
     //getting the measurments - the naming of the x-axe will be measured here
     var x_months_length = ctx.measureText("x in months").width;
@@ -552,6 +569,7 @@ function measure_text_x_axe_and_delete(){ //for x-axe arrow naming
     var x_hours_length = ctx.measureText("x in hours").width;
 
     //now deleting
+    //days
     ctx.clearRect(x_whole_axe_length + x_axe_name_diff, 1, x_days_length, -20); //20px, we have to do "ctx.font = 20px serif", because it's allignment is up .... (...,1,...,...) because of the line width
     ctx.clearRect(x_whole_axe_length + x_axe_name_diff, 1, x_days_length, x_axe_name_diff); //double insurance, sometimes it deletes almost everything, but not all the text --> x_axe_name_diff, because it's deletes only the neccessary lines
     //x_hours
@@ -564,7 +582,7 @@ function measure_text_x_axe_and_delete(){ //for x-axe arrow naming
 
 function measure_text_y_axe_and_delete(){ //for y-axe arrow naming
     const canvas = document.getElementById('graph');
-    const ctx = canvas.getContext("2d"); //getting the the features of the canvas, so i can promptly edit it AKA the context ... ctx
+    const ctx = canvas.getContext("2d"); //getting the features of the canvas, so i can promptly edit it AKA the context ... ctx
     
     //getting the width
     const width = canvas.width;
@@ -572,7 +590,7 @@ function measure_text_y_axe_and_delete(){ //for y-axe arrow naming
     const y_axe_name_diff = width * 0.005; //diff ... difference
 
     ctx.lineWidth = 0.5;
-    ctx.strokeStyle = '#000000'; //if strokestyle was not set, it will now be set in the occupied function
+    ctx.strokeStyle = '#000000'; //if strokestyle was not set correctly --> changes: it will now be set in the occupied function AKA in this function
     
     //getting the measurments - the naming of the x-axe will be measured here
     var y_temp_length = ctx.measureText("Temperature").width;
@@ -596,7 +614,7 @@ function measure_text_y_axe_and_delete(){ //for y-axe arrow naming
 }
 
 function sensor_setting(){
-    //the same like setting_time()
+    //the same like setting_time() --> yeaaah, it was the same, but after i changed a few things its not anymore, the same function
     const sensor = document.getElementById("box_sens").value;
     const zone = document.getElementById("box_time").value;
     let lapse = 15;
@@ -615,12 +633,13 @@ function sensor_setting(){
     switch (sensor) { //the scaling depends on the sensors
         case "Temperature":
             switch (zone) {
-                case "Current-Data-Time": //it will only activate, if we user Current-Data-Time
+                case "Current-Data-Time": //it will only activate, if we use "Current-Data-Time"
                     if (read_data_bool == true && save_data_bool == true && data_division_temp != 0){
                         lapse = data_max_temp - data_min_temp;
                         unit = data_division_temp;
 
-                        ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow. Why, you ask, very simple cause this a self drawn graph not like any other you find online
+                        ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow.
+                                                                           // Why, you ask, very simple cause this a self drawn graph not like any other you find online
                         measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
 
                         const steps = lapse/10;
@@ -638,10 +657,10 @@ function sensor_setting(){
                             ctx.lineWidth = 2;
                             ctx.strokeStyle = '#000000';
                             ctx.stroke();
-                            //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range are 325°C --> meanig per lapse we have --> 32.5 degree difference
+                            //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range is 325°C --> meanig per lapse we have --> 32.5 degree difference
                             ctx.font = "20px serif";
 
-                            ctx.fillText([data_min_temp + (Math.round(steps_array[i] * 10)/10)] + "°C", -width*0.06, -steps_array[i] * unit);
+                            ctx.fillText([data_min_temp + Number((Math.round(steps_array[i] * 10)/10).toPrecision(2))] + "°C", -width*0.06, -steps_array[i] * unit);
                         }
 
                         ctx.font = "20px serif";
@@ -650,7 +669,8 @@ function sensor_setting(){
                 break;
             
                 default:
-                    ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow. Why, you ask, very simple cause this a self drawn graph not like any other you find online
+                    ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow.
+                                                                       // Why, you ask, very simple cause this a self drawn graph not like any other you find online
                     measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
                     //-75°C...250°C
                     lapse = 10;
@@ -677,12 +697,13 @@ function sensor_setting(){
 
         case "Airmoisure":
             switch (zone) {
-                case "Current-Data-Time": //it will only activate, if we user Current-Data-Time
+                case "Current-Data-Time": //it will only activate, if we use "Current-Data-Time"
                     if (read_data_bool == true && save_data_bool == true && data_division_hpp != 0){
                         lapse = data_max_hpp - data_min_hpp;
                         unit = data_division_hpp;
 
-                        ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow. Why, you ask, very simple cause this a self drawn graph not like any other you find online
+                        ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow.
+                                                                           // Why, you ask, very simple cause this a self drawn graph not like any other you find online
                         measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
 
                         const steps = lapse/10;
@@ -700,10 +721,10 @@ function sensor_setting(){
                             ctx.lineWidth = 2;
                             ctx.strokeStyle = '#000000';
                             ctx.stroke();
-                            //giving numbers (names) to the lines with corosponding --> 0 ... 100% --> our complete range are 100%
+                            //giving numbers (names) to the lines with corosponding --> 0 ... 100% --> our complete range is 100%
                             ctx.font = "20px serif";
 
-                            ctx.fillText([data_min_hpp + (Math.round(steps_array[i] * 10)/10)] + "°C", -width*0.06, -steps_array[i] * unit);
+                            ctx.fillText([data_min_hpp + Number((Math.round(steps_array[i] * 10)/10).toPrecision(2))] + "%", -width*0.06, -steps_array[i] * unit);
                         }
 
                         ctx.font = "20px serif";
@@ -725,7 +746,7 @@ function sensor_setting(){
                         ctx.lineWidth = 2;
                         ctx.strokeStyle = '#000000';
                         ctx.stroke();
-                        //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range are 325°C --> meanig per lapse we have --> 32.5 degree difference
+                        //giving numbers (names) to the lines with corosponding --> 0%...100% --> our complete range is 100% --> meanig per lapse we have --> 1% degree difference
                         ctx.font = "20px serif";
                         const unit_temp = 100/lapse;
                         ctx.fillText([(i*unit_temp)] + "%", -width*0.06, -i*unit);
@@ -738,12 +759,13 @@ function sensor_setting(){
 
         case "Airpressure":
             switch (zone) {
-                case "Current-Data-Time": //it will only activate, if we user Current-Data-Time
+                case "Current-Data-Time": //it will only activate, if we use "Current-Data-Time"
                     if (read_data_bool == true && save_data_bool == true && data_division_bme != 0){
                         lapse = data_max_bme - data_min_bme;
                         unit = data_division_bme;
 
-                        ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow. Why, you ask, very simple cause this a self drawn graph not like any other you find online
+                        ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow.
+                                                                           // Why, you ask, very simple cause this a self drawn graph not like any other you find online
                         measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
 
                         const steps = lapse/10;
@@ -761,10 +783,10 @@ function sensor_setting(){
                             ctx.lineWidth = 2;
                             ctx.strokeStyle = '#000000';
                             ctx.stroke();
-                            //giving numbers (names) to the lines with corosponding --> 0 ... 100% --> our complete range are 100%
+                            //giving numbers (names) to the lines with corosponding --> 300hPa ... 1100hPa --> our max difference is 800hPa
                             ctx.font = "20px serif";
 
-                            ctx.fillText([data_min_bme + (Math.round(steps_array[i] * 10)/10)] + "°C", -width*0.06, -steps_array[i] * unit);
+                            ctx.fillText([data_min_bme + (Math.round(Number(steps_array[i])))] + "hPa", -width*0.06, -steps_array[i] * unit);
                         }
 
                         ctx.font = "20px serif";
@@ -825,7 +847,7 @@ function sensor_setting(){
                             //giving numbers (names) to the lines with corosponding --> 0 ... 100% --> our complete range are 100%
                             ctx.font = "20px serif";
 
-                            ctx.fillText([data_min_ozon + (Math.round(steps_array[i] * 10)/10)] + "°C", -width*0.06, -steps_array[i] * unit);
+                            ctx.fillText([data_min_ozon + Number((Math.round(steps_array[i] * 10)/10).toPrecision(2))] + "ppm", -width*0.06, -steps_array[i] * unit);
                         }
 
                         ctx.font = "20px serif";
@@ -883,7 +905,7 @@ function HTTP_SAVE(){ //for saving the whole data, so i can extract the coordina
     
     //------------------------------------------------//
     const result_values_ozon = save_drawing_data_for_ozon();
-    if (result_values_ozon[2] != 0){
+    if (result_values_ozon[2] != 0){ //WHYYYY, you ask? Cause you asked for it. I am obviously joking, with this if statement, i am protected against invalid results from my function
         data_max_ozon = result_values_ozon[0];
         data_min_ozon = result_values_ozon[1];
         data_division_ozon = result_values_ozon[2];
@@ -931,11 +953,11 @@ function Read_from_temp(){
 function Read_from_bme(){ //this method will later be implemented in HTTP_SET
     const sensor_name = '"msgBME":'; //for splitting the name of the sensor from the sensor-data
     //fetchUserInfo("sensorbox.com", "sd", "bme280", "", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data); //test data
-    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_bme.http", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data, ":BME:");
+    fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_bme.http", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data, ":BME:"); //test data
 }
 
 function save_drawing_data_for_ozon(){
-    //reading zone ... getting the element and reading the value, which currently used e.g. sellected
+    //reading zone ... getting the element and reading the value, which is currently used e.g. sellected
     const zone = document.getElementById("box_time").value;
 
     //Range --> [0-100]ppm
@@ -956,7 +978,7 @@ function save_drawing_data_for_ozon(){
                 ozon_min = Number(ozon_data[0]); //min 0%
 
                 for (let i = 0; i < ozon_data.length; i++) {
-                    if (ozon_max <= Number(ozon_data[i])){ //we have to add Number, because its a string, if we dont do that, yeeeah, our values will be completly wrong.
+                    if (ozon_max <= Number(ozon_data[i])){ //we have to add "Number()"", because its a string, if we dont do that, yeeeah, our values will be completly wrong.
                         ozon_max = Number(ozon_data[i]); //biggest value
                     }
                     if (ozon_min >= Number(ozon_data[i])){
@@ -1023,11 +1045,11 @@ function save_drawing_data_for_ozon(){
                     //////////////////////////////////////////////       
                     console.log(i + " . " + y_coordinates[i] + " - Y-Values");
                     //////////////////////////////////////////////
-                    break;
                 }
+            break;
         }
 
-        switch (zone) {
+        switch (zone) { //selecting the right time zone, hehe, i know this method, has 1000 aura, because of its unique properties
             case "Current-Data-Time":
                 let result_values = sensor_time_calculate_actual_coordinates_universal(ozon_canvas_x, ozon_time);
                 time_max_ozon = result_values[0];
@@ -1061,7 +1083,7 @@ function save_drawing_data_for_ozon(){
 }
 
 function save_drawing_data_for_temp(){
-    //reading zone ... getting the element and reading the value, which currently used e.g. selected
+    //reading zone ... getting the element and reading the value, which is currently used e.g. selected
     const zone = document.getElementById("box_time").value;
 
     //Range --> -75°C...250°C
@@ -1209,7 +1231,7 @@ function save_drawing_data_for_temp(){
 }
 
 function save_drawing_data_for_hpp(){
-    //reading zone ... getting the element and reading the value, which currently used e.g. sellected
+    //reading zone ... getting the element and reading the value, which is currently used e.g. sellected
     const zone = document.getElementById("box_time").value;
 
     //Range --> [0-100]%
@@ -1288,7 +1310,7 @@ function save_drawing_data_for_hpp(){
                         break;
 
                         default:
-                            y_coordinates[i] = hpp_1 * Number(hpp_data[i]); // -300, because we beging to drawing at 300hPa
+                            y_coordinates[i] = hpp_1 * Number(hpp_data[i]); 
                             hpp_canvas_y[i] = y_coordinates[i];
                         break;
                     }
@@ -1336,7 +1358,7 @@ function save_drawing_data_for_hpp(){
 }
 
 function save_drawing_data_for_bme(){
-    //reading zone ... getting the element and reading the value, which currently used e.g. sellected
+    //reading zone ... getting the element and reading the value, which is currently used e.g. sellected
     const zone = document.getElementById("box_time").value;
 
     if (bme_data.length >= 1){
@@ -1451,7 +1473,7 @@ function save_drawing_data_for_bme(){
 
             break;
         } 
-        //bme_canvas_y = y_coordinates; //please dont ask me, why this line of code is not working
+        //bme_canvas_y = y_coordinates; //please dont ask me, why this line of code is not working --> changes: it has probably sth to do how arrays function in js. Obviously completely different compared to C#
 
         if (bme_division != 0){
             return [bme_max, bme_min, bme_division];
@@ -1506,7 +1528,7 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
     let temp_min = saved_hours[0]; //same here
 
     //here i will select the biggest and the lowest time --> for the graph and for the calculations
-    for (let i = 0; i < saved_hours.length; i++) { //for 2x method ---> yk what i am talking about. With that i can clearly select the biggest data and the smallest data. chad for method.
+    for (let i = 0; i < saved_hours.length; i++) { //for 2x method ---> yk what i am talking about. With that i can clearly select the biggest data and the smallest data. chad for-method.
         if (temp_max <= saved_hours[i]){
             temp_max = saved_hours[i]; //setting temporary biggest value
         }
@@ -1516,7 +1538,7 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
     }
 
     for (let i = 0; i < sensor_time.length; i++) { //read sensor_time and save it
-        //the max time value for the sensors -- i concluded, that a day-time zone will be programmed first and the other participants like 2 weeks shown line, etc. will be connected to this 24-hour data
+        //the max time value for the sensors -- i concluded, that a day-time zone will be programmed first and the other participants like 2 weeks shown line, etc. will be connected to this 24-hour data --> still same thought, but 2 weeks wont appear anymore :(
         let time_all = x_point_length; //general time - coordinate
         time_divided = time_all / (temp_max - temp_min); //divided time  - coordinate
 
@@ -1552,7 +1574,6 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
         x_coord_tempory[i] -= x_coord_tempory[0]; //the first value is the smallest
         x_coord[i] = x_coord_tempory[i]; //i have absolutely noooo idea, why you have to write it, in that way and cant do x_coord = x_coord_temp. Yk, it worked fine before, but yeeah, thats fucking cringe. --> the reason is extremely simple, its because i am writing in js. 
     }
-
 
     return [Math.round(temp_max * 100)/100, Math.round(temp_min * 100)/100, Math.round(time_divided * 100)/100]; //returnig the values as a array
 
@@ -1620,7 +1641,7 @@ function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
                     x_coord_temp[i] = time_1h * calculate_per_1h_from_this;
                 break;
         }
-        x_coord[i] = x_coord_temp[i]; //i have absolutely noooo idea, why you have to write it, in that way and cant do x_coord = x_coord_temp. Yk, it worked fine before, but yeeah, thats fucking cringe.
+        x_coord[i] = x_coord_temp[i]; //i have absolutely noooo idea, why you have to write it, in that way and cant do x_coord = x_coord_temp. Yk, it worked fine before, but yeeah, thats fucking cringe. --> yeah i like i said, because of js.
         //////////////////check////////////////
         ///////////////////////////////////////
         console.log(i + " . " + x_coord_temp[i] + " - X-Values");
@@ -1674,14 +1695,14 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
     //checking
     //////////////////////////////////////////////////////////////////
-    console.log(BMEmsg + "\n\nsplit BMEmsg"); //it worksssssssssssssss, yeeeaaa men
+    console.log(BMEmsg + "\n\nsplit BMEmsg"); //it worksssssssssssssss, yeeeaaa men ---> heeeey, i was extremely happy, when it worked, dont u dare to be mad!
     console.log(without_symbols + "\n\nsplit symbols"); //it worksssssssssssssss, yeeeaaa men
     //////////////////////////////////////////////////////////////////
 
     //saving without_symbols to a specific sensor save point
     data_sensor_no_sym = without_symbols;
 
-    //first lets take split the data with @
+    //first lets take without_symbols and split the data with @
     const split_data = without_symbols.split('@'); 
 
     //checking
@@ -1725,4 +1746,4 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 }
 //To do --> csv save and graph save
 
-setInterval(HTTP_READ(), 100);
+setInterval(HTTP_READ(), 1000); //yeah i changed, the paramter, to 1 second --> it should work, but we have to test it properly with the esp
