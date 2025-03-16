@@ -67,37 +67,61 @@ let u_can_calculate_now = false;
 let read_data_bool = false;
 let save_data_bool = false;
 
+//-----------------------------------------------------------------------------//
 //bme
 let time_max_bme = 0; //time max and divided time of the general time division
 let time_min_bme = 0;
 let time_division_bme =  0; //general time division ... number
+
+let data_max_bme = 0; //max data for the bme
+let data_min_bme = 0; //lowest data for the bme
+let data_division_bme = 0; //division factor for the coordinates and drawing
 
 //hpp
 let time_max_hpp = 0; //time max and divided time of the general time division
 let time_min_hpp = 0;
 let time_division_hpp = 0; //general time division ... number
 
+let data_max_hpp = 0;
+let data_min_hpp = 0;
+let data_division_hpp = 0;
+
 //ozon
 let time_max_ozon = 0; //time max and divided time of the general time division
 let time_min_ozon = 0;
 let time_division_ozon = 0; //general time division ... number
 
+let data_max_ozon = 0;
+let data_min_ozon = 0;
+let data_division_ozon = 0;
+
 //temp
-let time_max_temp= 0; //time max and divided time of the general time division
+let time_max_temp = 0; //time max and divided time of the general time division
 let time_min_temp = 0;
 let time_division_temp = 0; //general time division ... number
+
+let data_max_temp = 0;
+let data_min_temp = 0;
+let data_division_temp = 0;
 
 //important values for drawing --- FOR ALL SENSORS
 let max_time_zone = 0;
 let min_time_zone = 0;
 let division_time_zone = 0;
 
+let max_data_zone = 0;
+let min_data_zone = 0;
+let division_data_zone = 0;
+//-----------------------------------------------------------------------------//
+
+
 function apply_button(){ //applying the filter options on the graph
     update();
 }
 
 function update(){ //changing the data, which shall be shown to the user
-    HTTP_SAVE(); //saving sensor-data
+
+    HTTP_SAVE(); //saving sensor-data ---> first HTTP_SAVE, because there are some pieces of information, which could be changed anytime
 
     canvas_setting(); //reseting everything
 
@@ -169,6 +193,8 @@ function draw_general(coord_canvas_sensor_x, coord_canvas_sensor_y){
             ctx.lineTo(coord_canvas_sensor_x[i], -coord_canvas_sensor_y[i]);
         }
         ctx.stroke();
+
+        ctx.fillStyle = "black";
     }
 }
 
@@ -399,29 +425,6 @@ function time_setting(){
             }
         break;
 
-        case "2 hours in a row":
-            lapse = 2; //1, because of 0 time
-            unit = x_point_length / lapse; //for each time lapse
-
-            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
-                                                              //we are beginning at 1, because line with
-            measure_text_x_axe_and_delete(); //deleting the text
-
-            for (let i = 0; i <= lapse; i++) {    
-                ctx.beginPath();
-                ctx.moveTo(i * unit, 0);
-                ctx.lineTo(i*unit, height_for_x_lapses);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-                //lapses naming
-                ctx.font = "12px serif";
-                ctx.fillText([i], [i*unit - unit/150], height_for_x_lapses + 0.02*height);
-            }
-            ctx.font = "20px serif";
-            ctx.fillText("x in hours", x_whole_axe_length + x_axe_name_diff,1);
-        break;
-
         case "Today":
             lapse = 24; //1, because of 0 time
             unit = x_point_length / lapse;
@@ -575,6 +578,7 @@ function measure_text_y_axe_and_delete(){ //for y-axe arrow naming
     var y_temp_length = ctx.measureText("Temperature").width;
     var y_airmois_length = ctx.measureText("Airmoisure").width;
     var y_airpress_length = ctx.measureText("Airpressure").width;
+    var y_ozon_length = ctx.measureText("Ozon").width;
 
     //now deleting
     //temperature
@@ -586,11 +590,15 @@ function measure_text_y_axe_and_delete(){ //for y-axe arrow naming
     //airpressure
     ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_airpress_length, -20);
     ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_airpress_length, y_axe_name_diff);
+    //ozon
+    ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_ozon_length, -20);
+    ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_ozon_length, y_axe_name_diff);
 }
 
 function sensor_setting(){
     //the same like setting_time()
     const sensor = document.getElementById("box_sens").value;
+    const zone = document.getElementById("box_time").value;
     let lapse = 15;
     let unit = 0;  //for each time lapse
 
@@ -606,96 +614,249 @@ function sensor_setting(){
 
     switch (sensor) { //the scaling depends on the sensors
         case "Temperature":
-            ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow. Why, you ask, very simple cause this a self drawn graph not like any other you find online
-            measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
-            //-75°C...250°C
-            lapse = 10;
-            unit = y_point_length / lapse; //for each time lapse
-            for (let i = 0; i <= lapse; i++) {    
-                //line generating
-                ctx.beginPath();
-                ctx.moveTo(0, -i * unit);
-                ctx.lineTo(-width*0.01, -i*unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-                //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range are 325°C --> meanig per lapse we have --> 32.5 degree difference
-                ctx.font = "20px serif";
-                const unit_temp = 325/lapse;
-                ctx.fillText([-75+(i*unit_temp)] + "°C", -width*0.06, -i*unit);
+            switch (zone) {
+                case "Current-Data-Time": //it will only activate, if we user Current-Data-Time
+                    if (read_data_bool == true && save_data_bool == true && data_division_temp != 0){
+                        lapse = data_max_temp - data_min_temp;
+                        unit = data_division_temp;
+
+                        ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow. Why, you ask, very simple cause this a self drawn graph not like any other you find online
+                        measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
+
+                        const steps = lapse/10;
+                        let steps_array = [];
+
+                        for (let i = 0; i <= 10; i++) {
+                            steps_array[i] = steps * i;                            
+                        }
+
+                        for (let i = 0; i < steps_array.length; i++) {
+                            //line generating
+                            ctx.beginPath();
+                            ctx.moveTo(0, -steps_array[i] * unit);
+                            ctx.lineTo(-width*0.01, -steps_array[i] * unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle = '#000000';
+                            ctx.stroke();
+                            //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range are 325°C --> meanig per lapse we have --> 32.5 degree difference
+                            ctx.font = "20px serif";
+
+                            ctx.fillText([data_min_temp + (Math.round(steps_array[i] * 10)/10)] + "°C", -width*0.06, -steps_array[i] * unit);
+                        }
+
+                        ctx.font = "20px serif";
+                        ctx.fillText("Temperature", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+                    }
+                break;
+            
+                default:
+                    ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow. Why, you ask, very simple cause this a self drawn graph not like any other you find online
+                    measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
+                    //-75°C...250°C
+                    lapse = 10;
+                    unit = y_point_length / lapse; //for each time lapse
+                    for (let i = 0; i <= lapse; i++) {    
+                        //line generating
+                        ctx.beginPath();
+                        ctx.moveTo(0, -i * unit);
+                        ctx.lineTo(-width*0.01, -i*unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = '#000000';
+                        ctx.stroke();
+                        //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range are 325°C --> meanig per lapse we have --> 32.5 degree difference
+                        ctx.font = "20px serif";
+                        const unit_temp = 325/lapse;
+                        ctx.fillText([-75+(i*unit_temp)] + "°C", -width*0.06, -i*unit);
+                    }
+                    ctx.font = "20px serif";
+                    ctx.fillText("Temperature", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+                break;
             }
-            ctx.font = "20px serif";
-            ctx.fillText("Temperature", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+            
         break;
 
         case "Airmoisure":
-            ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); //clearing the axe, so it is cleared
-            measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
-            //0...100% RH
-            lapse = 10; 
-            unit = y_point_length / lapse; //for each time lapse
-            for (let i = 0; i <= lapse; i++) {    
-                //line generating
-                ctx.beginPath();
-                ctx.moveTo(0, -i * unit);
-                ctx.lineTo(-width*0.01, -i*unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-                //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range are 325°C --> meanig per lapse we have --> 32.5 degree difference
-                ctx.font = "20px serif";
-                const unit_temp = 100/lapse;
-                ctx.fillText([(i*unit_temp)] + "%", -width*0.06, -i*unit);
+            switch (zone) {
+                case "Current-Data-Time": //it will only activate, if we user Current-Data-Time
+                    if (read_data_bool == true && save_data_bool == true && data_division_hpp != 0){
+                        lapse = data_max_hpp - data_min_hpp;
+                        unit = data_division_hpp;
+
+                        ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow. Why, you ask, very simple cause this a self drawn graph not like any other you find online
+                        measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
+
+                        const steps = lapse/10;
+                        let steps_array = [];
+
+                        for (let i = 0; i <= 10; i++) {
+                            steps_array[i] = steps * i;                            
+                        }
+
+                        for (let i = 0; i < steps_array.length; i++) {
+                            //line generating
+                            ctx.beginPath();
+                            ctx.moveTo(0, -steps_array[i] * unit);
+                            ctx.lineTo(-width*0.01, -steps_array[i] * unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle = '#000000';
+                            ctx.stroke();
+                            //giving numbers (names) to the lines with corosponding --> 0 ... 100% --> our complete range are 100%
+                            ctx.font = "20px serif";
+
+                            ctx.fillText([data_min_hpp + (Math.round(steps_array[i] * 10)/10)] + "°C", -width*0.06, -steps_array[i] * unit);
+                        }
+
+                        ctx.font = "20px serif";
+                        ctx.fillText("Temperature", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+                    }
+                break;
+            
+                default:
+                    ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); //clearing the axe, so it is cleared
+                    measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
+                    //0...100% RH
+                    lapse = 10; 
+                    unit = y_point_length / lapse; //for each time lapse
+                    for (let i = 0; i <= lapse; i++) {    
+                        //line generating
+                        ctx.beginPath();
+                        ctx.moveTo(0, -i * unit);
+                        ctx.lineTo(-width*0.01, -i*unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = '#000000';
+                        ctx.stroke();
+                        //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range are 325°C --> meanig per lapse we have --> 32.5 degree difference
+                        ctx.font = "20px serif";
+                        const unit_temp = 100/lapse;
+                        ctx.fillText([(i*unit_temp)] + "%", -width*0.06, -i*unit);
+                    }
+                    ctx.font = "20px serif";
+                    ctx.fillText("Airmoisure", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+                break;
             }
-            ctx.font = "20px serif";
-            ctx.fillText("Airmoisure", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
         break;
 
         case "Airpressure":
-            ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); //clearing the axe, so it is cleared
-            measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
-            //300hPa...1100hPa
-            lapse = 10; 
-            unit = y_point_length / lapse; //for each time lapse
-            for (let i = 0; i <= lapse; i++) {    
-                //line generating
-                ctx.beginPath();
-                ctx.moveTo(0, -i * unit);
-                ctx.lineTo(-width*0.01, -i*unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-                //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range are 325°C --> meanig per lapse we have --> 32.5 degree difference
-                ctx.font = "20px serif";
-                const unit_temp = 800/lapse; //1100hPa - 300hPa = 800hPa
-                ctx.fillText([300 + (i*unit_temp)] + "hPa", -width*0.06, -i*unit);
-            }
-            ctx.font = "20px serif";
-            ctx.fillText("Airpressure", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+            switch (zone) {
+                case "Current-Data-Time": //it will only activate, if we user Current-Data-Time
+                    if (read_data_bool == true && save_data_bool == true && data_division_bme != 0){
+                        lapse = data_max_bme - data_min_bme;
+                        unit = data_division_bme;
+
+                        ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow. Why, you ask, very simple cause this a self drawn graph not like any other you find online
+                        measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
+
+                        const steps = lapse/10;
+                        let steps_array = [];
+
+                        for (let i = 0; i <= 10; i++) {
+                            steps_array[i] = steps * i;                            
+                        }
+
+                        for (let i = 0; i < steps_array.length; i++) {
+                            //line generating
+                            ctx.beginPath();
+                            ctx.moveTo(0, -steps_array[i] * unit);
+                            ctx.lineTo(-width*0.01, -steps_array[i] * unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle = '#000000';
+                            ctx.stroke();
+                            //giving numbers (names) to the lines with corosponding --> 0 ... 100% --> our complete range are 100%
+                            ctx.font = "20px serif";
+
+                            ctx.fillText([data_min_bme + (Math.round(steps_array[i] * 10)/10)] + "°C", -width*0.06, -steps_array[i] * unit);
+                        }
+
+                        ctx.font = "20px serif";
+                        ctx.fillText("Airpressure", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+                    }
+                break;
+
+                default:
+                    ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); //clearing the axe, so it is cleared
+                    measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
+                    //300hPa...1100hPa
+                    lapse = 10; 
+                    unit = y_point_length / lapse; //for each time lapse
+                    for (let i = 0; i <= lapse; i++) {    
+                        //line generating
+                        ctx.beginPath();
+                        ctx.moveTo(0, -i * unit);
+                        ctx.lineTo(-width*0.01, -i*unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = '#000000';
+                        ctx.stroke();
+                        //giving numbers (names) to the lines with corosponding 
+                        ctx.font = "20px serif";
+                        const unit_temp = 800/lapse; //1100hPa - 300hPa = 800hPa
+                        ctx.fillText([300 + (i*unit_temp)] + "hPa", -width*0.06, -i*unit);
+                    }
+                    ctx.font = "20px serif";
+                    ctx.fillText("Airpressure", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+                break;
+            }    
         break;
 
         case "Gas":
-            //i dont know we have to test it first --> now i know how to do it
-            ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); //clearing the axe, so it is cleared
-            measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
-            //0% ... 100%
-            lapse = 10; 
-            unit = y_point_length / lapse; //for each time lapse
-            for (let i = 0; i <= lapse; i++) {    
-                //line generating
-                ctx.beginPath();
-                ctx.moveTo(0, -i * unit);
-                ctx.lineTo(-width*0.01, -i*unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-                //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range are 325°C --> meanig per lapse we have --> 32.5 degree difference
-                ctx.font = "20px serif";
-                const unit_temp = 100/lapse; //1100hPa - 300hPa = 800hPa
-                ctx.fillText((i*unit_temp) + "ppm", -width*0.06, -i*unit);
+            switch (zone) {
+                case "Current-Data-Time": //it will only activate, if we user Current-Data-Time
+                    if (read_data_bool == true && save_data_bool == true && data_division_ozon != 0){
+                        lapse = data_max_ozon - data_min_ozon;
+                        unit = data_division_ozon;
+
+                        ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); // clearrect(..,2,..,...), because if do less than that, we well we will delete the arrow. Why, you ask, very simple cause this a self drawn graph not like any other you find online
+                        measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
+
+                        const steps = lapse/10;
+                        let steps_array = [];
+
+                        for (let i = 0; i <= 10; i++) {
+                            steps_array[i] = steps * i;                            
+                        }
+
+                        for (let i = 0; i < steps_array.length; i++) {
+                            //line generating
+                            ctx.beginPath();
+                            ctx.moveTo(0, -steps_array[i] * unit);
+                            ctx.lineTo(-width*0.01, -steps_array[i] * unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle = '#000000';
+                            ctx.stroke();
+                            //giving numbers (names) to the lines with corosponding --> 0 ... 100% --> our complete range are 100%
+                            ctx.font = "20px serif";
+
+                            ctx.fillText([data_min_ozon + (Math.round(steps_array[i] * 10)/10)] + "°C", -width*0.06, -steps_array[i] * unit);
+                        }
+
+                        ctx.font = "20px serif";
+                        ctx.fillText("Ozon", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+                    }
+                break;
+
+                default:
+                    //i dont know we have to test it first --> now i know how to do it
+                    ctx.clearRect(-1, 2, -width*0.1, -y_axe_length-1); //clearing the axe, so it is cleared
+                    measure_text_y_axe_and_delete(); //deleting the text aka arrow names, so conflicts wont happen
+                    //0% ... 100%
+                    lapse = 10; 
+                    unit = y_point_length / lapse; //for each time lapse
+                    for (let i = 0; i <= lapse; i++) {    
+                        //line generating
+                        ctx.beginPath();
+                        ctx.moveTo(0, -i * unit);
+                        ctx.lineTo(-width*0.01, -i*unit); // -i*unit --> because we have a translate point, meaning everything under the translate point is positive and everything above it, is negative
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = '#000000';
+                        ctx.stroke();
+                        //giving numbers (names) to the lines with corosponding 
+                        ctx.font = "20px serif";
+                        const unit_temp = 100/lapse;
+                        ctx.fillText((i*unit_temp) + "ppm", -width*0.06, -i*unit);
+                    }
+                    ctx.font = "20px serif";
+                    ctx.fillText("Ozon", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+                break;
             }
-            ctx.font = "20px serif";
-            ctx.fillText("Airpressure", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
         break;
     }
 }
@@ -719,12 +880,36 @@ function HTTP_READ(){ //here i will set and save the values for the sensor data
 function HTTP_SAVE(){ //for saving the whole data, so i can extract the coordinates (canvas)
     //saving the data
     save_data_bool = false; //for the time zone
+    
+    //------------------------------------------------//
+    const result_values_ozon = save_drawing_data_for_ozon();
+    if (result_values_ozon[2] != 0){
+        data_max_ozon = result_values_ozon[0];
+        data_min_ozon = result_values_ozon[1];
+        data_division_ozon = result_values_ozon[2];
+    }
 
-    save_drawing_data_for_ozon();
-    save_drawing_data_for_bme();
-    save_drawing_data_for_hpp();
-    save_drawing_data_for_temp();
+    const result_values_bme = save_drawing_data_for_bme();
+    if (result_values_bme[2] != 0){
+        data_max_bme = result_values_bme[0];
+        data_min_bme = result_values_bme[1];
+        data_division_bme = result_values_bme[2];
+    }
 
+    const result_values_hpp = save_drawing_data_for_hpp();
+    if (result_values_hpp[2] != 0){
+        data_max_hpp = result_values_hpp[0];
+        data_min_hpp = result_values_hpp[1];
+        data_division_hpp = result_values_hpp[2];
+    }
+
+    const result_values_temp = save_drawing_data_for_temp();
+    if (result_values_temp[2] != 0){
+        data_max_temp = result_values_temp[0];
+        data_min_temp = result_values_temp[1];
+        data_division_temp = result_values_temp[2];
+    }
+    //------------------------------------------------//
     save_data_bool = true;
 }
 
@@ -755,40 +940,91 @@ function save_drawing_data_for_ozon(){
 
     //Range --> [0-100]ppm
     if (ozon_data.length >= 1){
+
         ozon_canvas_x = [];
         ozon_canvas_y = [];
 
         let y_coordinates = []; //saving the coords, for drawing, or else it will be way too complicated
 
-        //the max difference for % value is 100 --> 100% - 0%, very important
-        const ozon_100 = y_point_length; //100% measurement
-        const ozon_10 = ozon_100 / 10; //10% measurement
-        const ozon_1 = ozon_10 / 10; //1% measurement
+        let ozon_max = 0; //max 100%
+        let ozon_min = 0; //min 0%
+        let ozon_division = 0; //division factor
+
+        switch (zone) {
+            case "Current-Data-Time":
+                ozon_max = Number(ozon_data[0]); //max 100%
+                ozon_min = Number(ozon_data[0]); //min 0%
+
+                for (let i = 0; i < ozon_data.length; i++) {
+                    if (ozon_max <= Number(ozon_data[i])){ //we have to add Number, because its a string, if we dont do that, yeeeah, our values will be completly wrong.
+                        ozon_max = Number(ozon_data[i]); //biggest value
+                    }
+                    if (ozon_min >= Number(ozon_data[i])){
+                        ozon_min = Number(ozon_data[i]); //lowest value
+                    }
+                }
+
+                ozon_division = y_point_length / (ozon_max - ozon_min); //division factor
+
+                for (let i = 0; i < ozon_data.length; i++) { //y-coordinates
+                    let dy_ozon = ozon_max - Number(ozon_data[i]); //max difference 100%
+
+                    switch (dy_ozon) { //same function like before, but more general
+                        case 0: //max value of 100% reached
+                            y_coordinates[i] = y_point_length;
+                            ozon_canvas_y[i] = y_coordinates[i];
+                        break;
+
+                        case (ozon_max - ozon_min): //lowest value possible is 0%
+                            y_coordinates[i] = 0;
+                            ozon_canvas_y[i] = y_coordinates[i];
+                        break;
+
+                        default:
+                            y_coordinates[i] = ozon_division * (Number(ozon_data[i]) - ozon_min);
+                            ozon_canvas_y[i] = y_coordinates[i];
+                        break;
+                    }
+
+                //////////////////check///////////////////////
+                //////////////////////////////////////////////       
+                console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+                //////////////////////////////////////////////
+                }   
+            break;
         
-        for (let i = 0; i < ozon_data.length; i++) { //y-coordinates
-            let dy_ozon = ozon_max_value - ozon_data[i];
+            default:
+                //the max difference for % value is 100 --> 100% - 0%, very important
+                const ozon_100 = y_point_length; //100% measurement
+                const ozon_10 = ozon_100 / 10; //10% measurement
+                const ozon_1 = ozon_10 / 10; //1% measurement
+                
+                for (let i = 0; i < ozon_data.length; i++) { //y-coordinates
+                    let dy_ozon = ozon_max_value - Number(ozon_data[i]);
 
-            switch (dy_ozon) { // 0 and 100 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
-                case 0: //max value of 100% reached
-                    y_coordinates[i] = ozon_100;
-                    ozon_canvas_y[i] = y_coordinates[i];
-                break;
+                    switch (dy_ozon) { // 0 and 100 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
+                        case 0: //max value of 100% reached
+                            y_coordinates[i] = ozon_100;
+                            ozon_canvas_y[i] = y_coordinates[i];
+                        break;
 
-                case 100: //lowest value of 0% reached
-                    y_coordinates[i] = 0;
-                    ozon_canvas_y[i] = y_coordinates[i];
-                break;
+                        case 100: //lowest value of 0% reached
+                            y_coordinates[i] = 0;
+                            ozon_canvas_y[i] = y_coordinates[i];
+                        break;
 
-                default:
-                    y_coordinates[i] = ozon_1 * ozon_data[i];
-                    ozon_canvas_y[i] = y_coordinates[i];        
-                break;
-            }
+                        default:
+                            y_coordinates[i] = ozon_1 * Number(ozon_data[i]);
+                            ozon_canvas_y[i] = y_coordinates[i];        
+                        break;
+                    }
 
-            //////////////////check///////////////////////
-            //////////////////////////////////////////////       
-            console.log(i + " . " + y_coordinates[i] + " - Y-Values");
-            //////////////////////////////////////////////
+                    //////////////////check///////////////////////
+                    //////////////////////////////////////////////       
+                    console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+                    //////////////////////////////////////////////
+                    break;
+                }
         }
 
         switch (zone) {
@@ -799,10 +1035,6 @@ function save_drawing_data_for_ozon(){
                 time_division_ozon = result_values[2];
             break;
 
-            case "2 hours in a row":
-
-            break;
-
             case "Today":
                 sensor_time_calculate_their_Coordinates_24h(ozon_canvas_x, ozon_time);
             break;
@@ -815,6 +1047,13 @@ function save_drawing_data_for_ozon(){
 
             break;
         } 
+
+        if (ozon_division != 0){
+            return [ozon_max, ozon_min, ozon_division];
+        }
+        else{
+            return [0, 0, 0];
+        }
     }
     else{
         console.log("Could not retrieve the corrosponding OZON-sensor data");
@@ -822,53 +1061,119 @@ function save_drawing_data_for_ozon(){
 }
 
 function save_drawing_data_for_temp(){
-    //reading zone ... getting the element and reading the value, which currently used e.g. sellected
+    //reading zone ... getting the element and reading the value, which currently used e.g. selected
     const zone = document.getElementById("box_time").value;
 
     //Range --> -75°C...250°C
     if (temp_data.length >= 1){
+
         temp_canvas_x = [];
         temp_canvas_y = [];
 
         let y_coordinates = []; //saving the coords, for drawing, or else it will be way too complicated
 
-        //the max difference for % value is 100 --> 100% - 0%, very important
-        const temp_325 = y_point_length; //325°C measurement
-        const temp_32_5 = temp_325 / 10; //32.5°C measurement
-        const temp_3_25 = temp_32_5 / 10; //3.25°C measurement
-        const temp_1 = temp_3_25 / 3.25; //1°C measurement
+        let temp_max = 0; //max 250°C
+        let temp_min = 0; //min -75°C
+        let temp_division = 0; //division factor
+
+        switch (zone) {
+            case "Current-Data-Time":
+                temp_max = Number(temp_data[0]); //max 250°C
+                temp_min = Number(temp_data[0]); //min -75°C
+
+                for (let i = 0; i < temp_data.length; i++) {
+                    if (temp_max <= Number(temp_data[i])){ //we have to add Number, because its a string, if we dont do that, yeeeah, our values will be completly wrong.
+                        temp_max = Number(temp_data[i]); //biggest value
+                    }
+                    if (temp_min >= Number(temp_data[i])){
+                        temp_min = Number(temp_data[i]); //lowest value
+                    }
+                }
+                temp_division = y_point_length / (temp_max - temp_min); //division factor
+
+                for (let i = 0; i < temp_data.length; i++) { //y-coordinates
+                    let dy_temp = temp_max - Number(temp_data[i]); //max difference 325°C
+
+                    switch (dy_temp) { //same function like before, but more general
+                        case 0: //max value of 250°C reached
+                            y_coordinates[i] = y_point_length;
+                            temp_canvas_y[i] = y_coordinates[i];
+                        break;
+
+                        case (temp_max - temp_min): //lowest value possible is -75°C 
+                            y_coordinates[i] = 0;
+                            temp_canvas_y[i] = y_coordinates[i];
+                        break;
+
+                        default:
+                            if (temp_min >= 0){ //min area is greater than 0°C
+                                y_coordinates[i] = temp_division * (Number(temp_data[i]) - temp_min);
+                                temp_canvas_y[i] = y_coordinates[i];
+                            }
+                            else if (temp_min < 0 && temp_max < 0){ //the whole measurement range is less than 0 
+                                y_coordinates[i] = temp_division * (Math.abs(temp_min) + Number(temp_data[i]));
+                                temp_canvas_y[i] = y_coordinates[i];    
+                            }
+                            else if (temp_min < 0 && temp_max > 0){ //negative and positiv range area
+                                if (Number(temp_data[i]) < 0){
+                                    y_coordinates[i] = temp_division * (Math.abs(temp_min) + Number(temp_data[i]));
+                                    temp_canvas_y[i] = y_coordinates[i];
+                                }   
+                                else{
+                                    y_coordinates[i] = temp_division * (Number(temp_data[i]) + Math.abs(temp_min)); //begin where ever you like
+                                    temp_canvas_y[i] = y_coordinates[i];
+                                }   
+                            }
+                        break;
+                    }
+
+                //////////////////check///////////////////////
+                //////////////////////////////////////////////       
+                console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+                //////////////////////////////////////////////
+                }          
+            break;
         
-        for (let i = 0; i < temp_data.length; i++) { //y-coordinates
-            let dy_temp = temp_max_value - temp_data[i];
+            default:
+                //the max difference for % value is 100 --> 100% - 0%, very important
+                const temp_325 = y_point_length; //325°C measurement
+                const temp_32_5 = temp_325 / 10; //32.5°C measurement
+                const temp_3_25 = temp_32_5 / 10; //3.25°C measurement
+                const temp_1 = temp_3_25 / 3.25; //1°C measurement
+                
+                for (let i = 0; i < temp_data.length; i++) { //y-coordinates
+                    let dy_temp = temp_max_value - temp_data[i];
 
-            switch (dy_temp) { // 0 and 100 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
-                case 0: //max value of 250°C reached
-                    y_coordinates[i] = temp_325;
-                    temp_canvas_y[i] = y_coordinates[i];
-                break;
+                    switch (dy_temp) { // 0 and 100 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
+                        case 0: //max value of 250°C reached
+                            y_coordinates[i] = temp_325;
+                            temp_canvas_y[i] = y_coordinates[i];
+                        break;
 
-                case 175: //lowest value of -75°C reached
-                    y_coordinates[i] = 0;
-                    temp_canvas_y[i] = y_coordinates[i];
-                break;
+                        case 325: //lowest value of -75°C reached
+                            y_coordinates[i] = 0;
+                            temp_canvas_y[i] = y_coordinates[i];
+                        break;
 
-                default:
-                    if (temp_data[i] < 0){
-                        y_coordinates[i] = temp_1 * (Math.abs(temp_data[i])); //beginning at -75°C
-                        temp_canvas_y[i] = y_coordinates[i];
+                        default:
+                            if (Number(temp_data[i]) < 0){
+                                y_coordinates[i] = temp_1 * (75 + Number(temp_data[i])); //beginning at -75°C
+                                temp_canvas_y[i] = y_coordinates[i];
+                            }
+                            else{
+                                y_coordinates[i] = temp_1 * (Number(temp_data[i]) + 75); //beginning at 0°C
+                                temp_canvas_y[i] = y_coordinates[i];
+                            }
+                        break;
                     }
-                    else{
-                        y_coordinates[i] = temp_1 * (temp_data[i] + 75); //beginning at 0°C
-                        temp_canvas_y[i] = y_coordinates[i];
-                    }
-                break;
-            }
 
-            //////////////////check///////////////////////
-            //////////////////////////////////////////////       
-            console.log(i + " . " + y_coordinates[i] + " - Y-Values");
-            //////////////////////////////////////////////
-        }
+                //////////////////check///////////////////////
+                //////////////////////////////////////////////       
+                console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+                //////////////////////////////////////////////
+                }
+            break;
+        }     
 
         switch (zone) {
             case "Current-Data-Time":
@@ -878,10 +1183,6 @@ function save_drawing_data_for_temp(){
                 time_division_temp = result_values[2];
             break;
 
-            case "2 hours in a row":
-
-            break;
-
             case "Today":
                 sensor_time_calculate_their_Coordinates_24h(temp_canvas_x, temp_time);
             break;
@@ -894,6 +1195,13 @@ function save_drawing_data_for_temp(){
 
             break;
         } 
+
+        if (temp_division != 0){
+            return [temp_max, temp_min, temp_division];
+        }
+        else{
+            return [0, 0, 0];
+        }
     }
     else{
         console.log("Could not retrieve the corrosponding Temp-sensor data");
@@ -906,40 +1214,91 @@ function save_drawing_data_for_hpp(){
 
     //Range --> [0-100]%
     if (hpp_data.length >= 1){ 
+
         hpp_canvas_x = [];
         hpp_canvas_y = [];
 
         let y_coordinates = []; //saving the coords, for drawing, or else it will be way too complicated
 
-        //the max difference for % value is 100 --> 100% - 0%, very important
-        const hpp_100 = y_point_length; //100%
-        const hpp_10 = hpp_100 / 10; //10%
-        const hpp_1 = hpp_10 / 10; //1%
+        let hpp_max = 0; //max 100%
+        let hpp_min = 0; //min 0%
+        let hpp_division = 0; //division factor
+
+        switch (zone) {
+            case "Current-Data-Time":
+                hpp_max = Number(hpp_data[0]); //max 100%
+                hpp_min = Number(hpp_data[0]); //min 0%
+
+                for (let i = 0; i < hpp_data.length; i++) {
+                    if (hpp_max <= Number(hpp_data[i])){ //we have to add Number, because its a string, if we dont do that, yeeeah, our values will be completly wrong.
+                        hpp_max = Number(hpp_data[i]); //biggest value
+                    }
+                    if (hpp_min >= Number(hpp_data[i])){
+                        hpp_min = Number(hpp_data[i]); //lowest value
+                    }
+                }
+
+                hpp_division = y_point_length / (hpp_max - hpp_min); //division factor
+
+                for (let i = 0; i < hpp_data.length; i++) { //y-coordinates
+                    let dy_hpp = hpp_max - Number(hpp_data[i]); //max difference 100%
+
+                    switch (dy_hpp) { //same function like before, but more general
+                        case 0: //max value of 100% reached
+                            y_coordinates[i] = y_point_length;
+                            hpp_canvas_y[i] = y_coordinates[i];
+                        break;
+
+                        case (hpp_max - hpp_min): //lowest value possible is 0%
+                            y_coordinates[i] = 0;
+                            hpp_canvas_y[i] = y_coordinates[i];
+                        break;
+
+                        default:
+                            y_coordinates[i] = hpp_division * (Number(hpp_data[i]) - hpp_min);
+                            hpp_canvas_y[i] = y_coordinates[i];
+                        break;
+                    }
+
+                //////////////////check///////////////////////
+                //////////////////////////////////////////////       
+                console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+                //////////////////////////////////////////////
+                }   
+            break;
         
-        for (let i = 0; i < hpp_data.length; i++) { //y-coordinates
-            let dy_hpp = hpp_max_value - hpp_data[i];
+            default:
+                //the max difference for % value is 100 --> 100% - 0%, very important
+                const hpp_100 = y_point_length; //100%
+                const hpp_10 = hpp_100 / 10; //10%
+                const hpp_1 = hpp_10 / 10; //1%
+        
+                for (let i = 0; i < hpp_data.length; i++) { //y-coordinates
+                    let dy_hpp = hpp_max_value - Number(hpp_data[i]);
 
-            switch (dy_hpp) { // 0 and 100 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
-                case 0: //max value of 100% reached
-                    y_coordinates[i] = hpp_100;
-                    hpp_canvas_y[i] = y_coordinates[i];
-                break;
+                    switch (dy_hpp) { // 0 and 100 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
+                        case 0: //max value of 100% reached
+                            y_coordinates[i] = hpp_100;
+                            hpp_canvas_y[i] = y_coordinates[i];
+                        break;
 
-                case 100: //lowest value of 0% reached
-                    y_coordinates[i] = 0;
-                    hpp_canvas_y[i] = y_coordinates[i];
-                break;
+                        case 100: //lowest value of 0% reached
+                            y_coordinates[i] = 0;
+                            hpp_canvas_y[i] = y_coordinates[i];
+                        break;
 
-                default:
-                    y_coordinates[i] = hpp_1 * hpp_data[i]; // -300, because we beging to drawing at 300hPa
-                    hpp_canvas_y[i] = y_coordinates[i];
-                break;
-            }
+                        default:
+                            y_coordinates[i] = hpp_1 * Number(hpp_data[i]); // -300, because we beging to drawing at 300hPa
+                            hpp_canvas_y[i] = y_coordinates[i];
+                        break;
+                    }
 
-            //////////////////check///////////////////////
-            //////////////////////////////////////////////       
-            console.log(i + " . " + y_coordinates[i] + " - Y-Values");
-            //////////////////////////////////////////////
+                    //////////////////check///////////////////////
+                    //////////////////////////////////////////////       
+                    console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+                    //////////////////////////////////////////////
+                }
+            break;
         }
 
         switch (zone) {
@@ -948,10 +1307,6 @@ function save_drawing_data_for_hpp(){
                 time_max_hpp = result_values[0];
                 time_min_hpp = result_values[1];
                 time_division_hpp = result_values[2];
-            break;
-
-            case "2 hours in a row":
-
             break;
 
             case "Today":
@@ -965,7 +1320,15 @@ function save_drawing_data_for_hpp(){
             case "2 Days in a row":
 
             break;
-        } 
+        }
+
+        if (hpp_division != 0){
+            return [hpp_max, hpp_min, hpp_division];
+        }
+        else{
+            return [0, 0, 0];
+        }
+         
     }
     else{
         console.log("Could not retrieve the corrosponding HPP-sensor data");
@@ -982,51 +1345,98 @@ function save_drawing_data_for_bme(){
         bme_canvas_y = [];
 
         let y_coordinates = []; //saving the coords, for drawing, or else it will be way too complicated
-        
-        //the max difference for hPa value is 800hPa --> 1100hPa - 300hPa, very important
-        const hPa_800 = y_point_length; //800hPa measurement
-        const hPa_80 = hPa_800 / 10; //80hPa measurement
-        const hPa_8 = hPa_80 / 10; //8hPa measurement
-        const hPa_1 = hPa_8 / 8; //1hPa measurement --> with this method i can clearly draw it, without it's extremely difficult to draw stuff like that
-        
-        for (let i = 0; i < bme_data.length; i++) { //y-coordinates
-            let dy_bme = bme_max_value - bme_data[i];
+    
+        let bme_max = 0; //max 100%
+        let bme_min = 0; //min 0%
+        let bme_division = 0; //division factor
 
-            switch (dy_bme) { // 0 and 800 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
-                case 0: //max value of 1100hPa reached
-                    y_coordinates[i] = hPa_800;
-                    bme_canvas_y[i] = y_coordinates[i];
-                break;
+        switch (zone) {
+            case "Current-Data-Time":
+                bme_max = Number(bme_data[0]); //max 1100hPa
+                bme_min = Number(bme_data[0]); //min 300hPa
 
-                case 800: //lowest value of 300hPa reached
-                    y_coordinates[i] = 0;
-                    bme_canvas_y[i] = y_coordinates[i];
-                break;
-
-                default:
-                    if (bme_data[i] > 300){
-                        y_coordinates[i] = hPa_1 * (bme_data[i] - 300); // -300, because we beging to drawing at 300hPa
-                        bme_canvas_y[i] = y_coordinates[i];
+                for (let i = 0; i < bme_data.length; i++) {
+                    if (bme_max <= Number(bme_data[i])){ //we have to add Number, because its a string, if we dont do that, yeeeah, our values will be completly wrong.
+                        bme_max = Number(bme_data[i]); //biggest value
                     }
-                break;
-            }
+                    if (bme_min >= Number(bme_data[i])){
+                        bme_min = Number(bme_data[i]); //lowest value
+                    }
+                }
 
-            //////////////////check///////////////////////
-            //////////////////////////////////////////////       
-            console.log(i + " . " + y_coordinates[i] + " - Y-Values");
-            //////////////////////////////////////////////
+                bme_division = y_point_length / (bme_max - bme_min); //division factor
+
+                for (let i = 0; i < bme_data.length; i++) { //y-coordinates
+                    let dy_bme = bme_max - Number(bme_data[i]); //max difference 800hPa
+
+                    switch (dy_bme) { //same function like before, but more general
+                        case 0: //max value of 1100hPa reached
+                            y_coordinates[i] = y_point_length;
+                            bme_canvas_y[i] = y_coordinates[i];
+                        break;
+
+                        case (bme_max - bme_min): //lowest value possible reached of 300hPa
+                            y_coordinates[i] = 0;
+                            bme_canvas_y[i] = y_coordinates[i];
+                        break;
+
+                        default:
+                            y_coordinates[i] = bme_division * (Number(bme_data[i]) - bme_min);
+                            bme_canvas_y[i] = y_coordinates[i];
+                        break;
+                    }
+
+                    //////////////////check///////////////////////
+                    //////////////////////////////////////////////       
+                    console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+                    //////////////////////////////////////////////
+                }   
+            break;
+
+            default:
+                //the max difference for hPa value is 800hPa --> 1100hPa - 300hPa, very important
+                const hPa_800 = y_point_length; //800hPa measurement
+                const hPa_80 = hPa_800 / 10; //80hPa measurement
+                const hPa_8 = hPa_80 / 10; //8hPa measurement
+                const hPa_1 = hPa_8 / 8; //1hPa measurement --> with this method i can clearly draw it, without it's extremely difficult to draw stuff like that
+                
+                for (let i = 0; i < bme_data.length; i++) { //y-coordinates
+                    let dy_bme = bme_max_value - Number(bme_data[i]);
+
+                    switch (dy_bme) { // 0 and 800 are special cases, extremeeeely unlikely to happen --> SSR Rank, be carefull
+                        case 0: //max value of 1100hPa reached
+                            y_coordinates[i] = hPa_800;
+                            bme_canvas_y[i] = y_coordinates[i];
+                        break;
+
+                        case 800: //lowest value of 300hPa reached
+                            y_coordinates[i] = 0;
+                            bme_canvas_y[i] = y_coordinates[i];
+                        break;
+
+                        default:
+                            if (bme_data[i] > 300){
+                                y_coordinates[i] = hPa_1 * (Number(bme_data[i]) - 300); // -300, because we beging to drawing at 300hPa
+                                bme_canvas_y[i] = y_coordinates[i];
+                            }
+                        break;
+                    }
+
+                    //////////////////check///////////////////////
+                    //////////////////////////////////////////////       
+                    console.log(i + " . " + y_coordinates[i] + " - Y-Values");
+                    //////////////////////////////////////////////
+                }
+            break;
+
         }
-
+        
         switch (zone) {
             case "Current-Data-Time":
                 let result_values = sensor_time_calculate_actual_coordinates_universal(bme_canvas_x, bme_time);
                 time_max_bme = result_values[0];
                 time_min_bme = result_values[1];
                 time_division_bme = result_values[2];
-            break;
-
-            case "2 hours in a row":
-
             break;
 
             case "Today":
@@ -1042,6 +1452,13 @@ function save_drawing_data_for_bme(){
             break;
         } 
         //bme_canvas_y = y_coordinates; //please dont ask me, why this line of code is not working
+
+        if (bme_division != 0){
+            return [bme_max, bme_min, bme_division];
+        }
+        else{
+            return [0, 0, 0];
+        }
     }
     else{
         console.log("Could not retrieve the corrosponding BME-sensor data");
@@ -1049,11 +1466,9 @@ function save_drawing_data_for_bme(){
 }
 
 function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time){
-    let x_coord_temp = [];
+    let x_coord_tempory = [];
     let saved_hours = []; //saving the calculated hours 
 
-    let temp_max = 0; //setting values, so that i can start comparing
-    let temp_min = 0; //same here
     let time_divided = 0; //same here
 
     //main process
@@ -1087,17 +1502,20 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
         saved_hours[i] = calculate_per_1h_from_this; //adding the current hours to my list, so that i can promptly work with them
     }
 
-    for (let i = 0; i < sensor_time.length; i++) { //read sensor_time and save it
-        //here i will select the biggest and the lowest time --> for the graph and for the calculations
-        for (let i = 0; i < saved_hours.length; i++) { //for 2x method ---> yk what i am talking about. With that i can clearly select the biggest data and the smallest data. chad for method.
-            if (temp_max <= saved_hours[i]){
-                temp_max = saved_hours[i]; //setting temporary biggest value
-            }
-            if (temp_min >= saved_hours[i]){ 
-                temp_min = saved_hours[i]; //same here, but the smallest value
-            }
-        }
+    let temp_max = saved_hours[0]; //setting values, so that i can start comparing
+    let temp_min = saved_hours[0]; //same here
 
+    //here i will select the biggest and the lowest time --> for the graph and for the calculations
+    for (let i = 0; i < saved_hours.length; i++) { //for 2x method ---> yk what i am talking about. With that i can clearly select the biggest data and the smallest data. chad for method.
+        if (temp_max <= saved_hours[i]){
+            temp_max = saved_hours[i]; //setting temporary biggest value
+        }
+        if (temp_min >= saved_hours[i]){ 
+            temp_min = saved_hours[i]; //same here, but the smallest value
+        }
+    }
+
+    for (let i = 0; i < sensor_time.length; i++) { //read sensor_time and save it
         //the max time value for the sensors -- i concluded, that a day-time zone will be programmed first and the other participants like 2 weeks shown line, etc. will be connected to this 24-hour data
         let time_all = x_point_length; //general time - coordinate
         time_divided = time_all / (temp_max - temp_min); //divided time  - coordinate
@@ -1112,23 +1530,30 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
 
         switch (dx_ultimate_time) { // 0 and 24 are not always there
             case 0:
-                    x_coord_temp[i] = time_all;
-                break;
+                x_coord_tempory[i] = time_all;
+            break;
         
             case (temp_max - temp_min):
-                    x_coord_temp[i] = 0;
-                break;
+                x_coord_tempory[i] = time_divided * temp_min;
+            break;
 
             default:
-                    x_coord_temp[i] = time_divided * saved_hours[i];
-                break;
+                x_coord_tempory[i] = time_divided * (saved_hours[i] - temp_min);
+            break;
         }
-        x_coord[i] = x_coord_temp[i]; //i have absolutely noooo idea, why you have to write it, in that way and cant do x_coord = x_coord_temp. Yk, it worked fine before, but yeeah, thats fucking cringe.
         //////////////////check////////////////
         ///////////////////////////////////////
-        console.log(i + " . " + x_coord_temp[i] + " - X-Values");
+        console.log(i + " . " + x_coord_tempory[i] + " - X-Values");
         ///////////////////////////////////////
     }
+
+    //now we will shift the coordinates
+    for (let i = 0; i < x_coord_tempory.length; i++) {
+        x_coord_tempory[i] -= x_coord_tempory[0]; //the first value is the smallest
+        x_coord[i] = x_coord_tempory[i]; //i have absolutely noooo idea, why you have to write it, in that way and cant do x_coord = x_coord_temp. Yk, it worked fine before, but yeeah, thats fucking cringe. --> the reason is extremely simple, its because i am writing in js. 
+    }
+
+
     return [Math.round(temp_max * 100)/100, Math.round(temp_min * 100)/100, Math.round(time_divided * 100)/100]; //returnig the values as a array
 
     //return{ //this way return my values as a object
