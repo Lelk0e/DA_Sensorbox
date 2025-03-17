@@ -33,6 +33,10 @@ int dsecond;
 String sensorTable;
 float BMEDataValue;
 float HTUDataValue;
+float TypKDataValue;
+float OzonDataValue;
+
+String webData;
 
 volatile bool lowPowerMode = false;
 
@@ -53,7 +57,7 @@ void receivedCallback(String &from, String &msg);
 void newConnectionCallback(uint32_t nodeId);
 String messageType(String msg);
 void dataSplit(String s, char del);
-void logSensorData();
+void logNodeData();
 int32_t read_fn_wctx(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len);
 int flush_fn(struct dblog_write_context *ctx);
 int32_t write_fn(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len);
@@ -86,11 +90,9 @@ void receivedCallback(String &from, String &msg)
   Serial.printf("Received from=%s msg=%s\n", from.c_str(), msg.c_str());
   if (messageType(msg) == "Data")
   {
-    if (from.equals("BME280"))
-    {
-      dataSplit(msg, ':');
-      logSensorData();
-    }
+    dataSplit(msg, ':');
+    logNodeData();
+    webData += msg;
   }
 }
 
@@ -141,6 +143,12 @@ void dataSplit(String s, char del)
   int idx10 = s.indexOf(del, idx9 + 1);
   if (idx10 == -1)
     return;
+  int idx11 = s.indexOf(del, idx10 + 1);
+  if (idx11 == -1)
+    return;
+  int idx12 = s.indexOf(del, idx11 + 1);
+  if (idx12 == -1)
+    return;
   String yearStr = s.substring(idx2 + 1, idx3);
   String monthStr = s.substring(idx3 + 1, idx4);
   String dayStr = s.substring(idx4 + 1, idx5);
@@ -154,12 +162,13 @@ void dataSplit(String s, char del)
   dminute = minuteStr.toInt();
   dsecond = secondStr.toInt();
   sensorTable = s.substring(idx8 + 1, idx9);
-  String BMEValStr = s.substring(idx9 + 1);
-  String HTUValStr = s.substring(idx10 + 1);
-  BMEDataValue = BMEValStr.toFloat();
+  BMEDataValue = (s.substring(idx9 + 1)).toFloat();
+  HTUDataValue = (s.substring(idx10 + 1)).toFloat();
+  TypKDataValue = (s.substring(idx11 + 1)).toFloat();
+  OzonDataValue = (s.substring(idx12 + 1)).toFloat();
 }
 
-void logSensorData()
+void logNodeData()
 {
   if (sensorTable.length() == 0)
   {
@@ -351,7 +360,7 @@ void setup()
   }
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SD, "/webpage/website.html", "text/html"); });
-            
+
   server.on("/set-time", HTTP_GET, [](AsyncWebServerRequest *request)
             {
   if(request->hasParam("year") && request->hasParam("month") && request->hasParam("day") && request->hasParam("hour") && request->hasParam("minute") && request->hasParam("second")){
@@ -391,11 +400,18 @@ void setup()
     } else {
       request->send(400, "text/plain", "error toggle on off");
     } });
-
-  server.on("/bme280", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-    String data = wrDBtoWs("/sd/BME280.db");
-    request->send(200, "text/plain", data); });
+  server.on("/Live", HTTP_GET, [](AsyncWebServerRequest *request) 
+  {
+    if (webData != "" && !webData.isEmpty())
+    {
+      request->send(200, "text/plain", webData);
+      webData = "";
+    }
+    else  
+    {
+      request->send(204, "text/plain", "Keine Daten");
+    }
+  });
 
   server.on("/download", HTTP_GET, [](AsyncWebServerRequest *request)
             {

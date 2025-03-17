@@ -25,7 +25,6 @@ Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 RTC_DS3231 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-
 const char *dbFileName = "/sd/data.db";
 char lastSentTs[32] = "0000:00:00:00:00:00";
 
@@ -247,7 +246,7 @@ uint16_t readOzon()
   return ppmValue / 0.805;
 }
 
-void logSensorData()
+void logNodeData()
 {
   int BMEValue = static_cast<int>(readBme());
   int HTUValue = static_cast<int>(readHTU());
@@ -311,6 +310,12 @@ void logSensorData()
     Serial.println("HTU: " + String(HTUValue) + "%");
     Serial.println("TypK: " + String(TypKValue) + "°C");
     Serial.println("Ozon: " + String(OzonValue) + "mV");
+    String msg = "Data:Time:" + String(timestamp) + String(nodeName) + String(BMEValue) + ":" + String(HTUValue) + ":" + String(TypKValue) + ":" + String(OzonValue);
+    if (!msg.isEmpty())
+    {
+      mesh.sendSingle(rootName, msg);
+      msg = "";
+    }
   }
 }
 
@@ -335,13 +340,13 @@ void sendDB()
   }
   while (true)
   {
-    uint32_t colType0, colType1, colType2,colType3,colType4;
+    uint32_t colType0, colType1, colType2, colType3, colType4;
     uint8_t *colVal0 = (uint8_t *)dblog_read_col_val(&rctx, 0, &colType0);
     uint8_t *colVal1 = (uint8_t *)dblog_read_col_val(&rctx, 1, &colType1);
     uint8_t *colVal2 = (uint8_t *)dblog_read_col_val(&rctx, 2, &colType2);
     uint8_t *colVal3 = (uint8_t *)dblog_read_col_val(&rctx, 3, &colType3);
     uint8_t *colVal4 = (uint8_t *)dblog_read_col_val(&rctx, 4, &colType4);
-    if (!colVal0 || !colVal1 || !colVal2|| !colVal3 || !colVal4)
+    if (!colVal0 || !colVal1 || !colVal2 || !colVal3 || !colVal4)
       break;
 
     char ts[32];
@@ -361,7 +366,7 @@ void sendDB()
       memcpy(&HTUValue, colVal2, sizeof(HTUValue));
       memcpy(&TypKValue, colVal3, sizeof(TypKValue));
       memcpy(&OzonValue, colVal4, sizeof(OzonValue));
-      String msg = "Data:Time:" + String(ts) + String(nodeName) + String(BMEValue) + ":" + String(HTUValue);
+      String msg = "Data:Time:" + String(ts) + String(nodeName) + String(BMEValue) + ":" + String(HTUValue) + ":" + String(TypKValue) + ":" + String(OzonValue);
       mesh.sendSingle(rootName, msg);
       delay(10);
       strcpy(lastSentTs, ts);
@@ -426,7 +431,7 @@ void resetLogging()
   }
   if (!logTask)
   {
-    logTask = new Task(1000, TASK_FOREVER, logSensorData);
+    logTask = new Task(1000, TASK_FOREVER, logNodeData);
     userSched.addTask(*logTask);
   }
   logTask->enable();
@@ -469,9 +474,11 @@ void setup()
       ;
   }
   Serial.print("Initializing sensor...");
-  if (!thermocouple.begin()) {
+  if (!thermocouple.begin())
+  {
     Serial.println("ERROR.");
-    while (1) delay(10);
+    while (1)
+      delay(10);
   }
   delay(500);
   initMesh();
@@ -503,7 +510,7 @@ void setup()
   sqliteLogger.write_fn = write_fn;
   sqliteLogger.flush_fn = flush_fn;
   dblog_write_init(&sqliteLogger);
-  logTask = new Task(1000, TASK_FOREVER, logSensorData);
+  logTask = new Task(1000, TASK_FOREVER, logNodeData);
   userSched.addTask(*logTask);
   logTask->enable();
   startTime = millis();
@@ -535,7 +542,7 @@ void loop()
     finalized = true;
     finalizeSignal = false;
   }
-  else
+  if (toggleOnOff)
   {
     try
     {
