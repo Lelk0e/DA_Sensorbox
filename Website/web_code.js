@@ -127,6 +127,11 @@ let min_data_zone = 0;
 let division_data_zone = 0;
 //-----------------------------------------------------------------------------//
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+//-----------------------------------------------------------------------------//
+//esp realization/implementation-----------------------------------------------//
+let sensor_mac_addresses_sensorbox = []; //will save all mac-addresses from the different sensorboxes in this list
+let sensor_all_data_sensorbox = []; //4 different arrays will be in there: hpp, ozon, bme, temp
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 
@@ -891,10 +896,10 @@ function HTTP_READ(){ //here i will set and save the values for the sensor data
     read_data_bool = false; //for the time-zone --> time-now
 
     //reading the whole data's
-    Read_from_Ozon();
-    Read_from_bme();
-    Read_from_hpp();
-    Read_from_temp();
+    Read_from_Ozon(); //test-method for xaamp webserver
+    Read_from_bme(); //test-method for xaamp webserver
+    Read_from_hpp(); //test-method for xaamp webserver
+    Read_from_temp(); //test-method for xaamp webserver
 
     read_data_bool = true;
 }
@@ -935,7 +940,9 @@ function HTTP_SAVE(){ //for saving the whole data, so i can extract the coordina
     save_data_bool = true;
 }
 
-function Read_from_hpp(){
+//this method can be used for test datas
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+function Read_from_hpp(){ 
     const sensor_name = '"msgHPP":'; //for splitting the name of the sensor from the sensor-data
     fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_hpp.http", data_hpp, sensor_name, data_hpp_no_sym, hpp_split, hpp_time, hpp_data, ":HPP:"); //test data
 }
@@ -952,8 +959,14 @@ function Read_from_temp(){
 
 function Read_from_bme(){ //this method will later be implemented in HTTP_SET
     const sensor_name = '"msgBME":'; //for splitting the name of the sensor from the sensor-data
-    //fetchUserInfo("sensorbox.com", "sd", "bme280", "", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data); //test data
     fetchUserInfo("localhost", "Diplomarbeit", "Website", "test_bme.http", data_bme, sensor_name, data_bme_no_sym, bme_split, bme_time, bme_data, ":BME:"); //test data
+}
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+
+function Read_all(){
+    //here we will read: all Sensor-data --> e.g. BME, HPP, etc.
+    fetch_ALL_INFO("sensorbox.com", "sd", "/LIVE", sensor_mac_addresses_sensorbox, sensor_all_data_sensorbox);
 }
 
 function save_drawing_data_for_ozon(){
@@ -1649,6 +1662,41 @@ function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
     }
 }
 
+//method for all incoming data --> this will be used for the esp
+const fetch_ALL_INFO = async(DNS_address, first_address, second_address, macs, datas)=>{ 
+    const address = DNS_address; 
+    const first = first_address; 
+    const second = `${second_address}`; 
+    const response = await fetch(`http://${address}/${first}/${second}`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
+        method: 'GET',
+        headers: {
+            'Content-Type': 'text/plain'
+        }
+    });
+
+    if (!response.ok){ //response.ok == 200
+        throw new Error('Data was not found');
+    }
+
+    //one message will look like that
+    //Data:Time:123:Sensorbox1:BMEData:HTUData:TypKData:OzonData
+
+    const userData = await response.text(); //i have to do asyn, because its parsing at the same when receiving the msg
+                                            //when a method returns a promise, u have to use "await"
+    data_sensor = userData; //saving my data
+
+    console.log(`"Reading Data ... "`);
+    console.log("...");
+    console.log("...");
+    console.log("...");
+
+
+    //checking
+    //////////////////////////////////////////////////////////////////
+    console.log(userData);
+    //////////////////////////////////////////////////////////////////
+}
+
 //method for reading my data from bme, hpp, ...
 const fetchUserInfo = async(DNS_address, first_address, second_address, where_is_it_saved, data_sensor, split_sensor_name, data_sensor_no_sym, sensor_split, sensor_time, sensor_data, split_sensor_frame_msg)=>{ 
     const address = DNS_address; //"localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp --> update: we have implented a dns address for our esp's, so we'll be using those
@@ -1680,7 +1728,7 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
     //checking
     //////////////////////////////////////////////////////////////////
-    console.log(userData);
+    //console.log(userData);
     //////////////////////////////////////////////////////////////////
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1695,8 +1743,8 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
     //checking
     //////////////////////////////////////////////////////////////////
-    console.log(BMEmsg + "\n\nsplit BMEmsg"); //it worksssssssssssssss, yeeeaaa men ---> heeeey, i was extremely happy, when it worked, dont u dare to be mad!
-    console.log(without_symbols + "\n\nsplit symbols"); //it worksssssssssssssss, yeeeaaa men
+    //console.log(BMEmsg + "\n\nsplit BMEmsg"); //it worksssssssssssssss, yeeeaaa men ---> heeeey, i was extremely happy, when it worked, dont u dare to be mad!
+    //console.log(without_symbols + "\n\nsplit symbols"); //it worksssssssssssssss, yeeeaaa men
     //////////////////////////////////////////////////////////////////
 
     //saving without_symbols to a specific sensor save point
@@ -1707,11 +1755,11 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
     //checking
     //////////////////////////////////////////////////////////////////
-    console.log("-------------------------------\n"); ///it workssssss
-    for (let i = 0; i < split_data.length; i++) {
-        console.log(split_data[i] + "\n\nsplit @ symbols");
-    }
-    console.log("-------------------------------\n");
+    //console.log("-------------------------------\n"); ///it workssssss
+    //for (let i = 0; i < split_data.length; i++) {
+    //    console.log(split_data[i] + "\n\nsplit @ symbols");
+    //}
+    //console.log("-------------------------------\n");
     //////////////////////////////////////////////////////////////////
 
     //saving split_data to a specific sensor
@@ -1726,12 +1774,12 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
     //checking
     //////////////////////////////////////////////////////////////////
-    console.log("-------------------------------\n"); ///it workssssss
-    for (let i = 0; i < sensor_data.length; i++) {
-        console.log(i + " . " + sensor_time[i] + "\ntime");
-        console.log(i + " . " + sensor_data[i] + "\ndata");
-    }
-    console.log("-------------------------------\n");
+    //console.log("-------------------------------\n"); ///it workssssss
+    //for (let i = 0; i < sensor_data.length; i++) {
+    //    console.log(i + " . " + sensor_time[i] + "\ntime");
+    //    console.log(i + " . " + sensor_data[i] + "\ndata");
+    //}
+    //console.log("-------------------------------\n");
     //////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////
@@ -1747,3 +1795,5 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 //To do --> csv save and graph save
 
 setInterval(HTTP_READ(), 1000); //yeah i changed, the paramter, to 1 second --> it should work, but we have to test it properly with the esp
+
+setInterval(Read_all(), 1000); //this should read the actual sensor-esp-data
