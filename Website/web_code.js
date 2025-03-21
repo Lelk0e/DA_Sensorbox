@@ -152,7 +152,7 @@ function update(){ //changing the data, which shall be shown to the user
                 draw_temp();
             break;
         
-            case "Airmoisure":
+            case "Humidity":
                 draw_hpp();
             break;
     
@@ -220,29 +220,32 @@ function draw_general(coord_canvas_sensor_x, coord_canvas_sensor_y){
     }
 }
 
-function setTime() { //from phillip, some parts of it is from me, but it was kinda changed
-    var check = false;
-    
+function setTime() { //from phillip, some parts of it is from me, but it was kinda changed    
     try{
         // Get the current time from the client's device
         var currentTime = new Date();
-        var date = currentTime.getDate(); //thats new, because we wanted to add dates to our time send routine
+        var year = currentTime.getFullYear(); //year
+        var month = currentTime.getMonth() + 1; //month
+        var day = currentTime.getDate(); //day
         var hour = currentTime.getHours();
         var minute = currentTime.getMinutes();
         var second = currentTime.getSeconds();
-
         // Send the time to the ESP32
         var xhr = new XMLHttpRequest();
         xhr.open(
             "GET",
-            "/set-time?hour=" +
+            "/set-time?year=" +
+              year +
+              "&month=" +
+              month +
+              "&day=" +
+              day +
+              "&hour=" +
               hour +
               "&minute=" +
               minute +
               "&second=" +
-              second +
-              "&date=" +
-              date,
+              second,
             true
         );
         xhr.onload = function () {
@@ -253,9 +256,7 @@ function setTime() { //from phillip, some parts of it is from me, but it was kin
             console.warn("A error happened, duo to: " + xhr.status);
         };
 
-        if (xhr.status == 200){ //200 meaning its okay and successfull
-            xhr.send();
-        }
+        xhr.send(); //sending our request
     }
     catch(err){ //this catch wont necessary happen, because http request is kinda weird
       alert("It occurs a errors when sending the httprequest, please make sure, you are connected to your device!\n" + err);
@@ -356,7 +357,6 @@ function create_graph_xy(){
                                //In addition, it depends on the arrow, because the lines of axe (x,y), 
                                //would cross over the arrow, this would look ugly
     x_point_length = x_axe_length*0.98; //important for the sensor data-showing
-    setTime(); //here i am sending httrequest, so our esp gets the current time --> OFC this was not test properly, will be done later
 }
 
 function time_setting(){   
@@ -387,7 +387,7 @@ function time_setting(){
                     division_time_zone = time_division_temp;
                 break;
             
-                case "Airmoisure":
+                case "Humidity":
                     max_time_zone = time_max_hpp;
                     min_time_zone = time_min_hpp;
                     division_time_zone = time_division_hpp;
@@ -569,7 +569,6 @@ function measure_text_x_axe_and_delete(){ //for x-axe arrow naming
     ctx.strokeStyle = '#000000'; //if strokestyle was not set correctly --> changes: it will now be set in the occupied function AKA in this function
     
     //getting the measurments - the naming of the x-axe will be measured here
-    var x_months_length = ctx.measureText("x in months").width;
     var x_days_length = ctx.measureText("x in days").width;
     var x_hours_length = ctx.measureText("x in hours").width;
 
@@ -580,9 +579,6 @@ function measure_text_x_axe_and_delete(){ //for x-axe arrow naming
     //x_hours
     ctx.clearRect(x_whole_axe_length + x_axe_name_diff, 1, x_hours_length, -20);
     ctx.clearRect(x_whole_axe_length + x_axe_name_diff, 1, x_hours_length, x_axe_name_diff); //same here
-    //x_months
-    ctx.clearRect(x_whole_axe_length + x_axe_name_diff, 1, x_months_length, -20);
-    ctx.clearRect(x_whole_axe_length + x_axe_name_diff, 1, x_months_length, x_axe_name_diff);
 }
 
 function measure_text_y_axe_and_delete(){ //for y-axe arrow naming
@@ -599,7 +595,7 @@ function measure_text_y_axe_and_delete(){ //for y-axe arrow naming
     
     //getting the measurments - the naming of the x-axe will be measured here
     var y_temp_length = ctx.measureText("Temperature").width;
-    var y_airmois_length = ctx.measureText("Airmoisure").width;
+    var y_humidity_length = ctx.measureText("Humidity").width;
     var y_airpress_length = ctx.measureText("Airpressure").width;
     var y_ozon_length = ctx.measureText("Ozon").width;
 
@@ -607,9 +603,9 @@ function measure_text_y_axe_and_delete(){ //for y-axe arrow naming
     //temperature
     ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_temp_length, -20); //20px, we have to do "ctx.font = 20px serif", because it's allignment is up .... (...,1,...,...) because of the line width
     ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_temp_length, y_axe_name_diff); //double insurance, sometimes it deletes almost everything, but not all the text
-    //airmoisure
-    ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_airmois_length, -20);
-    ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_airmois_length, y_axe_name_diff); //same here
+    //Humidity
+    ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_humidity_length, -20);
+    ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_humidity_length, y_axe_name_diff); //same here
     //airpressure
     ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_airpress_length, -20);
     ctx.clearRect(-1, -[y_whole_axe_length + y_axe_name_diff], y_airpress_length, y_axe_name_diff);
@@ -622,7 +618,7 @@ function sensor_setting(){
     //the same like setting_time() --> yeaaah, it was the same, but after i changed a few things its not anymore, the same function
     const sensor = document.getElementById("box_sens").value;
     const zone = document.getElementById("box_time").value;
-    let lapse = 15;
+    let lapse = 0;
     let unit = 0;  //for each time lapse
 
     //here i will draw a xy Graph with legends
@@ -697,10 +693,9 @@ function sensor_setting(){
                     ctx.fillText("Temperature", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
                 break;
             }
-            
         break;
 
-        case "Airmoisure":
+        case "Humidity":
             switch (zone) {
                 case "Current-Data-Time": //it will only activate, if we use "Current-Data-Time"
                     if (read_data_bool == true && save_data_bool == true && data_division_hpp != 0){
@@ -757,7 +752,7 @@ function sensor_setting(){
                         ctx.fillText([(i*unit_temp)] + "%", -width*0.06, -i*unit);
                     }
                     ctx.font = "20px serif";
-                    ctx.fillText("Airmoisure", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+                    ctx.fillText("Humidity", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
                 break;
             }
         break;
@@ -966,7 +961,7 @@ function Read_from_bme(){ //this method will later be implemented in HTTP_SET
 
 function Read_all(){
     //here we will read: all Sensor-data --> e.g. BME, HPP, etc.
-    fetch_ALL_INFO("sensorbox.com", "sd", "/LIVE", sensor_mac_addresses_sensorbox, sensor_all_data_sensorbox);
+    fetch_ALL_INFO("sensorbox.com", "Live", "webData", sensor_mac_addresses_sensorbox, sensor_all_data_sensorbox);
 }
 
 function save_drawing_data_for_ozon(){
@@ -1662,12 +1657,38 @@ function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
     }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+
+const socket = new WebSocket("http://sensorbox.com/Live/webData"); //websocket method, live implementation
+
+socket.addEventListener("open", (event) =>{ //connection open 
+    console.log("Connection was successfull!");
+}); 
+
+socket.addEventListener("close", (event) =>{ //connection closed
+    console.log("Connection was closed!");
+}); 
+
+socket.addEventListener("message", (event) =>{ //take message
+    console.log("Reading message ... \n", event.data);
+
+}); 
+
+socket.addEventListener("error", (event) =>{ //errors are occuring
+    console.log("A websocket error occured: ", event);
+}); 
+
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+
 //method for all incoming data --> this will be used for the esp
 const fetch_ALL_INFO = async(DNS_address, first_address, second_address, macs, datas)=>{ 
     const address = DNS_address; 
     const first = first_address; 
-    const second = `${second_address}`; 
-    const response = await fetch(`http://${address}/${first}/${second}`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
+    const second = second_address;
+    const response = await fetch(`http://${address}/${first}`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
         method: 'GET',
         headers: {
             'Content-Type': 'text/plain'
@@ -1697,7 +1718,8 @@ const fetch_ALL_INFO = async(DNS_address, first_address, second_address, macs, d
     //////////////////////////////////////////////////////////////////
 }
 
-//method for reading my data from bme, hpp, ...
+
+//method for reading my data from bme, hpp, ... ---> well this method is not so good, we will use websockets
 const fetchUserInfo = async(DNS_address, first_address, second_address, where_is_it_saved, data_sensor, split_sensor_name, data_sensor_no_sym, sensor_split, sensor_time, sensor_data, split_sensor_frame_msg)=>{ 
     const address = DNS_address; //"localhost"; //this ip is only test-wise constructed --> update: now i will change the ip to tesp.ip from the esp --> update: we have implented a dns address for our esp's, so we'll be using those
     const first = first_address; //"Diplomarbeit";
@@ -1762,7 +1784,7 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
     //console.log("-------------------------------\n");
     //////////////////////////////////////////////////////////////////
 
-    //saving split_data to a specific sensor
+    //saving split_data to a specific sensor 
     sensor_split = split_data;
 
     //select time and data
@@ -1796,4 +1818,4 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
 setInterval(HTTP_READ(), 1000); //yeah i changed, the paramter, to 1 second --> it should work, but we have to test it properly with the esp
 
-setInterval(Read_all(), 1000); //this should read the actual sensor-esp-data
+//setInterval(Read_all(), 1000); //this should read the actual sensor-esp-data
