@@ -52,7 +52,8 @@ using namespace std;
 Scheduler userSched;
 namedMesh mesh;
 
-String nodeName = "BME280";
+String nodeName = "";
+uint8_t baseMac[6];
 String rootName;
 int hour = 0, minute = 0, second = 0;
 int year = 0, month = 0, day = 0;
@@ -116,7 +117,13 @@ void initMesh()
   mesh.init("Sensorbox", "12345678", &userSched, 5555);
   mesh.setContainsRoot(true);
   Serial.println(mesh.getAPIP());
-  mesh.setName(nodeName);
+  esp_base_mac_addr_get(baseMac);
+  char macStr[18];
+  snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",
+           baseMac[0], baseMac[1], baseMac[2], baseMac[3], baseMac[4], baseMac[5]);
+  String macString = String(macStr);
+  mesh.setName(macString);
+  nodeName = macStr;
   mesh.onReceive(&receivedCallback);
   mesh.onNewConnection(&newConnectionCallback);
   mesh.onChangedConnections([]()
@@ -310,7 +317,7 @@ void logNodeData()
     Serial.println("HTU: " + String(HTUValue) + "%");
     Serial.println("TypK: " + String(TypKValue) + "°C");
     Serial.println("Ozon: " + String(OzonValue) + "mV");
-    String msg = "Data:Time:" + String(timestamp) + String(nodeName) + String(BMEValue) + ":" + String(HTUValue) + ":" + String(TypKValue) + ":" + String(OzonValue);
+    String msg = "Data:Time:" + String(timestamp) + ":" + String(nodeName) + ":" + String(BMEValue) + ":" + String(HTUValue) + ":" + String(TypKValue) + ":" + String(OzonValue);
     if (!msg.isEmpty())
     {
       mesh.sendSingle(rootName, msg);
@@ -366,7 +373,7 @@ void sendDB()
       memcpy(&HTUValue, colVal2, sizeof(HTUValue));
       memcpy(&TypKValue, colVal3, sizeof(TypKValue));
       memcpy(&OzonValue, colVal4, sizeof(OzonValue));
-      String msg = "Data:Time:" + String(ts) + String(nodeName) + String(BMEValue) + ":" + String(HTUValue) + ":" + String(TypKValue) + ":" + String(OzonValue);
+      String msg = "Data:Time:" + String(ts) + ":" + String(nodeName) + ":" + String(BMEValue) + ":" + String(HTUValue) + ":" + String(TypKValue) + ":" + String(OzonValue);
       mesh.sendSingle(rootName, msg);
       delay(10);
       strcpy(lastSentTs, ts);

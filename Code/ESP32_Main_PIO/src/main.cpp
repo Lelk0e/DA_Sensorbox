@@ -6,6 +6,7 @@
 #include "ulog_sqlite.h"
 #include "DNSServer.h"
 #include "RTClib.h"
+#include <WiFi.h>
 #define cs_pin 5
 
 RTC_DS3231 rtc;
@@ -361,6 +362,12 @@ void setup()
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SD, "/webpage/website.html", "text/html"); });
 
+  server.on("/design.css", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SD, "/webpage/design.css", "text/css"); });
+
+  server.on("/web_code.js", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SD, "/webpage/web_code.js", "application/javascript"); });
+
   server.on("/set-time", HTTP_GET, [](AsyncWebServerRequest *request)
             {
   if(request->hasParam("year") && request->hasParam("month") && request->hasParam("day") && request->hasParam("hour") && request->hasParam("minute") && request->hasParam("second")){
@@ -379,6 +386,14 @@ void setup()
     Serial.println(second);
     DateTime newDateTime(year, month, day, hour, minute, second);
     rtc.adjust(newDateTime);
+    String timeMessage = "Time:" +
+                       String(year) + ":" +
+                       String(month) + ":" +
+                       String(day) + ":" +
+                       String(hour) + ":" +
+                       String(minute) + ":" +
+                       String(second);
+  mesh.sendBroadcast(timeMessage);
     request->send(200, "text/plain", "Time received successfully");
   } else {
     request->send(400, "text/plain", "Missing time parameters");
@@ -400,8 +415,8 @@ void setup()
     } else {
       request->send(400, "text/plain", "error toggle on off");
     } });
-  server.on("/Live", HTTP_GET, [](AsyncWebServerRequest *request) 
-  {
+  server.on("/Live", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
     if (webData != "" && !webData.isEmpty())
     {
       request->send(200, "text/plain", webData);
@@ -410,8 +425,7 @@ void setup()
     else  
     {
       request->send(204, "text/plain", "Keine Daten");
-    }
-  });
+    } });
 
   server.on("/download", HTTP_GET, [](AsyncWebServerRequest *request)
             {
