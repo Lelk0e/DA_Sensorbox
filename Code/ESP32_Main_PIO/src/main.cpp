@@ -48,6 +48,7 @@ FILE *readDbFile = NULL;
 byte buf[BUF_SIZE];
 
 AsyncWebServer server(80);
+static AsyncWebSocket ws("/ws");
 
 DNSServer dnsServer;
 const byte DNS_PORT = 53;
@@ -404,29 +405,44 @@ void setup()
     if(request->hasParam("On") || request->hasParam("Off")){
       if(request->hasParam("On")){
         toggleOnOff = true;
-        mesh.sendBroadcast("");
+        mesh.sendBroadcast("On");
       } else if (request->hasParam("Off")) {
         if (toggleOnOff == true)
         {
           mesh.sendBroadcast("Finalize");
+          mesh.sendBroadcast("Off");
         }
         toggleOnOff = false;
       }
     } else {
       request->send(400, "text/plain", "error toggle on off");
     } });
-  server.on("/Live", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-    if (webData != "" && !webData.isEmpty())
-    {
-      request->send(200, "text/plain", webData);
-      webData = "";
-    }
-    else  
-    {
-      request->send(204, "text/plain", "Keine Daten");
-    } });
 
+  ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
+             {
+      if (type == WS_EVT_CONNECT) {
+        Serial.println("Client connected to WebSocket");
+        if (webData != "" && !webData.isEmpty()) {
+          client->text(webData);
+          webData = "";
+        }
+      } else if (type == WS_EVT_DISCONNECT) {
+        Serial.println("Client disconnected from WebSocket");
+      } else if (type == WS_EVT_ERROR) {
+        Serial.println("WebSocket error");
+      } else if (type == WS_EVT_PONG) {
+        Serial.println("WebSocket pong received");
+      } else if (type == WS_EVT_DATA) {
+        AwsFrameInfo *info = (AwsFrameInfo *)arg;
+        if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
+          data[len] = 0;
+          String message = String((char*)data);
+          Serial.printf("Received from client: %s\n", message.c_str());
+        }
+      } });
+
+  server.addHandler(&ws);
+  
   server.on("/download", HTTP_GET, [](AsyncWebServerRequest *request)
             {
       if (request->hasParam("file")) {
