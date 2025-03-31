@@ -3596,6 +3596,18 @@
 		(uuid "f924783e-7552-4baf-bcc6-29357f268282")
 	)
 	(rectangle
+		(start 54.61 82.55)
+		(end 128.27 125.73)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 41110725-2728-4606-842a-ceaab6e68ebc)
+	)
+	(rectangle
 		(start 194.31 81.28)
 		(end 283.21 149.86)
 		(stroke
@@ -3618,6 +3630,18 @@
 			(type none)
 		)
 		(uuid 6b1d1578-a474-4d86-8930-eb195e72b882)
+	)
+	(rectangle
+		(start 132.08 81.28)
+		(end 193.04 139.7)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid b8169407-4cd4-4825-8f71-fd746a719e83)
 	)
 	(rectangle
 		(start 205.74 13.97)
@@ -3688,6 +3712,18 @@
 		)
 		(uuid "5412a66f-baf4-45e9-bed3-e7b19bb40053")
 	)
+	(text "BME-Sensor\n"
+		(exclude_from_sim no)
+		(at 150.368 84.328 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 0.6)
+				(bold yes)
+			)
+		)
+		(uuid "559515ff-966f-4cec-acb2-350a7f2f008f")
+	)
 	(text "Memory-Card\n"
 		(exclude_from_sim no)
 		(at 244.856 17.78 0)
@@ -3732,6 +3768,18 @@
 		)
 		(uuid "9cef65b0-c338-435f-91e5-05604c328010")
 	)
+	(text "HPP-Sensor\n"
+		(exclude_from_sim no)
+		(at 79.756 119.38 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 0.6)
+				(bold yes)
+			)
+		)
+		(uuid "ab0f9f60-c5c7-43a9-9223-4f5f96644aa9")
+	)
 	(text "1A 95% Wirkungsgrad\n"
 		(exclude_from_sim no)
 		(at 36.576 75.438 0)
@@ -3744,7 +3792,7 @@
 	)
 	(text "GPIO19 und 20 überall anpassen\nstatt 20 und 21\n"
 		(exclude_from_sim no)
-		(at 156.972 140.208 0)
+		(at 156.464 144.018 0)
 		(effects
 			(font
 				(size 1.27 1.27)
