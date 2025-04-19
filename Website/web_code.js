@@ -129,8 +129,7 @@ let division_data_zone = 0;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //-----------------------------------------------------------------------------//
 //esp realization/implementation-----------------------------------------------//
-let sensor_mac_addresses_sensorbox = []; //will save all mac-addresses from the different sensorboxes in this list
-let sensor_all_data_sensorbox = []; //4 different arrays will be in there: hpp, ozon, bme, temp
+let mac_all = [];
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
@@ -1663,22 +1662,101 @@ function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
 const socket = new WebSocket("http://sensorbox.com/Live/webData"); //websocket method, live implementation
 
 socket.addEventListener("open", (event) =>{ //connection open 
+    mac_all = []; //i am not sure, if this line of code, will definetely work, but we'll see
     console.log("Connection was successfull!");
 }); 
 
 socket.addEventListener("close", (event) =>{ //connection closed
+    //here we will add the csc data, when event is closing
     console.log("Connection was closed!");
 }); 
 
 socket.addEventListener("message", (event) =>{ //take message
     console.log("Reading message ... \n", event.data);
 
+    const split_data = event.data.split(":"); // [Data]:[Time]:[h]:[min]:[s]:[nodename]:[bmeValue]:[HTUValue]:[TypKValue]:[OzonValue]
+
+    //reading sensorboxname -- mac
+    const mac_name = split_data[5]; 
+
+    update_mac_combobox(mac_name); //updating the combobox
+
+    //reading time values
+    const mac_time = split_data[2] + ":" + split_data[3] + ":" + split_data[4]; //recreating the time format for the time functions
+   
+    //reading sensor data
+    const mac_data_bme = split_data[6]; 
+    const mac_data_hpp = split_data[7];
+    const mac_data_temp = split_data[8];
+    const mac_data_ozon = split_data[9];
+
+    const temp_data = [mac_name, mac_time, mac_data_bme, mac_data_hpp, mac_data_temp, mac_data_ozon];
+    mac_all.add(temp_data); //saving data local
 }); 
+
+function update_mac_combobox(mac_name){
+    const combobox_mac = document.getElementById("mac_box").value;
+    const combobox_mac_length = document.getElementById("mac_box").length;
+    let letmeknow = false;
+
+    if (combobox_mac_length == 0){
+        combobox_mac.add(mac_name);
+    }
+    else{
+        for (let i = 0; i < combobox_mac_length; i++) {
+            if (mac_name == combobox_mac.item(i)){
+                letmeknow = true;
+                break;
+            }
+        }
+        if (letmeknow == true){
+            console.log("this mac was already added.");
+        }
+        else if (letmeknow == false){
+            console.log("this mac is new!");
+            combobox_mac.add(mac_name); //adding unknown address
+        }
+    }  
+}
+
+function mac_setting(){
+    const combobox_mac = document.getElementById("mac_box").value;
+
+    //resetting values
+    bme_time = [];
+    bme_data = [];
+
+    hpp_time = [];
+    hpp_data = [];
+
+    temp_time = [];
+    temp_data = [];
+
+    ozon_time = [];
+    ozon_data = [];
+
+    for (let i = 0; i < mac_all.length; i++) {
+        const value_mac = mac_all[i][0]; //mac address name
+        
+        if (value_mac == combobox_mac){ //the current mac
+            bme_time.add(mac_all[i][1]);
+            bme_data.add(mac_all[i][2]);
+
+            hpp_time.add(mac_all[i][1]);
+            hpp_data.add(mac_all[i][3]);
+
+            temp_time.add(mac_all[i][1]);
+            temp_data.add(mac_all[i][4]);
+
+            ozon_time.add(mac_all[i][1]);
+            ozon_data.add(mac_all[i][5]);
+        }
+    }
+}
 
 socket.addEventListener("error", (event) =>{ //errors are occuring
     console.log("A websocket error occured: ", event);
 }); 
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
