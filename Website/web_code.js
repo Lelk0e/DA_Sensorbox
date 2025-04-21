@@ -1894,6 +1894,6 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 }
 //To do --> csv save and graph save
 
-setInterval(HTTP_READ(), 1000); //yeah i changed, the paramter, to 1 second --> it should work, but we have to test it properly with the esp
+//setInterval(HTTP_READ(), 1000); //yeah i changed, the paramter, to 1 second --> it should work, but we have to test it properly with the esp
 
 //setInterval(Read_all(), 1000); //this should read the actual sensor-esp-data
