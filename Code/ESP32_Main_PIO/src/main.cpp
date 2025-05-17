@@ -352,7 +352,10 @@ void setup()
   Serial.begin(115200);
   initMesh();
   initSDCard();
-  dnsServer.start(DNS_PORT, "sensorbox.com", mesh.getAPIP());
+  WiFi.mode(WIFI_AP);
+  WiFi.softAP("SensorBoxAP", "12345678");
+  IPAddress myIP = WiFi.softAPIP();
+  dnsServer.start(DNS_PORT, "sensorbox.com", myIP);
   if (!rtc.begin())
   {
     Serial.println("Couldn't find RTC");
