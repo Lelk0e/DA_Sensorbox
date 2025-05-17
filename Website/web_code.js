@@ -1659,7 +1659,7 @@ function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
-const socket = new WebSocket("http://sensorbox.com/Live/webData"); //websocket method, live implementation
+const socket = new WebSocket("sensorbox.com"); //websocket method, live implementation
 
 socket.addEventListener("open", (event) =>{ //connection open 
     mac_all = []; //i am not sure, if this line of code, will definetely work, but we'll see
