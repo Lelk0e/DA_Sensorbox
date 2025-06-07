@@ -129,7 +129,8 @@ let division_data_zone = 0;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //-----------------------------------------------------------------------------//
 //esp realization/implementation-----------------------------------------------//
-let mac_all = [];
+let mac_all = []; //websockets
+let sensor_mac_all_fetch = []; //fetchen all
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
@@ -301,7 +302,6 @@ function canvas_setting(){
     //why, you ask. Very simple, because these methods will update the graph's x and y axe-lines, the combo boxes are sometimes bugged, and dont update at the beginning if you dont change the current item. I had several problems with that, maybe i will change this line of code in the future, but now it will stay like that --> yeah it will stay like that
     time_setting();
     sensor_setting();
-
     u_can_calculate_now = true;
 }
 
@@ -406,7 +406,6 @@ function time_setting(){
             }
 
             if (read_data_bool == true && save_data_bool == true){
-
                 lapse = max_time_zone - min_time_zone; //it can be a dot number, so yeaaah
                 unit = division_time_zone; //for each time lapse --> x_point.length / max_time_zone 
 
@@ -432,10 +431,10 @@ function time_setting(){
                     //lapses naming
                     ctx.font = "12px serif";
                     if (i == 0){
-                        ctx.fillText(min_time_zone, [steps_array[i] * unit] -unit/6, height_for_x_lapses + 0.02*height); //bro it works, omg --> you ask why, very simple, it took me like 15hours, to finish this shit
+                        ctx.fillText(min_time_zone.toFixed(2), steps_array[i] * unit - (steps_array[1] * unit)/10, height_for_x_lapses + 0.02*height); //bro it works, omg --> you ask why, very simple, it took me like 15hours, to finish this shit
                     }
                     else{
-                        ctx.fillText((min_time_zone + Math.round(steps_array[i] * 10)/10), steps_array[i] * unit -unit/6, height_for_x_lapses + 0.02*height); //extremely complicated, it depends on the definition of the general time zone
+                        ctx.fillText((min_time_zone + steps_array[i]).toFixed(2), steps_array[i] * unit - (steps_array[1] * unit)/10, height_for_x_lapses + 0.02*height); //extremely complicated, it depends on the definition of the general time zone
                     }
                 }
                 ctx.font = "20px serif";
@@ -498,55 +497,6 @@ function time_setting(){
                 }
                 else{
                     ctx.fillText( [i] + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
-                }
-            }
-            ctx.font = "20px serif";
-            ctx.fillText("x in hours", x_whole_axe_length + x_axe_name_diff,1);
-        break;
-
-        case "2 Days in a row":
-            lapse = 24; //1, because of 0 time
-            unit = x_point_length / lapse; //for each time lapse
-
-            ctx.clearRect(-unit/2, 1, unit/2 + x_axe_length-1, height_for_x_lapses + 0.02*height + 12); //clearing the axe, so it is cleared
-                                                              //we are beginning at 1, because of line width
-            measure_text_x_axe_and_delete(); //deleting the text
-
-            for (let i = 0; i <= lapse; i++) {    
-                ctx.beginPath();
-                ctx.moveTo(i * unit, 0);
-                ctx.lineTo(i*unit, height_for_x_lapses);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-                //lapses naming
-                ctx.font = "12px serif";
-
-                if (i <= 12){
-                    if (i <= 6){
-                        if (i <= 4){
-                            ctx.fillText( "0" + [i]*2 + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
-                        }
-                        else{
-                            ctx.fillText( [i]*2 + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
-                        }
-                    }
-                    else{
-                        ctx.fillText( [i]*2 + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
-                    }
-                }
-                else if (i > 12){
-                    if (i <= 18){
-                        if (i <= 16){
-                            ctx.fillText( "0" + (2 + ([i] - 13)*2) + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
-                        }
-                        else{
-                            ctx.fillText( (2 + ([i] - 13)*2) + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
-                        }
-                    }
-                    else{
-                        ctx.fillText( (2 + ([i] - 13)*2) + ":00", [-unit/3 + i*unit], height_for_x_lapses + 0.02*height);
-                    }
                 }
             }
             ctx.font = "20px serif";
@@ -660,7 +610,7 @@ function sensor_setting(){
                             //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range is 325°C --> meanig per lapse we have --> 32.5 degree difference
                             ctx.font = "20px serif";
 
-                            ctx.fillText([data_min_temp + Number((Math.round(steps_array[i] * 10)/10).toPrecision(2))] + "°C", -width*0.06, -steps_array[i] * unit);
+                            ctx.fillText((data_min_temp + steps_array[i]).toFixed(1) + "°C", -width*0.07, -steps_array[i] * unit);
                         }
 
                         ctx.font = "20px serif";
@@ -686,7 +636,7 @@ function sensor_setting(){
                         //giving numbers (names) to the lines with corosponding --> -75°C...250°C --> our complete range are 325°C --> meanig per lapse we have --> 32.5 degree difference
                         ctx.font = "20px serif";
                         const unit_temp = 325/lapse;
-                        ctx.fillText([-75+(i*unit_temp)] + "°C", -width*0.06, -i*unit);
+                        ctx.fillText([-75+(i*unit_temp)] + "°C", -width*0.07, -i*unit);
                     }
                     ctx.font = "20px serif";
                     ctx.fillText("Temperature", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
@@ -723,7 +673,7 @@ function sensor_setting(){
                             //giving numbers (names) to the lines with corosponding --> 0 ... 100% --> our complete range is 100%
                             ctx.font = "20px serif";
 
-                            ctx.fillText([data_min_hpp + Number((Math.round(steps_array[i] * 10)/10).toPrecision(2))] + "%", -width*0.06, -steps_array[i] * unit);
+                            ctx.fillText((data_min_hpp + steps_array[i]).toFixed(1) + "%", -width*0.07, -steps_array[i] * unit);
                         }
 
                         ctx.font = "20px serif";
@@ -748,7 +698,7 @@ function sensor_setting(){
                         //giving numbers (names) to the lines with corosponding --> 0%...100% --> our complete range is 100% --> meanig per lapse we have --> 1% degree difference
                         ctx.font = "20px serif";
                         const unit_temp = 100/lapse;
-                        ctx.fillText([(i*unit_temp)] + "%", -width*0.06, -i*unit);
+                        ctx.fillText([(i*unit_temp)] + "%", -width*0.07, -i*unit);
                     }
                     ctx.font = "20px serif";
                     ctx.fillText("Humidity", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
@@ -785,7 +735,7 @@ function sensor_setting(){
                             //giving numbers (names) to the lines with corosponding --> 300hPa ... 1100hPa --> our max difference is 800hPa
                             ctx.font = "20px serif";
 
-                            ctx.fillText([data_min_bme + (Math.round(Number(steps_array[i])))] + "hPa", -width*0.06, -steps_array[i] * unit);
+                            ctx.fillText((data_min_bme + steps_array[i]).toFixed(1) + "hPa", -width*0.07, -steps_array[i] * unit);
                         }
 
                         ctx.font = "20px serif";
@@ -810,7 +760,7 @@ function sensor_setting(){
                         //giving numbers (names) to the lines with corosponding 
                         ctx.font = "20px serif";
                         const unit_temp = 800/lapse; //1100hPa - 300hPa = 800hPa
-                        ctx.fillText([300 + (i*unit_temp)] + "hPa", -width*0.06, -i*unit);
+                        ctx.fillText([300 + (i*unit_temp)] + "hPa", -width*0.07, -i*unit);
                     }
                     ctx.font = "20px serif";
                     ctx.fillText("Airpressure", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
@@ -846,7 +796,7 @@ function sensor_setting(){
                             //giving numbers (names) to the lines with corosponding --> 0 ... 100% --> our complete range are 100%
                             ctx.font = "20px serif";
 
-                            ctx.fillText([data_min_ozon + Number((Math.round(steps_array[i] * 10)/10).toPrecision(2))] + "ppm", -width*0.06, -steps_array[i] * unit);
+                            ctx.fillText((data_min_ozon + steps_array[i]).toFixed(1) + "ppm", -width*0.07, -steps_array[i] * unit);
                         }
 
                         ctx.font = "20px serif";
@@ -872,7 +822,7 @@ function sensor_setting(){
                         //giving numbers (names) to the lines with corosponding 
                         ctx.font = "20px serif";
                         const unit_temp = 100/lapse;
-                        ctx.fillText((i*unit_temp) + "ppm", -width*0.06, -i*unit);
+                        ctx.fillText((i*unit_temp) + "ppm", -width*0.07, -i*unit);
                     }
                     ctx.font = "20px serif";
                     ctx.fillText("Ozon", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
@@ -959,8 +909,16 @@ function Read_from_bme(){ //this method will later be implemented in HTTP_SET
 
 
 function Read_all(){
+    read_data_bool = false; //for the time-zone --> time-now
+    
     //here we will read: all Sensor-data --> e.g. BME, HPP, etc.
-    fetch_ALL_INFO("sensorbox.com", "Live", "webData", sensor_mac_addresses_sensorbox, sensor_all_data_sensorbox);
+    const sensor_name = '"all":'; 
+    sensor_mac_all_fetch = [];
+    //fetch_ALL_INFO("sensorbox.com", "Live", "webData", sensor_mac_addresses_sensorbox, sensor_all_data_sensorbox);
+    fetch_ALL_INFO("localhost", "Diplomarbeit", "Website", "test_all_sensors_sensorboxes.http", sensor_name);
+
+    read_data_bool = true; //for the time-zone --> time-now
+
 }
 
 function save_drawing_data_for_ozon(){
@@ -1070,10 +1028,6 @@ function save_drawing_data_for_ozon(){
 
             case "Yesterday":
                 sensor_time_calculate_their_Coordinates_24h(ozon_canvas_x, ozon_time);
-            break;
-
-            case "2 Days in a row":
-
             break;
         } 
 
@@ -1219,10 +1173,6 @@ function save_drawing_data_for_temp(){
             case "Yesterday":
                 sensor_time_calculate_their_Coordinates_24h(temp_canvas_x, temp_time);
             break;
-
-            case "2 Days in a row":
-
-            break;
         } 
 
         if (temp_division != 0){
@@ -1344,10 +1294,6 @@ function save_drawing_data_for_hpp(){
 
             case "Yesterday":
                 sensor_time_calculate_their_Coordinates_24h(hpp_canvas_x, hpp_time);
-            break;
-
-            case "2 Days in a row":
-
             break;
         }
 
@@ -1475,10 +1421,6 @@ function save_drawing_data_for_bme(){
             case "Yesterday":
                 sensor_time_calculate_their_Coordinates_24h(bme_canvas_x, bme_time);
             break;
-
-            case "2 Days in a row":
-
-            break;
         } 
         //bme_canvas_y = y_coordinates; //please dont ask me, why this line of code is not working --> changes: it has probably sth to do how arrays function in js. Obviously completely different compared to C#
 
@@ -1499,7 +1441,6 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
     let saved_hours = []; //saving the calculated hours 
 
     let time_divided = 0; //same here
-
     //main process
     ////////////////////////
     for (let i = 0; i < sensor_time.length; i++) { //read sensor_time and save it
@@ -1527,7 +1468,7 @@ function sensor_time_calculate_actual_coordinates_universal(x_coord, sensor_time
             sec_the_chosen = sec_string.split("0")[1];
         }
 
-        let calculate_per_1h_from_this = Number(hour_the_chosen) + Number(min_the_chosen/60) + Number(sec_the_chosen/360); //like 12.5h
+        let calculate_per_1h_from_this = Number(hour_the_chosen) + Number(min_the_chosen)/60 + Number(sec_the_chosen)/3600; //like 12.5h
         saved_hours[i] = calculate_per_1h_from_this; //adding the current hours to my list, so that i can promptly work with them
     }
 
@@ -1628,7 +1569,7 @@ function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
             sec_the_chosen = sec_string.split("0")[1];
         }
 
-        let calculate_per_1h_from_this = Number(hour_the_chosen) + Number(min_the_chosen/60) + Number(sec_the_chosen/360); //like 12.5h
+        let calculate_per_1h_from_this = Number(hour_the_chosen) + Number(min_the_chosen)/60 + Number(sec_the_chosen)/3600; //like 12.5h
 
         const max_time = 24; //24h --> 24:00:00
         const lowest_time = 0; //0h --> 00:00:00
@@ -1659,7 +1600,7 @@ function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
-const socket = new WebSocket("sensorbox.com"); //websocket method, live implementation
+const socket = new WebSocket("ws://sensorbox.com/ws"); //websocket method, live implementation --> changed to ws:// ... /ws
 
 socket.addEventListener("open", (event) =>{ //connection open 
     mac_all = []; //i am not sure, if this line of code, will definetely work, but we'll see
@@ -1691,36 +1632,39 @@ socket.addEventListener("message", (event) =>{ //take message
     const mac_data_ozon = split_data[9];
 
     const temp_data = [mac_name, mac_time, mac_data_bme, mac_data_hpp, mac_data_temp, mac_data_ozon];
-    mac_all.add(temp_data); //saving data local
+    mac_all.push(temp_data); //saving data local
 }); 
 
 function update_mac_combobox(mac_name){
-    const combobox_mac = document.getElementById("mac_box").value;
+    const combobox_mac = document.getElementById("mac_box");
     const combobox_mac_length = document.getElementById("mac_box").length;
     let letmeknow = false;
 
+    const option = new Option(mac_name, combobox_mac_length);
+    console.log(combobox_mac_length);
     if (combobox_mac_length == 0){
-        combobox_mac.add(mac_name);
+        combobox_mac.add(option);
     }
     else{
         for (let i = 0; i < combobox_mac_length; i++) {
-            if (mac_name == combobox_mac.item(i)){
+            if (combobox_mac.item(i).text == mac_name){
                 letmeknow = true;
                 break;
             }
         }
         if (letmeknow == true){
             console.log("this mac was already added.");
+            letmeknow = false;
         }
         else if (letmeknow == false){
             console.log("this mac is new!");
-            combobox_mac.add(mac_name); //adding unknown address
+            combobox_mac.add(option); //adding unknown address
         }
     }  
 }
 
 function mac_setting(){
-    const combobox_mac = document.getElementById("mac_box").value;
+    const combobox_mac = document.getElementById("mac_box");
 
     //resetting values
     bme_time = [];
@@ -1734,23 +1678,33 @@ function mac_setting(){
 
     ozon_time = [];
     ozon_data = [];
+    try
+    {
+        for (let i = 0; i < sensor_mac_all_fetch.length; i++) {
+            const value_mac = sensor_mac_all_fetch[i][0]; //mac address name
+            ////////////////////
+            //testing
+            console.log(sensor_mac_all_fetch[i][0] + "|" + sensor_mac_all_fetch[i][1] + "|" +  sensor_mac_all_fetch[i][2] + "|" + sensor_mac_all_fetch[i][3] + "|" + sensor_mac_all_fetch[i][4] + "|" +  sensor_mac_all_fetch[i][5]);
+            ////////////////////
+            const current_value = combobox_mac.item(combobox_mac.value).text;
+            if (current_value == value_mac){ //the current mac
+                bme_time.push(sensor_mac_all_fetch[i][1]);
+                console.log(sensor_mac_all_fetch[i][1]); //test
+                console.log(sensor_mac_all_fetch[i][2]); //test
+                bme_data.push(Number(sensor_mac_all_fetch[i][2]));
 
-    for (let i = 0; i < mac_all.length; i++) {
-        const value_mac = mac_all[i][0]; //mac address name
-        
-        if (value_mac == combobox_mac){ //the current mac
-            bme_time.add(mac_all[i][1]);
-            bme_data.add(mac_all[i][2]);
+                hpp_time.push(sensor_mac_all_fetch[i][1]);
+                hpp_data.push(Number(sensor_mac_all_fetch[i][3]));
 
-            hpp_time.add(mac_all[i][1]);
-            hpp_data.add(mac_all[i][3]);
+                temp_time.push(sensor_mac_all_fetch[i][1]);
+                temp_data.push(Number(sensor_mac_all_fetch[i][4])); //mac_all for websockets
 
-            temp_time.add(mac_all[i][1]);
-            temp_data.add(mac_all[i][4]);
-
-            ozon_time.add(mac_all[i][1]);
-            ozon_data.add(mac_all[i][5]);
+                ozon_time.push(sensor_mac_all_fetch[i][1]);
+                ozon_data.push(Number(sensor_mac_all_fetch[i][5]));
+            }
         }
+    } catch(err){
+        console.log(err);
     }
 }
 
@@ -1762,11 +1716,11 @@ socket.addEventListener("error", (event) =>{ //errors are occuring
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
 //method for all incoming data --> this will be used for the esp
-const fetch_ALL_INFO = async(DNS_address, first_address, second_address, macs, datas)=>{ 
+const fetch_ALL_INFO = async(DNS_address, first_address, second_address, where_is_it_saved, split_sensor_name)=>{ 
     const address = DNS_address; 
     const first = first_address; 
     const second = second_address;
-    const response = await fetch(`http://${address}/${first}`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
+    const response = await fetch(`http://${address}/${first}/${second}/${where_is_it_saved}`,{ //if you want to use the test_send.http, you have use this: `http://${address}/${first}/${second}/test_send.http`
         method: 'GET',
         headers: {
             'Content-Type': 'text/plain'
@@ -1778,7 +1732,8 @@ const fetch_ALL_INFO = async(DNS_address, first_address, second_address, macs, d
     }
 
     //one message will look like that
-    //Data:Time:123:Sensorbox1:BMEData:HTUData:TypKData:OzonData
+    //earlier --> Data:Time:123:Sensorbox1:BMEData:HTUData:TypKData:OzonData
+    //now     --> [Data]:[Time]:[h]:[min]:[s]:[nodename]:[bmeValue]:[HTUValue]:[TypKValue]:[OzonValue]
 
     const userData = await response.text(); //i have to do asyn, because its parsing at the same when receiving the msg
                                             //when a method returns a promise, u have to use "await"
@@ -1794,6 +1749,39 @@ const fetch_ALL_INFO = async(DNS_address, first_address, second_address, macs, d
     //////////////////////////////////////////////////////////////////
     console.log(userData);
     //////////////////////////////////////////////////////////////////
+
+    //extracting the beginning name of the sent message --> quite important, when I want to read the data
+    const msg = userData.split(`${split_sensor_name}`)[1]?.trim(); //prevents error messages "?" ... plus '...', with that i can even extract " this symbols 
+    
+    //now i will split all the uneccessary data
+    const without_symbols = msg.split(`"`)[1]?.trim();
+
+    //first lets take without_symbols and split the data with |
+    const split_data = without_symbols.split('|');
+
+    for (let i = 0; i < split_data.length; i++) {
+        let split_information = split_data[i].split(":"); // [Data]:[Time]:[h]:[min]:[s]:[nodename]:[bmeValue]:[HTUValue]:[TypKValue]:[OzonValue]
+
+        //reading sensorboxname -- mac
+        const mac_name = split_information[5]; 
+
+        update_mac_combobox(mac_name); //updating the combobox
+
+        //reading time values
+        const mac_time = split_information[2] + ":" + split_information[3] + ":" + split_information[4]; //recreating the time format for the time functions
+   
+        //reading sensor data
+        const mac_data_bme = split_information[6]; 
+        const mac_data_hpp = split_information[7];
+        const mac_data_temp = split_information[8];
+        const mac_data_ozon = split_information[9];
+
+        const temp_data = [mac_name, mac_time, mac_data_bme, mac_data_hpp, mac_data_temp, mac_data_ozon];
+        sensor_mac_all_fetch.push(temp_data); //saving data local
+    } 
+
+    mac_setting();
+    HTTP_SAVE();
 }
 
 
@@ -1896,4 +1884,4 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
 //setInterval(HTTP_READ(), 1000); //yeah i changed, the paramter, to 1 second --> it should work, but we have to test it properly with the esp
 
-//setInterval(Read_all(), 1000); //this should read the actual sensor-esp-data
+setInterval(Read_all(), 1000); //this should read the actual sensor-esp-data

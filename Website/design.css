@@ -1,3 +1,86 @@
-canvas{
-    border: 5px black;
+/* General Reset and Font */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Body Styling */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling */
+    background-color: darkslategrey;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Vertical Stack */
+.stack_ver {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Horizontal Stack */
+.stack_hor {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Dropdown Menus */
+select {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    background-color: dimgray;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+select:hover {
+    background-color: gray;
+}
+
+/* Buttons */
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+#butt_apply {
+    background-color: darkslateblue;
+    color: white;
+}
+
+#meas_ss_butt {
+    background-color: dimgray;
+    color: white;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background-color: slateblue;
+}
+
+/* Canvas Styling */
+canvas#graph {
+    border: 3px solid black;
+    border-radius: 10px;
+    background-color: white;
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
