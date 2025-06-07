@@ -14236,7 +14236,7 @@
 			(uuid "816dcd1d-8361-4eda-8a1c-29860c145cd4")
 		)
 		(instances
-			(project ""
+			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "S1")
 					(unit 1)
@@ -15004,6 +15004,92 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "Rx1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Sensor:BME280")
+		(at 34.29 140.97 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7fb36c29-9eb9-4eb1-a7e8-3391837f862f")
+		(property "Reference" "U3"
+			(at 34.29 125.73 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BME280"
+			(at 34.29 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_LGA:Bosch_LGA-8_2.5x2.5mm_P0.65mm_ClockwisePinNumbering"
+			(at 22.86 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf"
+			(at 29.21 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "3-in-1 sensor, humidity, pressure, temperature, I2C and SPI interface, 1.71-3.6V, LGA-8"
+			(at 34.29 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "6"
+			(uuid "8407588f-46bf-4808-8c4b-f2934e3c201b")
+		)
+		(pin "4"
+			(uuid "6e2da1c3-0685-4ef1-8ce8-ee5ddf9f1e99")
+		)
+		(pin "3"
+			(uuid "d440c482-4776-42e0-9f80-e1b290725bda")
+		)
+		(pin "1"
+			(uuid "53a3a62b-dfc9-4fb0-bc1e-ab32dee0f488")
+		)
+		(pin "5"
+			(uuid "a95b0482-bd8c-4d31-a5b6-ab24c137b37a")
+		)
+		(pin "2"
+			(uuid "7476deb9-9ed8-4383-8e39-b556f7fff793")
+		)
+		(pin "8"
+			(uuid "8d3f8ee2-2846-401c-acf3-73c6fb243ec8")
+		)
+		(pin "7"
+			(uuid "df019407-dcec-4046-880c-3ff3459fad39")
+		)
+		(instances
+			(project "SensorBox"
+				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
+					(reference "U3")
 					(unit 1)
 				)
 			)
@@ -17169,7 +17255,7 @@
 			(uuid "fa04f7e5-33f5-420a-b172-cc114348c039")
 		)
 		(instances
-			(project ""
+			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "L1")
 					(unit 1)
@@ -17961,92 +18047,6 @@
 			(project "SensorBox"
 				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
 					(reference "Rset1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Sensor:BME280")
-		(at 34.29 140.97 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "e06f7d09-810a-4a46-a907-e6a0e8cb754b")
-		(property "Reference" "U1"
-			(at 34.29 125.73 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "BME280"
-			(at 34.29 128.27 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "BME280 (2):BME280"
-			(at 22.86 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf"
-			(at 29.21 140.97 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "3-in-1 sensor, humidity, pressure, temperature, I2C and SPI interface, 1.71-3.6V, LGA-8"
-			(at 34.29 140.97 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "6"
-			(uuid "da7caa29-2585-42ba-ac21-bab7f21f7390")
-		)
-		(pin "2"
-			(uuid "dde259de-9f7c-4654-848a-a7256f4d4fae")
-		)
-		(pin "7"
-			(uuid "b6fbeaad-66c7-49c9-9ead-7597e8c67a9a")
-		)
-		(pin "8"
-			(uuid "b25f34cf-9aca-45fe-b672-ad07bbc27b45")
-		)
-		(pin "1"
-			(uuid "e27c2fde-38f3-4d65-b100-703db96c6e20")
-		)
-		(pin "3"
-			(uuid "ef6394a5-e194-4e85-87e5-6d804a3643cf")
-		)
-		(pin "4"
-			(uuid "e28b4360-882c-479e-8f2e-e61f97995a1b")
-		)
-		(pin "5"
-			(uuid "8c7e671d-3b00-4cb0-856a-2fc7177ce301")
-		)
-		(instances
-			(project "SensorBox"
-				(path "/7cbe8151-7294-42e6-9c4e-6ec8952d674f"
-					(reference "U1")
 					(unit 1)
 				)
 			)
