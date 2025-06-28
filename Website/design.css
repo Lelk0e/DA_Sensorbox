@@ -12,7 +12,7 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Prevent scrolling */
+    overflow: hidden;
     background-color: darkslategrey;
     font-family: 'Segoe UI', sans-serif;
 }
@@ -23,6 +23,7 @@ html, body {
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    padding: 20px;
 }
 
 /* Horizontal Stack */
@@ -32,6 +33,7 @@ html, body {
     gap: 15px;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
 }
 
 /* Dropdown Menus */
@@ -60,16 +62,6 @@ button {
     transition: transform 0.2s ease, background-color 0.3s ease;
 }
 
-#butt_apply {
-    background-color: darkslateblue;
-    color: white;
-}
-
-#meas_ss_butt {
-    background-color: dimgray;
-    color: white;
-}
-
 button:hover {
     transform: scale(1.05);
     background-color: slateblue;
@@ -83,4 +75,44 @@ canvas#graph {
     max-width: 100%;
     height: auto;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+/* Checkbox Inputs and Labels */
+input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid white;
+    border-radius: 4px;
+    background-color: dimgray;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+input[type="checkbox"]:checked {
+    background-color: slateblue;
+    border-color: white;
+}
+
+input[type="checkbox"]::before {
+    color: white;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    visibility: hidden;
+}
+
+input[type="checkbox"]:checked::before {
+    visibility: visible;
+}
+
+label[for="FETCH"],
+label[for="LIVE"] {
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    user-select: none;
 }

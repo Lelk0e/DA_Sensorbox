@@ -13,6 +13,12 @@
     <div class="stack_ver">
         <!--Filter system-->
         <div class="stack_hor"> <!--objects will be aligned in a horizontal way-->
+            <!-- Fetch or Live-->
+            <select onchange="load_setting()" id="data_box" style="background-color:dimgray;" name="Sensors">
+                <option id="fetchen">Fetchen</option>
+                <option id="live">Live</option>
+            </select>
+
             <!--select the comboboxes-->
             <select onchange="mac_setting()" id="mac_box" style="background-color:dimgray;" name="Sensors">
                 
@@ -32,7 +38,10 @@
             </select>
             <!--apply button-->
             <button onclick="apply_button()" style="background-color:darkslateblue;" id="butt_apply">Apply</button>
+            <!--Measurement button-->
             <button onclick="measure_off_on_button()" style="background-color:dimgray;" id="meas_ss_butt">Measurement start/stop</button>
+            <!--Excel button-->
+            <button onclick="excel_button()" style="background-color:rgb(2, 255, 74);" id="butt_excel">Download Excel</button>
         </div>
         <!--Canvas--> 
         <!--xy box .... time x ... data y ---- doing it with a canvas-->   
