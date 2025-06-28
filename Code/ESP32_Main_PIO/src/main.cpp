@@ -7,7 +7,21 @@
 #include "DNSServer.h"
 #include "RTClib.h"
 #include <WiFi.h>
+#include <Wire.h>
+#include "SparkFunBME280.h"
+#include "Adafruit_HTU21DF.h"
+#include "Adafruit_MAX31855.h"
+
 #define cs_pin 5
+#define sda_pin 21
+#define scl_pin 22
+#define ozon_pin 32
+#define external_analogIn 33
+
+// Sensor objects
+BME280 bme280Sensor;
+Adafruit_HTU21DF htu = Adafruit_HTU21DF();
+Adafruit_MAX31855 thermocouple(14, 15, 12); // MAXCLK, MAXCS, MAXDO
 
 RTC_DS3231 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
@@ -40,6 +54,9 @@ float OzonDataValue;
 String webData;
 
 volatile bool lowPowerMode = false;
+volatile bool meshEnabled = true;
+volatile int apClientsConnected = 0;
+volatile bool webSocketConnected = false;
 
 FILE *dbFile;
 FILE *readDbFile = NULL;
@@ -55,11 +72,16 @@ const byte DNS_PORT = 53;
 
 bool toggleOnOff = false;
 
+// Task for reading local sensor data
+Task *localSensorTask;
+
 void receivedCallback(String &from, String &msg);
 void newConnectionCallback(uint32_t nodeId);
 String messageType(String msg);
 void dataSplit(String s, char del);
 void logNodeData();
+void readLocalSensors();
+void toggleMesh(bool enable);
 int32_t read_fn_wctx(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len);
 int flush_fn(struct dblog_write_context *ctx);
 int32_t write_fn(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len);
@@ -67,11 +89,112 @@ int32_t read_fn_rctx(struct dblog_read_context *ctx, void *buffer, uint32_t pos,
 void print_error(int res);
 void exitLPM();
 String wrDBtoWs(const char *filename);
+void verifyMeshStatus();
+void initMesh();
+void checkAPConnections();
+
+// Sensor reading functions
+float readHTU()
+{
+  float humidity = htu.readHumidity();
+  if (isnan(humidity))
+    return -1;
+  return humidity;
+}
+
+float readBme()
+{
+  float pressure = bme280Sensor.readFloatPressure();
+  if (isnan(pressure))
+    return -1;
+  return pressure;
+}
+
+float readTypK()
+{
+  float temperatureK = thermocouple.readCelsius();
+  return temperatureK;
+}
+
+uint16_t readOzon()
+{
+  uint16_t ppmValue = analogRead(ozon_pin);
+  return ppmValue / 0.805;
+}
+
+void readLocalSensors()
+{
+  if (!meshEnabled) {
+    Serial.println("=== Reading Local Sensors ===");
+    
+    int BMEValue = static_cast<int>(readBme());
+    int HTUValue = static_cast<int>(readHTU());
+    int TypKValue = static_cast<int>(readTypK());
+    int OzonValue = static_cast<int>(readOzon());
+    
+    Serial.print("BME: "); Serial.print(BMEValue); Serial.println(" Pa");
+    Serial.print("HTU: "); Serial.print(HTUValue); Serial.println(" %");
+    Serial.print("TypK: "); Serial.print(TypKValue); Serial.println(" °C");
+    Serial.print("Ozon: "); Serial.print(OzonValue); Serial.println(" mV");
+    
+    DateTime now = rtc.now();
+    char timestamp[24];
+    snprintf(timestamp, sizeof(timestamp), "%04d:%02d:%02d:%02d:%02d:%02d",
+             now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
+    
+    Serial.print("Timestamp: "); Serial.println(timestamp);
+    
+    // Send data via WebSocket
+    String sensorData = "{\"timestamp\":\"" + String(timestamp) + "\",\"node\":\"mainESP\",\"bme\":" + String(BMEValue) + ",\"htu\":" + String(HTUValue) + ",\"typk\":" + String(TypKValue) + ",\"ozon\":" + String(OzonValue) + "}";
+    ws.textAll(sensorData);
+    
+    Serial.print("WebSocket clients: "); Serial.println(ws.count());
+    Serial.println("Local sensor data sent via WebSocket");
+    Serial.println("================================");
+  } else {
+    Serial.println("Mesh enabled - skipping local sensor reading");
+  }
+}
+
+void toggleMesh(bool enable)
+{
+  if (enable && !meshEnabled) {
+    Serial.println("=== ENABLING MESH NETWORK ===");
+    meshEnabled = true;
+    initMesh();
+    delay(2000); // Give mesh time to initialize
+    // Send broadcast to tell clients to send their data
+    Serial.println("Sending 'SendData' broadcast to all clients");
+    mesh.sendBroadcast("SendData");
+    Serial.println("Mesh network enabled and broadcast sent");
+    verifyMeshStatus();
+    Serial.println("================================");
+  } else if (!enable && meshEnabled) {
+    Serial.println("=== DISABLING MESH NETWORK ===");
+    meshEnabled = false;
+    
+    // More thorough mesh stopping
+    Serial.println("Stopping mesh network...");
+    mesh.stop();
+    delay(1000);
+    
+    // Force WiFi mode to AP only for web server
+    WiFi.mode(WIFI_AP);
+    delay(500);
+    
+    Serial.println("Mesh network stopped and WiFi mode set to AP only");
+    verifyMeshStatus();
+    Serial.println("================================");
+  } else {
+    Serial.print("Mesh toggle ignored - current state: ");
+    Serial.println(meshEnabled ? "enabled" : "disabled");
+  }
+}
 
 void initMesh()
 {
   mesh.setDebugMsgTypes(ERROR | DEBUG | CONNECTION);
-  mesh.init("Sensorbox", "12345678", &userSched, 5555);
+  mesh.init("Mesh", "12345678", &userSched, 5555);
   mesh.setRoot(true);
   mesh.setContainsRoot(true);
   Serial.println(mesh.getAPIP());
@@ -89,18 +212,34 @@ void sendRoot()
 
 void receivedCallback(String &from, String &msg)
 {
-  Serial.printf("Received from=%s msg=%s\n", from.c_str(), msg.c_str());
-  if (messageType(msg) == "Data")
-  {
+  Serial.println("=== MESH MESSAGE RECEIVED ===");
+  Serial.printf("From: %s\n", from.c_str());
+  Serial.printf("Message: %s\n", msg.c_str());
+  
+  // Check if message is JSON format (from clients) or old format
+  if (msg.startsWith("{\"timestamp\":")) {
+    // JSON format from clients - add to webData for WebSocket
+    Serial.println("Received JSON data from client - adding to webData");
+    webData += msg + "\n";
+    Serial.println("Data added to webData for WebSocket transmission");
+  } else if (messageType(msg) == "Data") {
+    // Old format - keep for backward compatibility
+    Serial.println("Processing old format data message...");
     dataSplit(msg, ':');
     logNodeData();
     webData += msg;
+    Serial.println("Data logged and added to web data");
   }
+  Serial.println("=============================");
 }
 
 void newConnectionCallback(uint32_t nodeId)
 {
+  Serial.println("=== NEW MESH NODE CONNECTED ===");
+  Serial.printf("Node ID: %u\n", nodeId);
+  
   sendRoot();
+  Serial.println("Root message sent to new node");
 
   DateTime now = rtc.now();
   String timeMessage = "Time:" +
@@ -111,6 +250,8 @@ void newConnectionCallback(uint32_t nodeId)
                        String(now.minute()) + ":" +
                        String(now.second());
   mesh.sendBroadcast(timeMessage);
+  Serial.println("Time sync message sent to all nodes");
+  Serial.println("================================");
 }
 
 void dataSplit(String s, char del)
@@ -347,15 +488,94 @@ String wrDBtoWs(const char *filename)
   return data;
 }
 
+void verifyMeshStatus()
+{
+  Serial.println("=== MESH STATUS VERIFICATION ===");
+  Serial.print("meshEnabled flag: "); Serial.println(meshEnabled ? "true" : "false");
+  Serial.print("lowPowerMode: "); Serial.println(lowPowerMode ? "true" : "false");
+  Serial.print("AP clients: "); Serial.println(apClientsConnected);
+  Serial.print("WiFi mode: ");
+  switch(WiFi.getMode()) {
+    case WIFI_MODE_NULL: Serial.println("NULL"); break;
+    case WIFI_MODE_STA: Serial.println("STA"); break;
+    case WIFI_MODE_AP: Serial.println("AP"); break;
+    case WIFI_MODE_APSTA: Serial.println("APSTA"); break;
+    default: Serial.println("UNKNOWN"); break;
+  }
+  Serial.println("================================");
+}
+
+void checkAPConnections()
+{
+  static int lastAPClients = 0;
+  int currentAPClients = WiFi.softAPgetStationNum();
+  
+  if (currentAPClients != lastAPClients) {
+    Serial.println("=== AP CONNECTION CHANGE ===");
+    Serial.print("Previous AP clients: "); Serial.println(lastAPClients);
+    Serial.print("Current AP clients: "); Serial.println(currentAPClients);
+    
+    apClientsConnected = currentAPClients;
+    
+    if (currentAPClients > lastAPClients) {
+      // New client connected
+      Serial.println("New AP client connected");
+      if (apClientsConnected == 1) {
+        Serial.println("First AP client - disabling mesh network");
+        toggleMesh(false);
+        // Don't send SendData here - wait for WebSocket connection
+      }
+    } else if (currentAPClients < lastAPClients) {
+      // Client disconnected
+      Serial.println("AP client disconnected");
+      if (apClientsConnected == 0) {
+        Serial.println("No AP clients remaining - enabling mesh network");
+        toggleMesh(true);
+      }
+    }
+    
+    Serial.println("=============================");
+    lastAPClients = currentAPClients;
+  }
+}
+
 void setup()
 {
   Serial.begin(115200);
+  
+  // Initialize I2C and sensors
+  Wire.begin(sda_pin, scl_pin);
+  delay(100);
+  
+  // Initialize sensors
+  bme280Sensor.setI2CAddress(0x76);
+  if (!bme280Sensor.beginI2C(Wire)) {
+    Serial.println("BME280 not working");
+  } else {
+    Serial.println("BME280 working");
+  }
+  
+  if (!htu.begin()) {
+    Serial.println("HTU21DF not working");
+  } else {
+    Serial.println("HTU21DF working");
+  }
+  
+  if (!thermocouple.begin()) {
+    Serial.println("MAX31855 not working");
+  } else {
+    Serial.println("MAX31855 working");
+  }
+  
+  // Initialize ozone sensor pin
+  pinMode(ozon_pin, INPUT);
+  
   initMesh();
   initSDCard();
-  WiFi.mode(WIFI_AP);
-  WiFi.softAP("SensorBoxAP", "12345678");
-  IPAddress myIP = WiFi.softAPIP();
-  dnsServer.start(DNS_PORT, "sensorbox.com", myIP);
+  //WiFi.mode(WIFI_AP);
+  //WiFi.softAP("SensorBoxAP", "12345678");
+  //IPAddress myIP = WiFi.softAPIP();
+  dnsServer.start(DNS_PORT, "sensorbox.com", mesh.getAPIP());
   if (!rtc.begin())
   {
     Serial.println("Couldn't find RTC");
@@ -363,6 +583,11 @@ void setup()
     while (1)
       delay(10);
   }
+  
+  // Create local sensor reading task
+  localSensorTask = new Task(1000, TASK_FOREVER, readLocalSensors);
+  userSched.addTask(*localSensorTask);
+  
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SD, "/webpage/website.html", "text/html"); });
 
@@ -424,15 +649,41 @@ void setup()
   ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
              {
       if (type == WS_EVT_CONNECT) {
-        Serial.println("Client connected to WebSocket");
+        Serial.println("=== WEBSOCKET CLIENT CONNECTED ===");
+        Serial.print("Client IP: "); Serial.println(client->remoteIP());
+        Serial.print("Total WebSocket clients: "); Serial.println(ws.count());
+        
+        webSocketConnected = true;
+        
+        // Send SendData broadcast when first WebSocket client connects
+        if (ws.count() == 1) {
+          Serial.println("First WebSocket client - sending SendData broadcast");
+          if (meshEnabled) {
+            mesh.sendBroadcast("SendData");
+            Serial.println("SendData broadcast sent to all clients");
+          }
+        }
+        
         if (webData != "" && !webData.isEmpty()) {
+          Serial.println("Sending stored web data to new client");
           client->text(webData);
           webData = "";
         }
+        Serial.println("=====================================");
       } else if (type == WS_EVT_DISCONNECT) {
-        Serial.println("Client disconnected from WebSocket");
+        Serial.println("=== WEBSOCKET CLIENT DISCONNECTED ===");
+        Serial.print("Client IP: "); Serial.println(client->remoteIP());
+        Serial.print("Remaining WebSocket clients: "); Serial.println(ws.count());
+        
+        if (ws.count() == 0) {
+          webSocketConnected = false;
+        }
+        
+        Serial.println("=======================================");
       } else if (type == WS_EVT_ERROR) {
-        Serial.println("WebSocket error");
+        Serial.println("=== WEBSOCKET ERROR ===");
+        Serial.println("WebSocket error occurred");
+        Serial.println("=======================");
       } else if (type == WS_EVT_PONG) {
         Serial.println("WebSocket pong received");
       } else if (type == WS_EVT_DATA) {
@@ -440,7 +691,8 @@ void setup()
         if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
           data[len] = 0;
           String message = String((char*)data);
-          Serial.printf("Received from client: %s\n", message.c_str());
+          Serial.print("WebSocket message received: ");
+          Serial.println(message);
         }
       } });
 
@@ -466,12 +718,67 @@ void setup()
 void loop()
 {
   dnsServer.processNextRequest();
+  
+  // Check AP connections for client detection
+  checkAPConnections();
+  
+  // Periodic mesh status check
+  static unsigned long lastStatusCheck = 0;
+  if (millis() - lastStatusCheck > 15000) { // Check every 15 seconds
+    if (!meshEnabled && apClientsConnected > 0) {
+      Serial.println("=== PERIODIC STATUS CHECK ===");
+      Serial.println("Mesh should be DISABLED - checking status...");
+      verifyMeshStatus();
+      Serial.println("=============================");
+    }
+    lastStatusCheck = millis();
+  }
+  
+  // Handle local sensor reading when mesh is disabled
+  static bool taskWasEnabled = false;
+  if (!meshEnabled && apClientsConnected > 0) {
+    // Enable task only once when conditions are met
+    if (!taskWasEnabled) {
+      Serial.println("Enabling local sensor task");
+      localSensorTask->enable();
+      taskWasEnabled = true;
+    }
+    
+    static unsigned long lastDebug = 0;
+    if (millis() - lastDebug > 5000) { // Debug every 5 seconds
+      Serial.println("=== SYSTEM STATUS ===");
+      Serial.print("Mesh enabled: "); Serial.println(meshEnabled ? "Yes" : "No");
+      Serial.print("AP clients: "); Serial.println(apClientsConnected);
+      Serial.print("Local sensor task: "); Serial.println(localSensorTask->isEnabled() ? "Running" : "Stopped");
+      Serial.println("===================");
+      lastDebug = millis();
+    }
+    
+    // Execute scheduler to run the task
+    userSched.execute();
+  } else {
+    // Disable task when conditions are not met
+    if (taskWasEnabled) {
+      Serial.println("Disabling local sensor task");
+      localSensorTask->disable();
+      taskWasEnabled = false;
+    }
+  }
+  
   if (toggleOnOff == true)
   {
     userSched.execute();
   }
-  if (!lowPowerMode)
+  
+  // Only update mesh if it's enabled
+  if (!lowPowerMode && meshEnabled)
   {
     mesh.update();
+  } else if (!lowPowerMode && !meshEnabled) {
+    static unsigned long lastMeshSkip = 0;
+    if (millis() - lastMeshSkip > 10000) { // Debug every 10 seconds
+      Serial.println("Mesh updates SKIPPED - mesh is disabled");
+      lastMeshSkip = millis();
+    }
   }
 }

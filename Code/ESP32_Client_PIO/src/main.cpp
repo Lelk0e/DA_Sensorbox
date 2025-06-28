@@ -41,6 +41,7 @@ volatile bool lowPowerMode = false;
 volatile bool LPMsig = false;
 bool finalizeSignal = false;
 bool finalized = false; // flag: true when finalization has occurred
+bool timeSynchronized = false; // flag: true when time has been synchronized
 Task *logTask;
 
 bool rtcStat;
@@ -66,6 +67,7 @@ String messageType(String msg);
 void timeSplit(String s, char del);
 void exitLPM();
 void resetLogging();
+void sendDB();
 
 int32_t read_fn(struct dblog_write_context *ctx, void *buffer, uint32_t pos, size_t len)
 {
@@ -114,7 +116,7 @@ void print_error(int res)
 void initMesh()
 {
   mesh.setDebugMsgTypes(ERROR | DEBUG | CONNECTION);
-  mesh.init("Sensorbox", "12345678", &userSched, 5555);
+  mesh.init("Mesh", "12345678", &userSched, 5555);
   mesh.setContainsRoot(true);
   Serial.println(mesh.getAPIP());
   esp_base_mac_addr_get(baseMac);
@@ -132,35 +134,98 @@ void initMesh()
 
 void receivedCallback(String &from, String &msg)
 {
+  Serial.println("=== CLIENT: MESH MESSAGE RECEIVED ===");
+  Serial.printf("From: %s\n", from.c_str());
+  Serial.printf("Message: %s\n", msg.c_str());
+  Serial.printf("My node name: %s\n", mesh.getName().c_str());
+  Serial.printf("Connected nodes: %d\n", mesh.getNodeList().size());
+  
+  // Check if the message is from the mainESP node
   if (from.equals("mainESP"))
   {
+    Serial.println("Message is from mainESP - processing...");
     String type = messageType(msg);
+    Serial.print("Message type: "); Serial.println(type);
+    Serial.print("Type length: "); Serial.println(type.length());
+    Serial.print("Type equals 'Time': "); Serial.println(type.equals("Time") ? "YES" : "NO");
+    Serial.print("Type == 'Time': "); Serial.println((type == "Time") ? "YES" : "NO");
+    
     if (type == "Time")
     {
+      Serial.println("*** TIME MESSAGE DETECTED - PROCESSING ***");
+      Serial.println("Processing time sync...");
       timeSplit(msg, ':');
+      timeSynchronized = true;
+      Serial.println("Time synchronized - logging can now begin");
+      
+      // Start logging task if not already started
+      if (!logTask->isEnabled()) {
+        Serial.println("Starting logging task");
+        logTask->enable();
+      }
     }
-    if (type == "LPMsh")
+    else if (type == "LPMsh")
     {
+      Serial.println("Low power mode signal received");
       LPMsig = true;
     }
-    if (type == "Finalize")
+    else if (type == "Finalize")
     {
+      Serial.println("Finalize signal received");
       finalizeSignal = true;
     }
-    if (type == "Reset")
+    else if (type == "Reset")
     {
+      Serial.println("Reset command received");
       resetLogging();
     }
-    if (type == "OnOff")
+    else if (type == "OnOff")
     {
+      Serial.println("OnOff toggle received");
       toggleOnOff = !toggleOnOff;
     }
-    if (type == "Root")
+    else if (type == "Root")
     {
       int pos = msg.indexOf(':');
       rootName = msg.substring(pos + 1);
+      Serial.print("Root name set to: "); Serial.println(rootName);
+    }
+    else if (type == "SendData")
+    {
+      Serial.println("=== SENDDATA COMMAND RECEIVED ===");
+      Serial.println("Sending all stored data to mainESP");
+      sendDB();
+      Serial.println("Data sending complete");
+      Serial.println("================================");
+    }
+    else
+    {
+      Serial.print("Unknown message type: '"); Serial.print(type); Serial.println("'");
     }
   }
+  else
+  {
+    Serial.print("Message is NOT from mainESP (from: '"); Serial.print(from); Serial.println("') - ignoring");
+    Serial.println("Trying alternative approach - processing anyway since we're connected to mesh...");
+    
+    // Alternative approach: process messages if we're connected to the mesh
+    String type = messageType(msg);
+    if (type == "Time")
+    {
+      Serial.println("*** TIME MESSAGE DETECTED (ALTERNATIVE) - PROCESSING ***");
+      Serial.println("Processing time sync...");
+      timeSplit(msg, ':');
+      timeSynchronized = true;
+      Serial.println("Time synchronized - logging can now begin");
+      
+      // Start logging task if not already started
+      if (!logTask->isEnabled()) {
+        Serial.println("Starting logging task");
+        logTask->enable();
+      }
+    }
+  }
+  Serial.println("=====================================");
 }
 
 void newConnectionCallback(uint32_t nodeId)
@@ -180,10 +245,14 @@ void initSDCard()
 
 void timeSplit(String s, char del)
 {
+  Serial.println("=== CLIENT: PARSING TIME MESSAGE ===");
+  Serial.print("Original message: "); Serial.println(s);
+  
   int prefixEnd = s.indexOf(':');
   if (prefixEnd != -1)
   {
     String datePortion = s.substring(prefixEnd + 1);
+    Serial.print("Date portion: "); Serial.println(datePortion);
 
     // Parse year
     int firstDel = datePortion.indexOf(del);
@@ -208,23 +277,62 @@ void timeSplit(String s, char del)
     // Parse second
     second = datePortion.substring(fifthDel + 1).toInt();
 
+    Serial.println("Parsed values:");
+    Serial.print("Year: "); Serial.println(year);
+    Serial.print("Month: "); Serial.println(month);
+    Serial.print("Day: "); Serial.println(day);
+    Serial.print("Hour: "); Serial.println(hour);
+    Serial.print("Minute: "); Serial.println(minute);
+    Serial.print("Second: "); Serial.println(second);
+
     DateTime newDateTime(year, month, day, hour, minute, second);
+    Serial.println("Setting RTC to new date/time...");
     rtc.adjust(newDateTime);
+    
+    // Verify the RTC was updated
+    delay(100);
+    DateTime now = rtc.now();
+    Serial.println("RTC verification:");
+    Serial.print("RTC Year: "); Serial.println(now.year());
+    Serial.print("RTC Month: "); Serial.println(now.month());
+    Serial.print("RTC Day: "); Serial.println(now.day());
+    Serial.print("RTC Hour: "); Serial.println(now.hour());
+    Serial.print("RTC Minute: "); Serial.println(now.minute());
+    Serial.print("RTC Second: "); Serial.println(now.second());
+    Serial.println("================================");
+  } else {
+    Serial.println("ERROR: No colon found in time message");
+    Serial.println("================================");
   }
 }
 
 String messageType(String msg)
 {
+  Serial.println("=== CLIENT: MESSAGE TYPE DETECTION ===");
+  Serial.print("Input message: "); Serial.println(msg);
+  
   if (msg == NULL)
   {
+    Serial.println("Message is NULL");
+    Serial.println("================================");
     return "";
   }
 
   int pos = msg.indexOf(':');
+  Serial.print("Colon position: "); Serial.println(pos);
+  
   if (pos != -1)
   {
-    return msg.substring(0, pos);
+    String type = msg.substring(0, pos);
+    Serial.print("Extracted type: "); Serial.println(type);
+    Serial.print("Type length: "); Serial.println(type.length());
+    Serial.print("Type equals 'Time': "); Serial.println(type.equals("Time") ? "YES" : "NO");
+    Serial.println("================================");
+    return type;
   }
+  
+  Serial.println("No colon found in message");
+  Serial.println("================================");
   return msg;
 }
 float readHTU()
@@ -255,6 +363,12 @@ uint16_t readOzon()
 
 void logNodeData()
 {
+  // Only log data if time has been synchronized
+  if (!timeSynchronized) {
+    Serial.println("=== CLIENT: SKIPPING LOG - TIME NOT SYNCHRONIZED ===");
+    return;
+  }
+  
   int BMEValue = static_cast<int>(readBme());
   int HTUValue = static_cast<int>(readHTU());
   int TypKValue = static_cast<int>(readTypK());
@@ -272,6 +386,15 @@ void logNodeData()
   char timestamp[24];
   snprintf(timestamp, sizeof(timestamp), "%04d:%02d:%02d:%02d:%02d:%02d",
            now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
+
+  Serial.println("=== CLIENT: LOGGING SENSOR DATA ===");
+  Serial.print("RTC Time: "); Serial.println(timestamp);
+  Serial.print("RTC Year: "); Serial.println(now.year());
+  Serial.print("RTC Month: "); Serial.println(now.month());
+  Serial.print("RTC Day: "); Serial.println(now.day());
+  Serial.print("RTC Hour: "); Serial.println(now.hour());
+  Serial.print("RTC Minute: "); Serial.println(now.minute());
+  Serial.print("RTC Second: "); Serial.println(now.second());
 
   int res = dblog_set_col_val(&sqliteLogger, 0, DBLOG_TYPE_TEXT, timestamp, strlen(timestamp));
   if (res != 0)
@@ -317,23 +440,30 @@ void logNodeData()
     Serial.println("HTU: " + String(HTUValue) + "%");
     Serial.println("TypK: " + String(TypKValue) + "°C");
     Serial.println("Ozon: " + String(OzonValue) + "mV");
-    String msg = "Data:Time:" + String(timestamp) + ":" + String(nodeName) + ":" + String(BMEValue) + ":" + String(HTUValue) + ":" + String(TypKValue) + ":" + String(OzonValue);
-    if (!msg.isEmpty())
+    
+    // Send data in JSON format to match main ESP32
+    String jsonData = "{\"timestamp\":\"" + String(timestamp) + "\",\"node\":\"" + String(nodeName) + "\",\"bme\":" + String(BMEValue) + ",\"htu\":" + String(HTUValue) + ",\"typk\":" + String(TypKValue) + ",\"ozon\":" + String(OzonValue) + "}";
+    
+    if (!jsonData.isEmpty())
     {
-      mesh.sendSingle(rootName, msg);
-      msg = "";
+      mesh.sendSingle(rootName, jsonData);
+      jsonData = "";
     }
   }
+  Serial.println("==================================");
 }
 
 void sendDB()
 {
+  Serial.println("=== CLIENT: SENDING DATABASE ===");
   readDbFile = fopen(dbFileName, "rb");
   if (!readDbFile)
   {
     Serial.println("Error opening DB for reading");
     return;
   }
+  Serial.println("Database file opened successfully");
+  
   struct dblog_read_context rctx;
   rctx.page_size_exp = 11;
   rctx.read_fn = (int32_t (*)(struct dblog_read_context *, void *, uint32_t, size_t))db_read_fn_rctx;
@@ -341,10 +471,14 @@ void sendDB()
   int res = dblog_read_init(&rctx);
   if (res)
   {
+    Serial.print("Error initializing DB read: ");
     print_error(res);
     fclose(readDbFile);
     return;
   }
+  Serial.println("Database read context initialized");
+  
+  int recordsSent = 0;
   while (true)
   {
     uint32_t colType0, colType1, colType2, colType3, colType4;
@@ -362,6 +496,7 @@ void sendDB()
 
     if (strcmp(ts, lastSentTs) <= 0)
     {
+      // Skip already sent records
     }
     else
     {
@@ -373,16 +508,23 @@ void sendDB()
       memcpy(&HTUValue, colVal2, sizeof(HTUValue));
       memcpy(&TypKValue, colVal3, sizeof(TypKValue));
       memcpy(&OzonValue, colVal4, sizeof(OzonValue));
-      String msg = "Data:Time:" + String(ts) + ":" + String(nodeName) + ":" + String(BMEValue) + ":" + String(HTUValue) + ":" + String(TypKValue) + ":" + String(OzonValue);
-      mesh.sendSingle(rootName, msg);
+      
+      // Send data in JSON format to match main ESP32
+      String jsonData = "{\"timestamp\":\"" + String(ts) + "\",\"node\":\"" + String(nodeName) + "\",\"bme\":" + String(BMEValue) + ",\"htu\":" + String(HTUValue) + ",\"typk\":" + String(TypKValue) + ",\"ozon\":" + String(OzonValue) + "}";
+      
+      Serial.print("Sending record "); Serial.print(recordsSent + 1); Serial.print(": "); Serial.println(ts);
+      mesh.sendSingle(rootName, jsonData);
       delay(10);
       strcpy(lastSentTs, ts);
+      recordsSent++;
     }
 
     if (dblog_read_next_row(&rctx) != 0)
       break;
   }
   fclose(readDbFile);
+  Serial.print("Database sending complete. Records sent: "); Serial.println(recordsSent);
+  Serial.println("=====================================");
 }
 
 void LPM(unsigned long durationMillis)
@@ -401,14 +543,27 @@ void LPM(unsigned long durationMillis)
 
 void exitLPM()
 {
+  Serial.println("=== CLIENT: EXITING LOW POWER MODE ===");
   lowPowerMode = false;
   Serial.println("Exiting LPM");
   initMesh();
-  while (!mesh.isConnected("mainESP"))
+  Serial.println("Mesh reinitialized, waiting for connection...");
+  
+  int connectionAttempts = 0;
+  while (!mesh.isConnected("mainESP") && connectionAttempts < 30)
   {
+    Serial.print("Connection attempt "); Serial.print(connectionAttempts + 1); Serial.println("/30");
     delay(1000);
+    connectionAttempts++;
   }
-  sendDB();
+  
+  if (mesh.isConnected("mainESP")) {
+    Serial.println("Connected to mainESP - sending stored data");
+    sendDB();
+  } else {
+    Serial.println("Failed to connect to mainESP after 30 attempts");
+  }
+  Serial.println("==========================================");
 }
 
 void resetLogging()
@@ -441,10 +596,17 @@ void resetLogging()
     logTask = new Task(1000, TASK_FOREVER, logNodeData);
     userSched.addTask(*logTask);
   }
-  logTask->enable();
+  
+  // Only enable logging if time has been synchronized
+  if (timeSynchronized) {
+    logTask->enable();
+    Serial.println("Reset complete. Logging restarted (time synchronized).");
+  } else {
+    Serial.println("Reset complete. Logging task created but not enabled - waiting for time sync.");
+  }
+  
   startTime = millis();
   finalized = false;
-  Serial.println("Reset complete. Logging restarted.");
 }
 
 void setup()
@@ -519,8 +681,10 @@ void setup()
   dblog_write_init(&sqliteLogger);
   logTask = new Task(1000, TASK_FOREVER, logNodeData);
   userSched.addTask(*logTask);
-  logTask->enable();
+  // Don't enable the task yet - wait for time sync
+  Serial.println("Logging task created but not enabled - waiting for time sync");
   startTime = millis();
+  finalized = false;
 }
 
 void loop()
