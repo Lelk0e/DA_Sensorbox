@@ -57,6 +57,7 @@ volatile bool lowPowerMode = false;
 volatile bool meshEnabled = true;
 volatile int apClientsConnected = 0;
 volatile bool webSocketConnected = false;
+volatile bool websiteReady = false; // Flag to indicate website is ready to receive data
 
 FILE *dbFile;
 FILE *readDbFile = NULL;
@@ -92,6 +93,8 @@ String wrDBtoWs(const char *filename);
 void verifyMeshStatus();
 void initMesh();
 void checkAPConnections();
+void meshReceivedCallback(uint32_t from, String &msg);
+void sendRoot();
 
 // Sensor reading functions
 float readHTU()
@@ -143,13 +146,24 @@ void readLocalSensors()
              now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
     
     Serial.print("Timestamp: "); Serial.println(timestamp);
-    
-    // Send data via WebSocket
-    String sensorData = "{\"timestamp\":\"" + String(timestamp) + "\",\"node\":\"mainESP\",\"bme\":" + String(BMEValue) + ",\"htu\":" + String(HTUValue) + ",\"typk\":" + String(TypKValue) + ",\"ozon\":" + String(OzonValue) + "}";
-    ws.textAll(sensorData);
-    
     Serial.print("WebSocket clients: "); Serial.println(ws.count());
-    Serial.println("Local sensor data sent via WebSocket");
+    Serial.print("Website ready: "); Serial.println(websiteReady ? "Yes" : "No");
+    
+    // Only send data via WebSocket if website is ready AND WebSocket clients are connected
+    if (websiteReady && ws.count() > 0) {
+      String sensorData = "{\"timestamp\":\"" + String(timestamp) + "\",\"node\":\"mainESP\",\"bme\":" + String(BMEValue) + ",\"htu\":" + String(HTUValue) + ",\"typk\":" + String(TypKValue) + ",\"ozon\":" + String(OzonValue) + "}";
+      ws.textAll(sensorData);
+      // Buffer main ESP data as well
+      webData += sensorData + "\n";
+      Serial.println("Local sensor data sent via WebSocket");
+    } else {
+      if (!websiteReady) {
+        Serial.println("Website not ready (OnOff not activated) - data not sent");
+      } else if (ws.count() == 0) {
+        Serial.println("No WebSocket clients connected - data paused (auto-pause)");
+      }
+    }
+    
     Serial.println("================================");
   } else {
     Serial.println("Mesh enabled - skipping local sensor reading");
@@ -163,6 +177,8 @@ void toggleMesh(bool enable)
     meshEnabled = true;
     initMesh();
     delay(2000); // Give mesh time to initialize
+    sendRoot();  // Always send Root message after mesh is enabled
+    delay(100);  // Give time for the message to propagate
     // Send broadcast to tell clients to send their data
     Serial.println("Sending 'SendData' broadcast to all clients");
     mesh.sendBroadcast("SendData");
@@ -172,16 +188,13 @@ void toggleMesh(bool enable)
   } else if (!enable && meshEnabled) {
     Serial.println("=== DISABLING MESH NETWORK ===");
     meshEnabled = false;
-    
     // More thorough mesh stopping
     Serial.println("Stopping mesh network...");
     mesh.stop();
     delay(1000);
-    
     // Force WiFi mode to AP only for web server
     WiFi.mode(WIFI_AP);
     delay(500);
-    
     Serial.println("Mesh network stopped and WiFi mode set to AP only");
     verifyMeshStatus();
     Serial.println("================================");
@@ -193,35 +206,78 @@ void toggleMesh(bool enable)
 
 void initMesh()
 {
+  Serial.println("=== INITIALIZING MESH NETWORK ===");
   mesh.setDebugMsgTypes(ERROR | DEBUG | CONNECTION);
   mesh.init("Mesh", "12345678", &userSched, 5555);
   mesh.setRoot(true);
   mesh.setContainsRoot(true);
   Serial.println(mesh.getAPIP());
   mesh.setName(nodeName);
-  mesh.onReceive(&receivedCallback);
+  Serial.println("Registering receivedCallback...");
+  // mesh.onReceive(&receivedCallback);  // Commented out - namedMesh is blocking messages
+  // Note: If messages are not reaching receivedCallback, it might be due to
+  // namedMesh internal processing. Consider using painlessMesh::onReceive directly
+  // or checking if namedMesh is properly forwarding non-nameBroadCast messages.
+  
+  // Alternative: Try using the base painlessMesh callback if namedMesh fails
+  // mesh.onReceive(&meshReceivedCallback);  // This still goes through namedMesh
+  
+  // Try to bypass namedMesh by accessing the underlying painlessMesh
+  static_cast<painlessMesh*>(&mesh)->onReceive(&meshReceivedCallback);
+  
+  Serial.println("Registering newConnectionCallback...");
   mesh.onNewConnection(&newConnectionCallback);
   mesh.onChangedConnections([]()
                             { Serial.printf("Changed connection\n"); });
+  Serial.println("Mesh network initialized successfully");
+  Serial.println("================================");
 }
 
 void sendRoot()
 {
-  mesh.sendBroadcast("Root:" + nodeName);
+  mesh.sendBroadcast("Root:" + String(mesh.getNodeId()));
 }
 
-void receivedCallback(String &from, String &msg)
-{
-  Serial.println("=== MESH MESSAGE RECEIVED ===");
-  Serial.printf("From: %s\n", from.c_str());
+// Direct callback for painlessMesh messages
+void meshReceivedCallback(uint32_t from, String &msg) {
+  Serial.println("=== MESH RECEIVED CALLBACK ===");
+  Serial.printf("From ID: %u\n", from);
   Serial.printf("Message: %s\n", msg.c_str());
+  Serial.printf("Message length: %d\n", msg.length());
+  Serial.printf("Message starts with JSON: %s\n", msg.startsWith("{\"timestamp\":" ) ? "YES" : "NO");
   
+  // If the message is 'On', send all stored data line by line to WebSocket clients
+  if (msg == "On") {
+    Serial.println("Received 'On' from client - sending all stored data to website clients");
+    int startPos = 0;
+    int newlinePos = webData.indexOf('\n', startPos);
+    while (newlinePos != -1) {
+      String record = webData.substring(startPos, newlinePos);
+      if (record.length() > 0) {
+        ws.textAll(record);
+        delay(10); // Small delay to avoid flooding
+      }
+      startPos = newlinePos + 1;
+      newlinePos = webData.indexOf('\n', startPos);
+    }
+    // Send any remaining data (in case there's no final newline)
+    if (startPos < webData.length()) {
+      String lastRecord = webData.substring(startPos);
+      if (lastRecord.length() > 0) {
+        ws.textAll(lastRecord);
+      }
+    }
+    Serial.println("All stored data sent to website clients");
+    // Optionally clear webData here if you want to avoid duplicates
+    // webData = "";
+  }
   // Check if message is JSON format (from clients) or old format
-  if (msg.startsWith("{\"timestamp\":")) {
-    // JSON format from clients - add to webData for WebSocket
+  else if (msg.startsWith("{\"timestamp\":")) {
+    // JSON format from clients - add to webData for later sending
     Serial.println("Received JSON data from client - adding to webData");
     webData += msg + "\n";
     Serial.println("Data added to webData for WebSocket transmission");
+    Serial.printf("webData length now: %d\n", webData.length());
   } else if (messageType(msg) == "Data") {
     // Old format - keep for backward compatibility
     Serial.println("Processing old format data message...");
@@ -229,6 +285,36 @@ void receivedCallback(String &from, String &msg)
     logNodeData();
     webData += msg;
     Serial.println("Data logged and added to web data");
+  } else {
+    Serial.println("Message format not recognized");
+  }
+  Serial.println("=============================");
+}
+
+void receivedCallback(String &from, String &msg)
+{
+  Serial.println("=== MESH MESSAGE RECEIVED ===");
+  Serial.printf("From: %s\n", from.c_str());
+  Serial.printf("Message: %s\n", msg.c_str());
+  Serial.printf("Message length: %d\n", msg.length());
+  Serial.printf("Message starts with JSON: %s\n", msg.startsWith("{\"timestamp\":") ? "YES" : "NO");
+  
+  // Check if message is JSON format (from clients) or old format
+  if (msg.startsWith("{\"timestamp\":")) {
+    // JSON format from clients - add to webData for WebSocket
+    Serial.println("Received JSON data from client - adding to webData");
+    webData += msg + "\n";
+    Serial.println("Data added to webData for WebSocket transmission");
+    Serial.printf("webData length now: %d\n", webData.length());
+  } else if (messageType(msg) == "Data") {
+    // Old format - keep for backward compatibility
+    Serial.println("Processing old format data message...");
+    dataSplit(msg, ':');
+    logNodeData();
+    webData += msg;
+    Serial.println("Data logged and added to web data");
+  } else {
+    Serial.println("Message format not recognized");
   }
   Serial.println("=============================");
 }
@@ -521,9 +607,22 @@ void checkAPConnections()
       // New client connected
       Serial.println("New AP client connected");
       if (apClientsConnected == 1) {
-        Serial.println("First AP client - disabling mesh network");
-        toggleMesh(false);
-        // Don't send SendData here - wait for WebSocket connection
+        Serial.println("First AP client - requesting data before disabling mesh");
+        
+        // Send SendData broadcast first to collect client data
+        if (meshEnabled) {
+          Serial.println("Sending SendData broadcast to collect client data");
+          mesh.sendBroadcast("SendData");
+          
+          // Wait for clients to respond (give them time to send data)
+          Serial.println("Waiting 3 seconds for clients to send data...");
+          delay(3000);
+          
+          Serial.println("Now disabling mesh network");
+          toggleMesh(false);
+        } else {
+          Serial.println("Mesh already disabled - skipping data collection");
+        }
       }
     } else if (currentAPClients < lastAPClients) {
       // Client disconnected
@@ -633,7 +732,30 @@ void setup()
     if(request->hasParam("On") || request->hasParam("Off")){
       if(request->hasParam("On")){
         toggleOnOff = true;
+        websiteReady = true; // Website is ready to receive data
+        Serial.println("=== WEBSITE READY ===");
+        Serial.println("OnOff toggle activated - system is ready to send data");
+        Serial.println("Data will be sent when WebSocket clients are connected");
+        Serial.println("=========================");
         mesh.sendBroadcast("On");
+        // Send all buffered data to all WebSocket clients
+        int startPos = 0;
+        int newlinePos = webData.indexOf('\n', startPos);
+        while (newlinePos != -1) {
+          String record = webData.substring(startPos, newlinePos);
+          if (record.length() > 0) {
+            ws.textAll(record);
+            delay(10);
+          }
+          startPos = newlinePos + 1;
+          newlinePos = webData.indexOf('\n', startPos);
+        }
+        if (startPos < webData.length()) {
+          String lastRecord = webData.substring(startPos);
+          if (lastRecord.length() > 0) {
+            ws.textAll(lastRecord);
+          }
+        }
       } else if (request->hasParam("Off")) {
         if (toggleOnOff == true)
         {
@@ -641,6 +763,12 @@ void setup()
           mesh.sendBroadcast("Off");
         }
         toggleOnOff = false;
+        websiteReady = false; // Website is no longer ready
+        Serial.println("=== WEBSITE NOT READY ===");
+        Serial.println("OnOff toggle deactivated - system stopped");
+        Serial.println("===========================");
+        // Only clear webData here
+        webData = "";
       }
     } else {
       request->send(400, "text/plain", "error toggle on off");
@@ -652,22 +780,47 @@ void setup()
         Serial.println("=== WEBSOCKET CLIENT CONNECTED ===");
         Serial.print("Client IP: "); Serial.println(client->remoteIP());
         Serial.print("Total WebSocket clients: "); Serial.println(ws.count());
+        Serial.print("Website ready: "); Serial.println(websiteReady ? "Yes" : "No");
         
         webSocketConnected = true;
         
-        // Send SendData broadcast when first WebSocket client connects
-        if (ws.count() == 1) {
-          Serial.println("First WebSocket client - sending SendData broadcast");
-          if (meshEnabled) {
-            mesh.sendBroadcast("SendData");
-            Serial.println("SendData broadcast sent to all clients");
-          }
+        // Auto-resume data sending if website is ready
+        if (websiteReady) {
+          Serial.println("=== AUTO-RESUME DATA SENDING ===");
+          Serial.println("WebSocket client connected - resuming data transmission");
+          Serial.println("=================================");
         }
         
+        // Send stored web data to new client
         if (webData != "" && !webData.isEmpty()) {
           Serial.println("Sending stored web data to new client");
-          client->text(webData);
-          webData = "";
+          Serial.print("webData length: "); Serial.println(webData.length());
+          // Split webData by newlines and send each measurement individually
+          int startPos = 0;
+          int newlinePos = webData.indexOf('\n', startPos);
+          int count = 0;
+          while (newlinePos != -1) {
+            String measurement = webData.substring(startPos, newlinePos);
+            if (measurement.length() > 0) {
+              Serial.print("Sending measurement: "); Serial.println(measurement);
+              client->text(measurement);
+              delay(50); // Increased delay between messages
+              count++;
+              if (count % 10 == 0) delay(200); // Longer pause every 10 messages
+            }
+            startPos = newlinePos + 1;
+            newlinePos = webData.indexOf('\n', startPos);
+          }
+          // Send any remaining data (in case there's no final newline)
+          if (startPos < webData.length()) {
+            String lastMeasurement = webData.substring(startPos);
+            if (lastMeasurement.length() > 0) {
+              Serial.print("Sending final measurement: "); Serial.println(lastMeasurement);
+              client->text(lastMeasurement);
+            }
+          }
+          Serial.println("All stored measurements sent individually");
+          // Do NOT clear webData here - keep it for other clients
         }
         Serial.println("=====================================");
       } else if (type == WS_EVT_DISCONNECT) {
@@ -677,6 +830,14 @@ void setup()
         
         if (ws.count() == 0) {
           webSocketConnected = false;
+          
+          // Auto-pause data sending when no WebSocket clients
+          if (websiteReady) {
+            Serial.println("=== AUTO-PAUSE DATA SENDING ===");
+            Serial.println("No WebSocket clients connected - pausing data transmission");
+            Serial.println("Data will resume when clients reconnect");
+            Serial.println("=================================");
+          }
         }
         
         Serial.println("=======================================");
@@ -749,6 +910,16 @@ void loop()
       Serial.println("=== SYSTEM STATUS ===");
       Serial.print("Mesh enabled: "); Serial.println(meshEnabled ? "Yes" : "No");
       Serial.print("AP clients: "); Serial.println(apClientsConnected);
+      Serial.print("WebSocket clients: "); Serial.println(ws.count());
+      Serial.print("Website ready: "); Serial.println(websiteReady ? "Yes" : "No");
+      Serial.print("Data transmission: ");
+      if (!websiteReady) {
+        Serial.println("STOPPED (OnOff not activated)");
+      } else if (ws.count() == 0) {
+        Serial.println("PAUSED (no WebSocket clients)");
+      } else {
+        Serial.println("ACTIVE (sending to WebSocket clients)");
+      }
       Serial.print("Local sensor task: "); Serial.println(localSensorTask->isEnabled() ? "Running" : "Stopped");
       Serial.println("===================");
       lastDebug = millis();
