@@ -330,7 +330,6 @@ function canvas_setting(){
     //why, you ask. Very simple, because these methods will update the graph's x and y axe-lines, the combo boxes are sometimes bugged, and dont update at the beginning if you dont change the current item. I had several problems with that, maybe i will change this line of code in the future, but now it will stay like that --> yeah it will stay like that
     time_setting();
     sensor_setting();
-    load_setting();
     u_can_calculate_now = true;
 }
 
