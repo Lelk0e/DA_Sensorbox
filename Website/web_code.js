@@ -467,9 +467,13 @@ function time_setting(){
                         ctx.fillText(min_hours + ":" + min_minutes + ":" + min_seconds, steps_array[i] * unit - (steps_array[1] * unit)/10, height_for_x_lapses + 0.02*height); //bro it works, omg --> you ask why, very simple, it took me like 15hours, to finish this shit
                     }
                     else{
-                        const steps_hours = min_hours + Math.floor(steps_array[i]);
-                        const steps_minutes = min_minutes +  Math.floor((steps_array[i] - steps_hours) * 60);
-                        const steps_seconds = min_seconds + Math.round(((steps_array[i] - steps_hours) * 60 - steps_minutes) * 60);
+                        const steps_hours = Math.floor(steps_array[i]);
+                        const steps_minutes = Math.floor((steps_array[i] - steps_hours) * 60);
+                        const steps_seconds = Math.round(((steps_array[i] - steps_hours) * 60 - steps_minutes) * 60);
+
+                        steps_hours = steps_hours + min_hours;
+                        steps_minutes = steps_minutes + min_minutes;
+                        steps_seconds = steps_seconds + min_seconds;
 
                         if (steps_seconds >= 60){
                             const number = Math.round(steps_seconds / 60);
@@ -478,7 +482,7 @@ function time_setting(){
                         }
 
                         if (steps_minutes >= 60){
-                            const number = Math.round(minutes / 60);
+                            const number = Math.round(steps_minutes / 60);
                             steps_hours = steps_hours + number;
                             steps_minutes = steps_minutes % 60;
                         }
@@ -1655,7 +1659,7 @@ function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
 const socket = new WebSocket("ws://sensorbox.com/ws"); //websocket method, live implementation --> changed to ws:// ... /ws
 
 socket.addEventListener("open", (event) =>{ //connection open 
-    //mac_all_websockets = []; //i am not sure, if this line of code, will definetely work, but we'll see
+    mac_all_websockets = []; //i am not sure, if this line of code, will definetely work, but we'll see
     console.log("Connection was successfull!");
 }); 
 
