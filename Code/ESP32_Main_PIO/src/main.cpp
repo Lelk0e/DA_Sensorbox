@@ -636,6 +636,33 @@ void checkAPConnections()
     Serial.println("=============================");
     lastAPClients = currentAPClients;
   }
+  
+  // Additional check: if AP clients are connected but mesh is still enabled, force disable
+  if (currentAPClients > 0 && meshEnabled) {
+    Serial.println("=== FORCE MESH DISABLE ===");
+    Serial.print("AP clients: "); Serial.println(currentAPClients);
+    Serial.println("Mesh still enabled - forcing disable");
+    
+    // Send SendData broadcast first to collect client data
+    Serial.println("Sending SendData broadcast to collect client data");
+    mesh.sendBroadcast("SendData");
+    
+    // Wait for clients to respond
+    Serial.println("Waiting 3 seconds for clients to send data...");
+    delay(3000);
+    
+    Serial.println("Now disabling mesh network");
+    toggleMesh(false);
+    Serial.println("================================");
+  }
+  
+  // Additional check: if no AP clients but mesh is disabled, force enable
+  if (currentAPClients == 0 && !meshEnabled) {
+    Serial.println("=== FORCE MESH ENABLE ===");
+    Serial.println("No AP clients and mesh disabled - forcing enable");
+    toggleMesh(true);
+    Serial.println("================================");
+  }
 }
 
 void setup()
@@ -767,8 +794,8 @@ void setup()
         Serial.println("=== WEBSITE NOT READY ===");
         Serial.println("OnOff toggle deactivated - system stopped");
         Serial.println("===========================");
-        // Only clear webData here
-        webData = "";
+        // Do NOT clear webData here - keep data for next On cycle
+        // webData = "";
       }
     } else {
       request->send(400, "text/plain", "error toggle on off");
@@ -827,6 +854,8 @@ void setup()
         Serial.println("=== WEBSOCKET CLIENT DISCONNECTED ===");
         Serial.print("Client IP: "); Serial.println(client->remoteIP());
         Serial.print("Remaining WebSocket clients: "); Serial.println(ws.count());
+        Serial.print("Current AP clients: "); Serial.println(WiFi.softAPgetStationNum());
+        Serial.print("Mesh enabled: "); Serial.println(meshEnabled ? "Yes" : "No");
         
         if (ws.count() == 0) {
           webSocketConnected = false;
@@ -839,6 +868,23 @@ void setup()
             Serial.println("=================================");
           }
         }
+        
+        // Force check AP connections after WebSocket disconnect to ensure correct state
+        Serial.println("=== FORCE AP CHECK AFTER WEBSOCKET DISCONNECT ===");
+        int currentAPClients = WiFi.softAPgetStationNum();
+        Serial.print("AP clients after WebSocket disconnect: "); Serial.println(currentAPClients);
+        
+        // If AP clients are still connected but mesh is enabled, force disable
+        if (currentAPClients > 0 && meshEnabled) {
+          Serial.println("AP clients still connected - forcing mesh disable");
+          toggleMesh(false);
+        }
+        // If no AP clients but mesh is disabled, force enable
+        else if (currentAPClients == 0 && !meshEnabled) {
+          Serial.println("No AP clients - forcing mesh enable");
+          toggleMesh(true);
+        }
+        Serial.println("================================================");
         
         Serial.println("=======================================");
       } else if (type == WS_EVT_ERROR) {
@@ -882,6 +928,25 @@ void loop()
   
   // Check AP connections for client detection
   checkAPConnections();
+  
+  // Periodic force check of AP connections (every 5 seconds)
+  static unsigned long lastForceCheck = 0;
+  if (millis() - lastForceCheck > 5000) {
+    int currentAPClients = WiFi.softAPgetStationNum();
+    if (currentAPClients > 0 && meshEnabled) {
+      Serial.println("=== PERIODIC FORCE CHECK - AP CLIENTS CONNECTED BUT MESH ENABLED ===");
+      Serial.print("AP clients: "); Serial.println(currentAPClients);
+      Serial.println("Forcing mesh disable");
+      toggleMesh(false);
+      Serial.println("================================================================");
+    } else if (currentAPClients == 0 && !meshEnabled) {
+      Serial.println("=== PERIODIC FORCE CHECK - NO AP CLIENTS BUT MESH DISABLED ===");
+      Serial.println("Forcing mesh enable");
+      toggleMesh(true);
+      Serial.println("=============================================================");
+    }
+    lastForceCheck = millis();
+  }
   
   // Periodic mesh status check
   static unsigned long lastStatusCheck = 0;
