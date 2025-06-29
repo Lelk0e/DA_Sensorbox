@@ -1,3 +1,4 @@
+
 /* General Reset and Font */
 * {
     margin: 0;
@@ -12,7 +13,6 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden;
     background-color: darkslategrey;
     font-family: 'Segoe UI', sans-serif;
 }
@@ -77,6 +77,54 @@ canvas#graph {
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
+/* Mobile responsiveness - Tablet and below */
+@media (max-width: 768px) {
+    .stack_hor {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    select, button {
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .stack_ver {
+        padding: 10px;
+    }
+    
+    canvas#graph {
+        max-height: 60vh;
+    }
+}
+
+/* Mobile responsiveness - Phone sizes */
+@media (max-width: 480px) {
+    select, button {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+    
+    canvas#graph {
+        max-height: 50vh;
+    }
+    
+    .canvas-container {
+        padding: 0 10px;
+    }
+}
+
+/* Large screen optimization */
+@media (min-width: 1400px) {
+    .stack_ver {
+        padding: 30px;
+    }
+    
+    canvas#graph {
+        max-height: 75vh;
+    }
+}
+
 /* Checkbox Inputs and Labels */
 input[type="checkbox"] {
     appearance: none;
@@ -96,6 +144,7 @@ input[type="checkbox"]:checked {
 }
 
 input[type="checkbox"]::before {
+    content: "✓";
     color: white;
     font-size: 14px;
     display: flex;
@@ -115,4 +164,27 @@ label[for="LIVE"] {
     font-size: 1rem;
     cursor: pointer;
     user-select: none;
+}
+
+/* Focus states for accessibility */
+select:focus,
+button:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    body {
+        background-color: white !important;
+    }
+    
+    canvas#graph {
+        border: 1px solid black;
+        box-shadow: none;
+    }
+    
+    .stack_hor {
+        display: none;
+    }
 }

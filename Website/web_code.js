@@ -130,9 +130,7 @@ let division_data_zone = 0;
 //-----------------------------------------------------------------------------//
 //esp realization/implementation-----------------------------------------------//
 let mac_all_websockets = []; //websockets
-let sensor_mac_all_fetch = []; //fetchen all
-let websockets_bool = false; //for the checkboxes
-let fetch_bool = false; //for the checkboxes
+let sensor_mac_all_fetch = []; //fetchen all --> will not be used right now, but can be used, if requested
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
@@ -265,6 +263,32 @@ function setTime() { //from phillip, some parts of it is from me, but it was kin
     };
 }
 
+function setOnoff(state) { //from phillip, some parts of it is from me, but it was kinda changed    
+    try{
+        // Send the time to the ESP32
+        var xhr = new XMLHttpRequest();
+        xhr.open(
+            "GET",
+            "/OnOff?" +
+              state,
+            true
+        );
+
+        xhr.onload = function () {
+            alert("On/Off send successfully: " + xhr.responseText);
+        };
+        
+        xhr.onerror = function(){ //on error function, cause those errors are only detectable through these methods
+            console.warn("A error happened, duo to: " + xhr.status);
+        };
+
+        xhr.send(); //sending our request
+    }
+    catch(err){ //this catch wont necessary happen, because http request is kinda weird
+      alert("It occurs a errors when sending the httprequest, please make sure, you are connected to your device!\n" + err);
+    };
+}
+
 function measure_off_on_button(){
     count_button_off_on += 1;
     const button_off_on = document.getElementById("meas_ss_butt");
@@ -272,10 +296,12 @@ function measure_off_on_button(){
     if (count_button_off_on == 1){ //start measurement
         button_off_on.style.backgroundColor = "green";
         setTime();
+        setOnoff("On");
     }
     else if (count_button_off_on == 2){ //stop measurement
         button_off_on.style.backgroundColor = "blue";
         setTime();
+        setOnoff("Off");
     }
     else{ //nothing will be happening here
         count_button_off_on = 0;
@@ -835,7 +861,7 @@ function sensor_setting(){
     }
 }
 
-function HTTP_READ(){ //here i will set and save the values for the sensor data
+function HTTP_READ(){ //here i will set and save the values for the sensor data ---> only for fetch
     //bme should also measure temperature 
     //ozon in ppm, does it change
     //first i will get the generated data, which is --> og's comments from me
@@ -911,7 +937,7 @@ function Read_from_bme(){ //this method will later be implemented in HTTP_SET
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 
-function Read_all(){
+function Read_all(){ //only for fetch
     read_data_bool = false; //for the time-zone --> time-now
     
     //here we will read: all Sensor-data --> e.g. BME, HPP, etc.
@@ -1615,58 +1641,61 @@ socket.addEventListener("close", (event) =>{ //connection closed
 }); 
 
 socket.addEventListener("message", (event) =>{ //take message
-    if (websockets_bool == true){
-        console.log("Reading message ... \n", event.data);
+    read_data_bool = false;
 
+    console.log("Reading message ... \n", event.data);
 
-        //{"timestamp":"2025:06:28:17:49:22","node":"mainESP","bme":92911,"htu":50,"typk":28,"ozon":2209} --> new [0][1][2][3][4][5]
-        const split_data_1 = event.data.split("{")[1]; 
-        const split_data_2 = split_data_1.split("}")[0]; 
-        const split_data = split_data_2.split(",");
+    //{"timestamp":"2025:06:28:17:49:22","node":"mainESP","bme":92911,"htu":50,"typk":28,"ozon":2209} --> new [0][1][2][3][4][5]
+    const split_data_1 = event.data.split("{")[1]; 
+    const split_data_2 = split_data_1.split("}")[0]; 
+    const split_data = split_data_2.split(",");
 
-        const split_time = split_data[0].split(`"`)[3].split(":");
-        console.log("Time:");
-        console.log(split_time[3] + ":" + split_time[4] + ":" + split_time[5]);
+    const split_time = split_data[0].split(`"`)[3].split(":");
+    console.log("Time:");
+    console.log(split_time[3] + ":" + split_time[4] + ":" + split_time[5]);
         
-        const split_node = split_data[1].split(":")[1];   
-        console.log("Node:");
-        console.log(split_node);
+    const split_node = split_data[1].split(":")[1];   
+    console.log("Node:");
+    console.log(split_node);
 
-        const split_bme = split_data[2].split(":")[1];
-        console.log("Bme:");
-        console.log(split_bme);
+    const split_bme = split_data[2].split(":")[1];
+    console.log("Bme:");
+    console.log(split_bme);
 
-        const split_htu = split_data[3].split(":")[1];
-        console.log("Htu:");
-        console.log(split_htu);
+    const split_htu = split_data[3].split(":")[1];
+    console.log("Htu:");
+    console.log(split_htu);
 
-        const split_typk = split_data[4].split(":")[1];
-        console.log("Typk:");
-        console.log(split_typk);
+    const split_typk = split_data[4].split(":")[1];
+    console.log("Typk:");
+    console.log(split_typk);
 
-        const split_ozon = split_data[5].split(":")[1];
-        console.log("Ozon:");
-        console.log(split_ozon);
+    const split_ozon = split_data[5].split(":")[1];
+    console.log("Ozon:");
+    console.log(split_ozon);
 
-        //reading sensorboxname -- mac
-        const mac_name = split_node; 
+    //reading sensorboxname -- mac
+    const mac_name = split_node; 
 
-        update_mac_combobox(mac_name); //updating the combobox
+    update_mac_combobox(mac_name); //updating the combobox
 
-        //reading time values
-        const mac_time = split_time[3] + ":" + split_time[4] + ":" + split_time[5]; //recreating the time format for the time functions
+    //reading time values
+    const mac_time = split_time[3] + ":" + split_time[4] + ":" + split_time[5]; //recreating the time format for the time functions
     
-        //reading sensor data
-        const mac_data_bme = split_bme; 
-        const mac_data_hpp = split_htu;
-        const mac_data_temp = split_typk;
-        const mac_data_ozon = split_ozon;
+    //reading sensor data
+    const mac_data_bme = split_bme; 
+    const mac_data_hpp = split_htu;
+    const mac_data_temp = split_typk;
+    const mac_data_ozon = split_ozon;
 
-        const temp_data = [mac_name, mac_time, mac_data_bme, mac_data_hpp, mac_data_temp, mac_data_ozon];
-        mac_all_websockets.push(temp_data); //saving data local
+    const temp_data = [mac_name, mac_time, mac_data_bme, mac_data_hpp, mac_data_temp, mac_data_ozon];
+    mac_all_websockets.push(temp_data); //saving data local
 
-        mac_setting();
-    }
+    read_data_bool = true; //enabling filter options
+
+    mac_setting();    
+
+    update(); //saving and drawing canvas data
 }); 
 
 function update_mac_combobox(mac_name){
@@ -1698,119 +1727,53 @@ function update_mac_combobox(mac_name){
 }
 
 function mac_setting(){
-    if (fetch_bool == true){
-        const combobox_mac = document.getElementById("mac_box");
+    const combobox_mac = document.getElementById("mac_box");
 
-        //resetting values
-        bme_time = [];
-        bme_data = [];
+    //resetting values
+    bme_time = [];
+    bme_data = [];
 
-        hpp_time = [];
-        hpp_data = [];
+    hpp_time = [];
+    hpp_data = [];
 
-        temp_time = [];
-        temp_data = [];
+    temp_time = [];
+    temp_data = [];
 
-        ozon_time = [];
-        ozon_data = [];
-        try
-        {
-            for (let i = 0; i < sensor_mac_all_fetch.length; i++) {
-                const value_mac = sensor_mac_all_fetch[i][0]; //mac address name
-                ////////////////////
-                //testing
-                console.log(sensor_mac_all_fetch[i][0] + "|" + sensor_mac_all_fetch[i][1] + "|" +  sensor_mac_all_fetch[i][2] + "|" + sensor_mac_all_fetch[i][3] + "|" + sensor_mac_all_fetch[i][4] + "|" +  sensor_mac_all_fetch[i][5]);
-                ////////////////////
-                const current_value = combobox_mac.item(combobox_mac.value).text;
-                if (current_value == value_mac){ //the current mac
-                    bme_time.push(sensor_mac_all_fetch[i][1]);
-                    console.log(sensor_mac_all_fetch[i][1]); //test
-                    console.log(sensor_mac_all_fetch[i][2]); //test
-                    bme_data.push(Number(sensor_mac_all_fetch[i][2]));
+    ozon_time = [];
+    ozon_data = [];
+    try
+    {
+        for (let i = 0; i < mac_all_websockets.length; i++) {
+            const value_mac = mac_all_websockets[i][0]; //mac address name
+            ////////////////////
+            //testing
+            console.log(mac_all_websockets[i][0] + "|" + mac_all_websockets[i][1] + "|" +  mac_all_websockets[i][2] + "|" + mac_all_websockets[i][3] + "|" + mac_all_websockets[i][4] + "|" +  mac_all_websockets[i][5]);
+            ////////////////////
+            const current_value = combobox_mac.item(combobox_mac.value).text;
+            if (current_value == value_mac){ //the current mac
+                bme_time.push(mac_all_websockets[i][1]);
+                console.log(mac_all_websockets[i][1]); //test
+                console.log(mac_all_websockets[i][2]); //test
+                bme_data.push(Number(mac_all_websockets[i][2])/100);
 
-                    hpp_time.push(sensor_mac_all_fetch[i][1]);
-                    hpp_data.push(Number(sensor_mac_all_fetch[i][3]));
+                hpp_time.push(mac_all_websockets[i][1]);
+                hpp_data.push(Number(mac_all_websockets[i][3]));
 
-                    temp_time.push(sensor_mac_all_fetch[i][1]);
-                    temp_data.push(Number(sensor_mac_all_fetch[i][4])); //mac_all for websockets
+                temp_time.push(mac_all_websockets[i][1]);
+                temp_data.push(Number(mac_all_websockets[i][4])); //mac_all for websockets
 
-                    ozon_time.push(sensor_mac_all_fetch[i][1]);
-                    ozon_data.push(Number(sensor_mac_all_fetch[i][5]));
-                }
+                ozon_time.push(mac_all_websockets[i][1]);
+                ozon_data.push(Number(mac_all_websockets[i][5]));
             }
-        } catch(err){
-            console.log(err);
         }
-    }
-    else if (websockets_bool == true){
-        const combobox_mac = document.getElementById("mac_box");
-
-        //resetting values
-        bme_time = [];
-        bme_data = [];
-
-        hpp_time = [];
-        hpp_data = [];
-
-        temp_time = [];
-        temp_data = [];
-
-        ozon_time = [];
-        ozon_data = [];
-        try
-        {
-            for (let i = 0; i < mac_all_websockets.length; i++) {
-                const value_mac = mac_all_websockets[i][0]; //mac address name
-                ////////////////////
-                //testing
-                console.log(mac_all_websockets[i][0] + "|" + mac_all_websockets[i][1] + "|" +  mac_all_websockets[i][2] + "|" + mac_all_websockets[i][3] + "|" + mac_all_websockets[i][4] + "|" +  mac_all_websockets[i][5]);
-                ////////////////////
-                const current_value = combobox_mac.item(combobox_mac.value).text;
-                if (current_value == value_mac){ //the current mac
-                    bme_time.push(mac_all_websockets[i][1]);
-                    console.log(mac_all_websockets[i][1]); //test
-                    console.log(mac_all_websockets[i][2]); //test
-                    bme_data.push(Number(mac_all_websockets[i][2])/100);
-
-                    hpp_time.push(mac_all_websockets[i][1]);
-                    hpp_data.push(Number(mac_all_websockets[i][3]));
-
-                    temp_time.push(mac_all_websockets[i][1]);
-                    temp_data.push(Number(mac_all_websockets[i][4])); //mac_all for websockets
-
-                    ozon_time.push(mac_all_websockets[i][1]);
-                    ozon_data.push(Number(mac_all_websockets[i][5]));
-                }
-            }
-        } catch(err){
-            console.log(err);
-        }
-    }  
-}
-
-function load_setting(){
-    const combobox_fetch_live = document.getElementById("data_box").value;
-    
-    switch (combobox_fetch_live) {
-        case "Fetchen":
-            websockets_bool = false;
-            fetch_bool = true;
-        break;
-    
-        case "Live":
-            websockets_bool = true;
-            fetch_bool = false;
-        break;
+    } catch(err){
+        console.log(err);
     }
 }
+
 
 function excel_button(){
-    if(fetch_bool == true){
-        create_excel(sensor_mac_all_fetch);
-
-    } else if (websockets_bool == true){
-        create_excel(mac_all_websockets);
-    }
+    create_excel(mac_all_websockets);
 }
 
 function create_excel(raw_data){
@@ -2003,4 +1966,4 @@ const fetchUserInfo = async(DNS_address, first_address, second_address, where_is
 
 //setInterval(HTTP_READ(), 1000); //yeah i changed, the paramter, to 1 second --> it should work, but we have to test it properly with the esp
 
-setInterval(Read_all(), 1000); //this should read the actual sensor-esp-data
+//setInterval(Read_all(), 1000); //this should read the actual sensor-esp-data
