@@ -468,8 +468,8 @@ function time_setting(){
                     }
                     else{
                         const steps_hours = Math.floor(min_hours + steps_array[i]);
-                        const steps_minutes = Math.floor((min_minutes + steps_array[i] - steps_hours) * 60);
-                        const steps_seconds = Math.round(((min_seconds + steps_array[i] - steps_hours) * 60 - steps_minutes) * 60);
+                        const steps_minutes = min_minutes +  Math.floor((steps_array[i] - steps_hours) * 60);
+                        const steps_seconds = min_seconds + Math.round(((steps_array[i] - steps_hours) * 60 - steps_minutes) * 60);
 
                         ctx.fillText(steps_hours + ":" + steps_minutes + ":" + steps_seconds, steps_array[i] * unit - (steps_array[1] * unit)/10, height_for_x_lapses + 0.02*height); //extremely complicated, it depends on the definition of the general time zone
                     }
