@@ -61,6 +61,8 @@ int year = 0, month = 0, day = 0;
 
 unsigned long startTime = 0;
 
+uint32_t rootNodeId = 0;
+
 void receivedCallback(String &from, String &msg);
 void newConnectionCallback(uint32_t nodeId);
 String messageType(String msg);
@@ -121,7 +123,7 @@ void initMesh()
   Serial.println(mesh.getAPIP());
   esp_base_mac_addr_get(baseMac);
   char macStr[18];
-  snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",
+  snprintf(macStr, sizeof(macStr), "%02x;%02x;%02x;%02x;%02x;%02x",
            baseMac[0], baseMac[1], baseMac[2], baseMac[3], baseMac[4], baseMac[5]);
   String macString = String(macStr);
   mesh.setName(macString);
@@ -140,11 +142,28 @@ void receivedCallback(String &from, String &msg)
   Serial.printf("My node name: %s\n", mesh.getName().c_str());
   Serial.printf("Connected nodes: %d\n", mesh.getNodeList().size());
   
+  // Always check message type first
+  String type = messageType(msg);
+
+  // Always process Root messages to set rootNodeId
+  if (type == "Root")
+  {
+    // Extract the value after the colon
+    int colonPos = msg.indexOf(':');
+    if (colonPos != -1) {
+      String idStr = msg.substring(colonPos + 1);
+      rootNodeId = idStr.toInt();
+      Serial.print("Root node ID set to: "); Serial.println(rootNodeId);
+    } else {
+      Serial.println("Root message format error: no colon found");
+    }
+  }
+  
   // Check if the message is from the mainESP node
   if (from.equals("mainESP"))
   {
     Serial.println("Message is from mainESP - processing...");
-    String type = messageType(msg);
+    // type already determined above
     Serial.print("Message type: "); Serial.println(type);
     Serial.print("Type length: "); Serial.println(type.length());
     Serial.print("Type equals 'Time': "); Serial.println(type.equals("Time") ? "YES" : "NO");
@@ -157,10 +176,8 @@ void receivedCallback(String &from, String &msg)
       timeSplit(msg, ':');
       timeSynchronized = true;
       Serial.println("Time synchronized - logging can now begin");
-      
-      // Start logging task if not already started
       if (!logTask->isEnabled()) {
-        Serial.println("Starting logging task");
+        Serial.println("Enabling logging task after time sync");
         logTask->enable();
       }
     }
@@ -184,12 +201,6 @@ void receivedCallback(String &from, String &msg)
       Serial.println("OnOff toggle received");
       toggleOnOff = !toggleOnOff;
     }
-    else if (type == "Root")
-    {
-      int pos = msg.indexOf(':');
-      rootName = msg.substring(pos + 1);
-      Serial.print("Root name set to: "); Serial.println(rootName);
-    }
     else if (type == "SendData")
     {
       Serial.println("=== SENDDATA COMMAND RECEIVED ===");
@@ -207,9 +218,7 @@ void receivedCallback(String &from, String &msg)
   {
     Serial.print("Message is NOT from mainESP (from: '"); Serial.print(from); Serial.println("') - ignoring");
     Serial.println("Trying alternative approach - processing anyway since we're connected to mesh...");
-    
-    // Alternative approach: process messages if we're connected to the mesh
-    String type = messageType(msg);
+    // type already determined above
     if (type == "Time")
     {
       Serial.println("*** TIME MESSAGE DETECTED (ALTERNATIVE) - PROCESSING ***");
@@ -217,7 +226,6 @@ void receivedCallback(String &from, String &msg)
       timeSplit(msg, ':');
       timeSynchronized = true;
       Serial.println("Time synchronized - logging can now begin");
-      
       // Start logging task if not already started
       if (!logTask->isEnabled()) {
         Serial.println("Starting logging task");
@@ -442,12 +450,15 @@ void logNodeData()
     Serial.println("Ozon: " + String(OzonValue) + "mV");
     
     // Send data in JSON format to match main ESP32
-    String jsonData = "{\"timestamp\":\"" + String(timestamp) + "\",\"node\":\"" + String(nodeName) + "\",\"bme\":" + String(BMEValue) + ",\"htu\":" + String(HTUValue) + ",\"typk\":" + String(TypKValue) + ",\"ozon\":" + String(OzonValue) + "}";
+    String jsonData = String("{\"timestamp\":\"") + String(timestamp) + "\",\"node\":\"" + String(nodeName) + "\",\"bme\":" + String(BMEValue) + ",\"htu\":" + String(HTUValue) + ",\"typk\":" + String(TypKValue) + ",\"ozon\":" + String(OzonValue) + "}";
     
-    if (!jsonData.isEmpty())
-    {
-      mesh.sendSingle(rootName, jsonData);
-      jsonData = "";
+    Serial.print("logNodeData: rootNodeId: "); Serial.println(rootNodeId);
+    Serial.print("logNodeData: mesh.isConnected(rootNodeId): "); Serial.println(((painlessMesh&)mesh).isConnected(rootNodeId) ? "YES" : "NO");
+    if (rootNodeId != 0 && ((painlessMesh&)mesh).isConnected(rootNodeId)) {
+      Serial.println("Sending sensor data to root node via mesh.sendSingle (by ID)");
+      mesh.sendSingle(rootNodeId, jsonData);
+    } else {
+      Serial.println("WARNING: Not sending data - rootNodeId not set or not connected");
     }
   }
   Serial.println("==================================");
@@ -513,7 +524,7 @@ void sendDB()
       String jsonData = "{\"timestamp\":\"" + String(ts) + "\",\"node\":\"" + String(nodeName) + "\",\"bme\":" + String(BMEValue) + ",\"htu\":" + String(HTUValue) + ",\"typk\":" + String(TypKValue) + ",\"ozon\":" + String(OzonValue) + "}";
       
       Serial.print("Sending record "); Serial.print(recordsSent + 1); Serial.print(": "); Serial.println(ts);
-      mesh.sendSingle(rootName, jsonData);
+      mesh.sendSingle(rootNodeId, jsonData);
       delay(10);
       strcpy(lastSentTs, ts);
       recordsSent++;
@@ -651,6 +662,8 @@ void setup()
   }
   delay(500);
   initMesh();
+  rootName = "mainESP";
+  Serial.println("Static rootName set to: mainESP");
 
   if (SD.exists(dbFileName))
   {
