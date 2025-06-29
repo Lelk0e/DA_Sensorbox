@@ -449,6 +449,11 @@ function time_setting(){
                     steps_array[i] = steps * i;
                 }
                 
+                //let calculate_per_1h_from_this = Number(hour_the_chosen) + Number(min_the_chosen)/60 + Number(sec_the_chosen)/3600; //like 12.5h
+                const min_hours = Math.floor(min_time_zone);
+                const min_minutes = Math.floor((min_time_zone - hours) * 60);
+                const min_seconds = Math.round(((min_time_zone - hours) * 60 - minutes) * 60);
+
                 for (let i = 0; i <= steps_array.length; i++) { // i = 0.0, so we can make sure, that we work with double numbers --> yeeeeah, i changed that, because i am working with steps_array, i dont need to look at double numbers anymore
                     ctx.beginPath();
                     ctx.moveTo(steps_array[i] * unit, 0);
@@ -459,10 +464,14 @@ function time_setting(){
                     //lapses naming
                     ctx.font = "12px serif";
                     if (i == 0){
-                        ctx.fillText(min_time_zone.toFixed(2), steps_array[i] * unit - (steps_array[1] * unit)/10, height_for_x_lapses + 0.02*height); //bro it works, omg --> you ask why, very simple, it took me like 15hours, to finish this shit
+                        ctx.fillText(min_hours + ":" + min_minutes + ":" + min_seconds, steps_array[i] * unit - (steps_array[1] * unit)/10, height_for_x_lapses + 0.02*height); //bro it works, omg --> you ask why, very simple, it took me like 15hours, to finish this shit
                     }
                     else{
-                        ctx.fillText((min_time_zone + steps_array[i]).toFixed(2), steps_array[i] * unit - (steps_array[1] * unit)/10, height_for_x_lapses + 0.02*height); //extremely complicated, it depends on the definition of the general time zone
+                        const steps_hours = Math.floor(min_time_zone + steps_array[i]);
+                        const steps_minutes = Math.floor((min_time_zone + steps_array[i] - steps_hours) * 60);
+                        const steps_seconds = Math.round(((min_time_zone + steps_array[i] - steps_hours) * 60 - steps_minutes) * 60);
+
+                        ctx.fillText(steps_hours + ":" + steps_minutes + ":" + steps_seconds, steps_array[i] * unit - (steps_array[1] * unit)/10, height_for_x_lapses + 0.02*height); //extremely complicated, it depends on the definition of the general time zone
                     }
                 }
                 ctx.font = "20px serif";
