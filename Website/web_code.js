@@ -734,7 +734,7 @@ function sensor_setting(){
                         }
 
                         ctx.font = "20px serif";
-                        ctx.fillText("Temperature", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
+                        ctx.fillText("Humidity", -1, -[y_whole_axe_length + y_axe_name_diff]); //arrow naming
                     }
                 break;
             
