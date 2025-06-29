@@ -1655,7 +1655,7 @@ function sensor_time_calculate_their_Coordinates_24h(x_coord, sensor_time){
 const socket = new WebSocket("ws://sensorbox.com/ws"); //websocket method, live implementation --> changed to ws:// ... /ws
 
 socket.addEventListener("open", (event) =>{ //connection open 
-    mac_all_websockets = []; //i am not sure, if this line of code, will definetely work, but we'll see
+    //mac_all_websockets = []; //i am not sure, if this line of code, will definetely work, but we'll see
     console.log("Connection was successfull!");
 }); 
 
