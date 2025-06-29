@@ -451,8 +451,8 @@ function time_setting(){
                 
                 //let calculate_per_1h_from_this = Number(hour_the_chosen) + Number(min_the_chosen)/60 + Number(sec_the_chosen)/3600; //like 12.5h
                 const min_hours = Math.floor(min_time_zone);
-                const min_minutes = Math.floor((min_time_zone - hours) * 60);
-                const min_seconds = Math.round(((min_time_zone - hours) * 60 - minutes) * 60);
+                const min_minutes = Math.floor((min_time_zone - min_hours) * 60);
+                const min_seconds = Math.round(((min_time_zone - min_hours) * 60 - min_minutes) * 60);
 
                 for (let i = 0; i <= steps_array.length; i++) { // i = 0.0, so we can make sure, that we work with double numbers --> yeeeeah, i changed that, because i am working with steps_array, i dont need to look at double numbers anymore
                     ctx.beginPath();
